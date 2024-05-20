@@ -12,12 +12,12 @@ class UserRepository:
     async def change_state_id(self, state_id: int):
         pass
     
-    async def set_admin(self, user: User):
+    async def set_admin(self, user: User, is_admin: bool):
         pass
 
     async def dismiss_admin(self, user: User):
         pass
-    
+
     async def is_admin_check(self, is_admin: bool, is_true_admin: bool):
         pass
 

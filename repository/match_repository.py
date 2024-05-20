@@ -1,7 +1,7 @@
 from model.match import Match
 
 
-class match_repository:
+class MatchRepository:
 
     async def create(self) -> Match:
         pass
@@ -12,7 +12,7 @@ class match_repository:
     async def delete(self, match: Match):
         pass
 
-    async def read_all(self, match: Match):
+    async def read_all(self, match: Match) -> list[Match]:
         pass
 
     async def filter_by_genre(self) -> list[Match]:
