@@ -5,6 +5,7 @@ from model.place import Place
 
 from data.execution import execute_query
 from data.connection import create_connection
+from data.read_all_execution import execute_read_query
 
 
 class MatchRepository:
@@ -57,18 +58,67 @@ class MatchRepository:
         connection = create_connection()
         execute_query(connection, delete_match)
 
-    async def read_all(self, match: Match) -> list[Match]:
-        pass
+    def read_all(self) -> list[Match]:
+        
+        list_of_matches = []
+        select_all_matches = 'SELECT * from matches'
 
-    async def filter_by_genre(self, genre: Genre) -> list[Match]:
-        pass
+        connection = create_connection()
+        matches = execute_read_query(connection, select_all_matches)
 
-    async def filter_by_place(self, place: Place) -> list[Match]:
-        pass
+        for match in matches:
+            list_of_matches.append(match)
+        
+        return list_of_matches
 
-    async def filter_by_group(self, group: Group) -> list[Match]:
-        pass
+    def filter_by_genre(self, genre: Genre) -> list[Match]:
+        
+        list_of_matches = []
+        select_matches = f'SELECT * from matches WHERE genre_id = {genre.id}'
+
+        connection = create_connection()
+        matches = execute_read_query(connection, select_matches)
+
+        for match in matches:
+            list_of_matches.append(match)
+        
+        return list_of_matches
+
+    def filter_by_place(self, place: Place) -> list[Match]:
+        
+        list_of_matches = []
+        select_matches = f'SELECT * from matches WHERE place_id = {place.id}'
+
+        connection = create_connection()
+        matches = execute_read_query(connection, select_matches)
+
+        for match in matches:
+            list_of_matches.append(match)
+        
+        return list_of_matches
+
+    def filter_by_group(self, group: Group) -> list[Match]:
+        
+        list_of_matches = []
+        select_matches = f'SELECT * from matches WHERE group_id = {group.id}'
+
+        connection = create_connection()
+        matches = execute_read_query(connection, select_matches)
+
+        for match in matches:
+            list_of_matches.append(match)
+        
+        return list_of_matches
 
     async def filter_by_solo_friendliness(self) -> list[Match]:
-        pass
+        
+        list_of_matches = []
+        select_matches = f'SELECT * from matches WHERE is_loneliness_friendly is true'
 
+        connection = create_connection()
+        matches = execute_read_query(connection, select_matches)
+
+        for match in matches:
+            list_of_matches.append(match)
+        
+        return list_of_matches
