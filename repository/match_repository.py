@@ -4,34 +4,35 @@ from model.group import Group
 from model.place import Place
 
 from data.execution import execute_query
-from data.connection import create_connection
 from data.read_all_execution import execute_read_query
 
+from mapping.match_mapping import match_from_row
 
 class MatchRepository:
 
-    def create(self, match: Match):
-        
-        match = Match()
-        match_records = (
-            match.start_time, 
-            match.duration, 
-            match.place_id, 
-            match.group_id, 
-            match.genre_id, 
-            match.is_loneliness_friendly
+    def create(self, connection, match: Match):
+        insert_match = f'''
+        INSERT INTO matches (
+            start_time, 
+            duration, 
+            place_id, 
+            group_id, 
+            genre_id, 
+            is_loneliness_friendly
+            ) 
+        VALUES (
+            {match.start_time},
+            {match.duration},
+            {match.place_id}, 
+            {match.group_id}, 
+            {match.genre_id}, 
+            {match.is_loneliness_friendly}
             )
+            '''
 
-        insert_query = (
-        f'INSERT INTO matches (start_time, duration, place_id, group_id, genre_id, is_loneliness_friendly) VALUES {match_records}'
-        )
-
-        connection = create_connection()
-        execute_query(connection, insert_query)
+        execute_query(connection, insert_match)
     
-    def update(self, match: Match):
-        
-        match = Match()
+    def update(self, connection, match: Match):
         update_match = f'''
             UPDATE
                 matches
@@ -46,37 +47,27 @@ class MatchRepository:
             WHERE
                 id = {match.id}
             '''
-         
-        connection = create_connection()
+        
         execute_query(connection, update_match)
 
-    def delete(self, match: Match):
-
-        match = Match()
+    def delete(self, connection, match: Match):
         delete_match = f'DELETE FROM matches WHERE id = {match.id}'
-
-        connection = create_connection()
         execute_query(connection, delete_match)
 
-    def read_all(self) -> list[Match]:
-        
+    def read_all(self, connection) -> list[Match]:
         list_of_matches = []
         select_all_matches = 'SELECT * from matches'
-
-        connection = create_connection()
         matches = execute_read_query(connection, select_all_matches)
 
-        for match in matches:
+        for row in matches:
+            match = match_from_row(row)
             list_of_matches.append(match)
         
         return list_of_matches
 
-    def filter_by_genre(self, genre: Genre) -> list[Match]:
-        
+    def filter_by_genre(self, connection, genre: Genre) -> list[Match]:
         list_of_matches = []
         select_matches = f'SELECT * from matches WHERE genre_id = {genre.id}'
-
-        connection = create_connection()
         matches = execute_read_query(connection, select_matches)
 
         for match in matches:
@@ -84,41 +75,35 @@ class MatchRepository:
         
         return list_of_matches
 
-    def filter_by_place(self, place: Place) -> list[Match]:
-        
+    def filter_by_place(self, connection, place: Place) -> list[Match]:
         list_of_matches = []
         select_matches = f'SELECT * from matches WHERE place_id = {place.id}'
-
-        connection = create_connection()
         matches = execute_read_query(connection, select_matches)
 
-        for match in matches:
+        for row in matches:
+            match = match_from_row(row)
             list_of_matches.append(match)
         
         return list_of_matches
 
-    def filter_by_group(self, group: Group) -> list[Match]:
-        
+    def filter_by_group(self, connection, group: Group) -> list[Match]:
         list_of_matches = []
         select_matches = f'SELECT * from matches WHERE group_id = {group.id}'
-
-        connection = create_connection()
         matches = execute_read_query(connection, select_matches)
 
-        for match in matches:
+        for row in matches:
+            match = match_from_row(row)
             list_of_matches.append(match)
         
         return list_of_matches
 
-    async def filter_by_solo_friendliness(self) -> list[Match]:
-        
+    def filter_by_solo_friendliness(self, connection) -> list[Match]:
         list_of_matches = []
-        select_matches = f'SELECT * from matches WHERE is_loneliness_friendly is true'
-
-        connection = create_connection()
+        select_matches = 'SELECT * from matches WHERE is_loneliness_friendly is true'
         matches = execute_read_query(connection, select_matches)
 
-        for match in matches:
+        for row in matches:
+            match = match_from_row(row)
             list_of_matches.append(match)
         
         return list_of_matches
