@@ -14,14 +14,15 @@ def match_from_row(row: tuple) -> Match:
     return match
 
 def row_from_match(match: Match) -> tuple:
-    row = set()
+    row = []
     int_start_time = int_to_datetime(match.start_time)
     int_duration = int_to_datetime(match.duration)
-    
+
     row.append(int_start_time)
     row.append(int_duration)
     row.append(match.place_id)
     row.append(match.group_id)
     row.append(match.genre_id)
     row.append(match.is_loneliness_friendly)
+    row = tuple(row)
     return row
