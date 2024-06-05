@@ -8,6 +8,7 @@ from data.read_all_execution import execute_read_query
 
 from mapping.match_mapping import match_from_row
 
+
 class MatchRepository:
 
     def create(self, connection, match: Match):
