@@ -6,12 +6,15 @@ from model.place import Place
 from data.execution import execute_query
 from data.read_all_execution import execute_read_query
 
-from mapping.match_mapping import match_from_row
+from mapping.match_mapping import match_from_row, row_from_match
+
+from utils.datetime_util import int_to_datetime
 
 
 class MatchRepository:
 
     def create(self, connection, match: Match):
+        set_of_values = row_from_match(match)
         insert_match = f'''
         INSERT INTO matches (
             start_time, 
@@ -21,25 +24,20 @@ class MatchRepository:
             genre_id, 
             is_loneliness_friendly
             ) 
-        VALUES (
-            {match.start_time},
-            {match.duration},
-            {match.place_id}, 
-            {match.group_id}, 
-            {match.genre_id}, 
-            {match.is_loneliness_friendly}
-            )
+        VALUES ({set_of_values})
             '''
 
         execute_query(connection, insert_match)
     
     def update(self, connection, match: Match):
+        start_time_obj = int_to_datetime(match.start_time)
+        duration_obj = int_to_datetime(match.duration)
         update_match = f'''
             UPDATE
                 matches
             SET
-                start_time = {match.start_time},
-                start_date = {match.start_date},
+                start_time = {start_time_obj},
+                start_date = {duration_obj},
                 duration = {match.duration},
                 place_id = {match.place_id},
                 group_id = {match.group_id},
