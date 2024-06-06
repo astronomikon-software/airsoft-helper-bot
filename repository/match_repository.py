@@ -8,13 +8,14 @@ from data.read_all_execution import execute_read_query
 
 from mapping.match_mapping import match_from_row, row_from_match
 
-from utils.datetime_util import int_to_datetime
+from utils.datetime_util import int_to_str
 
 
 class MatchRepository:
 
     def create(self, connection, match: Match):
-        set_of_values = row_from_match(match)
+        start_time_str = int_to_str(match.start_time)
+        duration_str = int_to_str(match.duration)
         insert_match = f'''
         INSERT INTO matches (
             start_time, 
@@ -24,13 +25,20 @@ class MatchRepository:
             genre_id, 
             is_loneliness_friendly
             ) 
-        VALUES ({set_of_values})
+        VALUES (
+            {start_time_str},
+            {duration_str},
+            {match.place_id},
+            {match.group_id},
+            {match.genre_id},
+            {match.is_loneliness_friendly}
+            )
             '''
 
         execute_query(connection, insert_match)
     
     def update(self, connection, match: Match):
-        start_time_obj = int_to_datetime(match.start_time)
+        start_time_obj = int_to_datetime(match.start_time) #!!!
         duration_obj = int_to_datetime(match.duration)
         update_match = f'''
             UPDATE
