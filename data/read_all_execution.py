@@ -2,11 +2,11 @@ import psycopg2
 from psycopg2 import OperationalError
 
 
-def execute_read_query(connection, query):
+def execute_read_query(connection, query, values):
     cursor = connection.cursor()
     result = None
     try:
-        cursor.execute(query)
+        cursor.execute(query, values)
         result = cursor.fetchall()
         return result
     except OperationalError as e:

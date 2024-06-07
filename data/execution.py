@@ -2,11 +2,11 @@ import psycopg2
 from psycopg2 import OperationalError
 
 
-def execute_query(connection, query):
+def execute_query(connection, query, values):
     cursor = connection.cursor()
     try:
-        cursor.execute(query)
+        cursor.execute(query, values)
         connection.commit()
     except OperationalError as e:
-        pass
+        print('Ошибка:', e)
      
