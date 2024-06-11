@@ -35,8 +35,7 @@ class MatchRepository:
 
     def read_all(self) -> list[Match]:
         select_formula = '''SELECT * from matches'''
-        select_values = set()
-        matches = execute_read_query(connection, select_formula, select_values)
+        matches = execute_read_query(connection, select_formula)
         list_of_matches = list(map(match_from_row, matches))
         return list_of_matches
 
