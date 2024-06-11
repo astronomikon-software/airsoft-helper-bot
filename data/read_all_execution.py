@@ -10,4 +10,4 @@ def execute_read_query(connection, query, values):
         result = cursor.fetchall()
         return result
     except OperationalError as e:
-        pass
+        print(e)

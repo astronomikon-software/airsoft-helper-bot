@@ -8,5 +8,5 @@ def execute_query(connection, query, values):
         cursor.execute(query, values)
         connection.commit()
     except OperationalError as e:
-        print('Ошибка:', e)
+        print(e)
      
