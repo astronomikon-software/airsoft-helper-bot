@@ -1,10 +1,11 @@
 import psycopg2
 from psycopg2 import OperationalError
 
+from connection import connection
 
-def execute_read_query(connection, query, values=set()):
+
+def execute_read_query(query, values=set()):
     cursor = connection.cursor()
-    result = None
     try:
         cursor.execute(query, values)
         result = cursor.fetchall()

@@ -3,7 +3,6 @@ from model.genre import Genre
 from model.group import Group
 from model.place import Place
 
-from data.connection import connection
 from data.execution import execute_query
 from data.read_all_execution import execute_read_query
 
@@ -17,52 +16,68 @@ class MatchRepository:
     def create(self, match: Match):
         start_time_obj = int_to_datetime(match.start_time)
         duration_obj = int_to_datetime(match.duration)
-        insert_formula = '''INSERT INTO matches (start_time, duration, place_id, group_id, genre_id, is_loneliness_friendly) VALUES (%s, %s, %s, %s, %s, %s)'''
-        insert_values = (start_time_obj, duration_obj, match.place_id, match.group_id, match.genre_id, match.is_loneliness_friendly)
-        execute_query(connection, insert_formula, insert_values)
+        execute_query(
+            '''INSERT INTO matches (start_time, duration, place_id, group_id, genre_id, is_loneliness_friendly) VALUES (%s, %s, %s, %s, %s, %s)''',
+            (
+                start_time_obj,
+                duration_obj,
+                match.place_id,
+                match.group_id,
+                match.genre_id,
+                match.is_loneliness_friendly
+            )
+        )
     
     def update(self, match: Match):
         start_time_obj = int_to_datetime(match.start_time)
         duration_obj = int_to_datetime(match.duration)
-        update_formula = '''UPDATE matches SET start_time = %s, duration = %s, place_id = %s, group_id = %s, genre_id = %s, is_loneliness_friendly = %s WHERE id = %s'''
-        update_values = (start_time_obj, duration_obj, match.place_id, match.group_id, match.genre_id, match.is_loneliness_friendly, match.id)
-        execute_query(connection, update_formula, update_values)
+        execute_query(
+            '''UPDATE matches SET start_time = %s, duration = %s, place_id = %s, group_id = %s, genre_id = %s, is_loneliness_friendly = %s WHERE id = %s''',
+            (
+                start_time_obj,
+                duration_obj,
+                match.place_id,
+                match.group_id,
+                match.genre_id,
+                match.is_loneliness_friendly,
+                match.id
+            )
+        )
 
     def delete(self, match: Match):
-        delete_formula = '''DELETE FROM matches WHERE id = %s'''
-        delete_values = (match.id,)
-        execute_query(connection, delete_formula, delete_values)
+        execute_query(
+            '''DELETE FROM matches WHERE id = %s''',
+            (match.id,)
+        )
 
     def read_all(self) -> list[Match]:
-        select_formula = '''SELECT * from matches'''
-        matches = execute_read_query(connection, select_formula)
-        list_of_matches = list(map(match_from_row, matches))
-        return list_of_matches
+        rows = execute_read_query('''SELECT * from matches''')
+        return list(map(match_from_row, rows))
 
     def read_by_genre(self, genre: Genre) -> list[Match]:
-        select_formula = '''SELECT * from matches WHERE genre_id = %s'''
-        select_values = (genre.id,)
-        matches = execute_read_query(connection, select_formula, select_values)
-        list_of_matches = list(map(match_from_row, matches))
-        return list_of_matches
+        rows = execute_read_query(
+            '''SELECT * from matches WHERE genre_id = %s''',
+            (genre.id,)
+        )
+        return list(map(match_from_row, rows))
 
     def read_by_place(self, place: Place) -> list[Match]:
-        select_formula = '''SELECT * from matches WHERE place_id = %s'''
-        select_values = (place.id,)
-        matches = execute_read_query(connection, select_formula, select_values)
-        list_of_matches = list(map(match_from_row, matches))
-        return list_of_matches
+        rows = execute_read_query(
+            '''SELECT * from matches WHERE place_id = %s''',
+            (place.id,)
+        )
+        return list(map(match_from_row, rows))
 
     def read_by_group(self, group: Group) -> list[Match]:
-        select_formula = '''SELECT * from matches WHERE group_id = %s'''
-        select_values = (group.id,)
-        matches = execute_read_query(connection, select_formula, select_values)
-        list_of_matches = list(map(match_from_row, matches))
-        return list_of_matches
+        rows = execute_read_query(
+            '''SELECT * from matches WHERE group_id = %s''',
+            (group.id,)
+        )
+        return list(map(match_from_row, rows))
 
     def read_by_solo_friendliness(self) -> list[Match]:
-        select_formula = '''SELECT * from matches WHERE is_loneliness_friendly is %s'''
-        select_values = (True,)
-        matches = execute_read_query(connection, select_formula, select_values)
-        list_of_matches = list(map(match_from_row, matches))
-        return list_of_matches
+        rows = execute_read_query(
+            '''SELECT * from matches WHERE is_loneliness_friendly is %s''',
+            (True,)
+        )
+        return list(map(match_from_row, rows))
