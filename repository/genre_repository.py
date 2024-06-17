@@ -5,6 +5,6 @@ from mapping.genre_mapping import genre_from_row
 
 class GenreRepository:
     
-    def read_all():
+    def read_all() -> list[Genre]:
         rows = execute_read_query('''SELECT * from genres''')
         return list(map(genre_from_row, rows))

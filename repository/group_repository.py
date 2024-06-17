@@ -5,6 +5,6 @@ from mapping.group_mapping import group_from_row
 
 class GroupRepository:
     
-    def read_all():
+    def read_all() -> list[Group]:
         rows = execute_read_query('''SELECT * from groups''')
         return list(map(group_from_row, rows))
