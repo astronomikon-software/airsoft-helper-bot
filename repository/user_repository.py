@@ -27,27 +27,11 @@ class UserRepository:
         )
         return user_from_row(row)
 
-    def change_state_id(self, user: User):
+    def update(self, user: User):
         execute_query(
-            '''UPDATE users SET state_id = %s WHERE id = %s''',
+            '''UPDATE users SET state_id = %s, is_admin = %s WHERE id = %s''', 
             (
                 user.state_id,
-                user.id,
+                user.is_adminuser.id,
             )
-        )
-    
-    def set_admin(self, user: User):
-        execute_query(
-            '''UPDATE users SET is_admin = %s WHERE id = %s''',
-            (
-                user.is_admin,
-                user.id,
-            )
-        )
-
-    def is_admin_check(self, user: User) -> bool:
-        row = execute_read_query(
-            '''SELECT is_admin FROM users WHERE id = %s''',
-            (user.id,)
-        )
-        return row[0]
+        )   
