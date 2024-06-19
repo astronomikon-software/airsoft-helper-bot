@@ -32,6 +32,7 @@ class UserRepository:
             '''UPDATE users SET state_id = %s, is_admin = %s WHERE id = %s''', 
             (
                 user.state_id,
-                user.is_adminuser.id,
+                user.is_admin,
+                user.id,
             )
         )   
