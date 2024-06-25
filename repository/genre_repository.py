@@ -11,3 +11,10 @@ class GenreRepository:
     def read_all(self) -> list[Genre]:
         rows = self.db_provider.execute_read_query('''SELECT * from genres''')
         return list(map(genre_from_row, rows))
+    
+    def read_by_id(self, id: int) -> Genre:
+        rows = self.db_provider.execute_read_query(
+            '''SELECT * FROM genres WHERE id = %s''',
+            (id,)
+        )        
+        return genre_from_row(rows[0])

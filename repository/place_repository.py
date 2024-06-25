@@ -11,3 +11,10 @@ class PlaceRepository:
     def read_all(self) -> list[Place]:
         rows = self.db_provider.execute_read_query('''SELECT * from places''')
         return list(map(place_from_row, rows))
+
+    def read_by_id(self, id: int) -> Place:
+        rows = self.db_provider.execute_read_query(
+            '''SELECT * FROM places WHERE id = %s''',
+            (id,)
+        )
+        return place_from_row(rows[0])
