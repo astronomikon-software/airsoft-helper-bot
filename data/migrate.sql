@@ -31,9 +31,9 @@ CREATE TABLE matches(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     start_time TIMESTAMP NOT NULL,
     duration TIMESTAMP NOT NULL,
-    place_id BIGINT REFERENCES places (id) NOT NULL,
-    group_id BIGINT REFERENCES groups (id) NOT NULL,
-    genre_id BIGINT REFERENCES genres (id) NOT NULL,
+    place_id BIGINT NOT NULL,
+    group_id BIGINT NOT NULL,
+    genre_id BIGINT NOT NULL,
     is_loneliness_friendly BOOLEAN NOT NULL
 );
 
