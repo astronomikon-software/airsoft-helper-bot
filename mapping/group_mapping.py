@@ -2,7 +2,7 @@ from model.group import Group
 
 
 def group_from_row(row: tuple) -> Group:
-    group = group()
+    group = Group()
     group.id = row[0]
     group.name = row[1]
     return group
