@@ -3,7 +3,6 @@ from data.db_provider import DbProvider
 from mapping.user_mapping import user_from_row
 
 
-
 class UserRepository:
     
     def __init__(self, db_provider: DbProvider):
@@ -21,12 +20,12 @@ class UserRepository:
             )
         )
    
-    def read_by_id(self, user: User) -> User:
-        row = self.db_provider.execute_read_query(
+    def read_by_id(self, id: int) -> User:
+        rows = self.db_provider.execute_read_query(
             '''SELECT * FROM users WHERE id = %s''',
-            (user.id,)
+            (id,)
         )
-        return user_from_row(row)
+        return user_from_row(rows[0])
 
     def update(self, user: User):
         self.db_provider.execute_query(

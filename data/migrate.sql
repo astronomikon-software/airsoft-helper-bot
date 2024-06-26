@@ -54,3 +54,6 @@ INSERT INTO genres(genre_name) VALUES('All Against All');
 INSERT INTO matches(start_time, duration, place_id, group_id, genre_id, is_loneliness_friendly) VALUES('2024-05-06 19:00:00', '2024-05-06 20:00:00', 1, 2, 1, False);
 INSERT INTO matches(start_time, duration, place_id, group_id, genre_id, is_loneliness_friendly) VALUES('2024-05-07 18:00:00', '2024-05-07 20:00:00', 2, 3, 1, True);
 INSERT INTO matches(start_time, duration, place_id, group_id, genre_id, is_loneliness_friendly) VALUES('2024-05-08 17:00:00', '2024-05-08 20:00:00', 3, 1, 2, False);
+
+INSERT INTO users(id, state_id, is_admin, is_true_admin) VALUES(1, 1, False, False);
+INSERT INTO users(id, state_id, is_admin, is_true_admin) VALUES(2, 1, False, False);
