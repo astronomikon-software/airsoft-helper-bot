@@ -30,7 +30,7 @@ CREATE TABLE users(
 CREATE TABLE matches(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     start_time TIMESTAMP NOT NULL,
-    duration TIMESTAMP NOT NULL,
+    duration TIMESTAMP,
     place_id BIGINT NOT NULL,
     group_id BIGINT NOT NULL,
     genre_id BIGINT NOT NULL,
@@ -50,10 +50,3 @@ INSERT INTO groups(group_name) VALUES('Suicide Squad');
 INSERT INTO genres(genre_name) VALUES('Battle-Royal');
 INSERT INTO genres(genre_name) VALUES('King of the Mount');
 INSERT INTO genres(genre_name) VALUES('All Against All');
-
-INSERT INTO matches(start_time, duration, place_id, group_id, genre_id, is_loneliness_friendly) VALUES('2024-05-06 19:00:00', '2024-05-06 20:00:00', 1, 1, 1, False);
-INSERT INTO matches(start_time, duration, place_id, group_id, genre_id, is_loneliness_friendly) VALUES('2024-05-07 18:00:00', '2024-05-07 20:00:00', 2, 2, 2, False);
-INSERT INTO matches(start_time, duration, place_id, group_id, genre_id, is_loneliness_friendly) VALUES('2024-05-08 17:00:00', '2024-05-08 20:00:00', 3, 3, 3, True);
-
-INSERT INTO users(id, state_id, is_admin, is_true_admin) VALUES(1, 1, False, False);
-INSERT INTO users(id, state_id, is_admin, is_true_admin) VALUES(2, 1, False, False);

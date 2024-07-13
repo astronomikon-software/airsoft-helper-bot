@@ -1,19 +1,48 @@
 import telebot
 from telebot import types
-from configuration import BOT_TOKEN
+from configuration import BOT_TOKEN, PSQL_DATABASE, PSQL_USER, PSQL_PASSWORD
 
 from menu_buttons.message_text import MessageText
 from menu_buttons.create_button import create_button
 from menu_buttons.button_name import ButtonName
 from menu_buttons.button_callback import ButtonCallback
 
+from model.user import User
+from model.match import Match
+from model.genre import Genre
+from model.group import Group
+from model.place import Place
 
+from data.db_provider import DbProvider
+from repository.user_repository import UserRepository
+from repository.match_repository import MatchRepository
+from repository.genre_repository import GenreRepository
+from repository.group_repository import GroupRepository
+from repository.place_repository import PlaceRepository
 
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
+db_provider = DbProvider(
+    database=PSQL_DATABASE,
+    user=PSQL_USER,
+    password=PSQL_PASSWORD
+)
+user_repository = UserRepository(db_provider)
+
+
 @bot.message_handler(commands=['start'])
 def start(message):
+    try:
+        user = User()
+        user.id = message.from_user.id
+        user.state_id = 1
+        user.is_admin = False
+        user.is_true_admin = False
+        user_repository.create(user)
+    except Exception as e:
+        print(e)
+        db_provider.rollback()
     markup = types.InlineKeyboardMarkup()
     markup.add(create_button(ButtonName.SCHEDULE, ButtonCallback.SCHEDULE))
     markup.add(create_button(ButtonName.HOW_TO, ButtonCallback.HOW_TO))
@@ -31,6 +60,7 @@ def callback_operator(callback):
                 markup.add(create_button(ButtonName.MARKET, ButtonCallback.MARKET))
                 bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.message_id, text=MessageText.HELLO)
                 bot.edit_message_reply_markup(chat_id=callback.message.chat.id, message_id=callback.message.message_id, reply_markup=markup)
+            
             elif callback.data == ButtonCallback.SCHEDULE:
                 markup = types.InlineKeyboardMarkup()
                 markup.add(create_button(ButtonName.CALENDAR, ButtonCallback.CALENDAR))
@@ -39,16 +69,42 @@ def callback_operator(callback):
                 markup.add(create_button(ButtonName.GO_BACK, ButtonCallback.TO_MAIN_MENU))
                 bot.edit_message_text(chat_id=callback.message.chat.id,message_id=callback.message.message_id, text=MessageText.CHOOSE_FUNCTION)
                 bot.edit_message_reply_markup(chat_id=callback.message.chat.id, message_id=callback.message.message_id, reply_markup=markup)
+            
             elif callback.data == ButtonCallback.HOW_TO:
                 markup = types.InlineKeyboardMarkup()
                 markup.add(create_button(ButtonName.TO_MAIN_MENU, ButtonCallback.TO_MAIN_MENU))
                 bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.message_id, text=MessageText.HOW_TO)
                 bot.edit_message_reply_markup(chat_id=callback.message.chat.id, message_id=callback.message.message_id, reply_markup=markup)
+            
             elif callback.data == ButtonCallback.MARKET:
                 markup = types.InlineKeyboardMarkup()
                 markup.add(create_button(ButtonName.TO_MAIN_MENU, ButtonCallback.TO_MAIN_MENU))
                 bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.message_id, text=MessageText.MARKET)
                 bot.edit_message_reply_markup(chat_id=callback.message.chat.id, message_id=callback.message.message_id, reply_markup=markup)
+            
+            elif callback.data == ButtonCallback.ORGANISERS:
+                user = user_repository.read_by_id(callback.from_user.id)
+                if user.is_admin == True:
+                    markup = types.InlineKeyboardMarkup()
+                    markup.add(create_button(ButtonName.NEW_GAME, ButtonCallback.NEW_GAME))
+                    markup.add(create_button(ButtonName.UPDATE_GAME, ButtonCallback.UPDATE_GAME))
+                    if user.is_true_admin == True:
+                        markup.add(create_button(ButtonName.SET_ADMIN, ButtonCallback.SET_ADMIN))
+                    markup.add(create_button(ButtonName.GO_BACK, ButtonCallback.SCHEDULE), create_button(ButtonName.TO_MAIN_MENU, ButtonCallback.TO_MAIN_MENU))
+                    bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.message_id, text=MessageText.CHOOSE_FUNCTION)
+                    bot.edit_message_reply_markup(chat_id=callback.message.chat.id, message_id=callback.message.message_id, reply_markup=markup)
+                else:
+                    markup = types.InlineKeyboardMarkup()
+                    markup.add(create_button(ButtonName.TO_MAIN_MENU, ButtonCallback.TO_MAIN_MENU))
+                    bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.message_id, text=MessageText.ORGANISER_APPLICATION)
+                    bot.edit_message_reply_markup(chat_id=callback.message.chat.id, message_id=callback.message.message_id, reply_markup=markup)
+            
+            elif callback.data == ButtonCallback.NEW_GAME:
+                pass
+
+            elif callback.data == ButtonCallback.UPDATE_GAME:
+                pass
+    
     except Exception as e:
         print(e)
 

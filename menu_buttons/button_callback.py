@@ -13,3 +13,6 @@ class ButtonCallback: #Enūma Eliš?..
     PLACES = 'places'
     LONELINESS = 'loneliness'
     HOW_TO = 'how_to'
+    NEW_GAME = 'new_game'
+    UPDATE_GAME = 'update_game'
+    SET_ADMIN = 'set_admin'
