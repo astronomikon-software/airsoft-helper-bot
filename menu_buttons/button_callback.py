@@ -16,3 +16,6 @@ class ButtonCallback: #Enūma Eliš?..
     NEW_GAME = 'new_game'
     UPDATE_GAME = 'update_game'
     SET_ADMIN = 'set_admin'
+    CHOOSE_GENRE = 'choose_genre'
+    CHOOSE_GROUP = 'choose_group'
+    CHOOSE_PLACE = 'choose_place'

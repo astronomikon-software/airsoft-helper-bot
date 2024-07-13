@@ -15,7 +15,12 @@ class DbProvider:
             if self.comm == True:
                 self.connection.commit()
         except OperationalError as e:
+            self.connection.rollback()
             print(e)
+        finally:
+            cursor.close()
+            if not self.connection.closed:
+                self.connection.rollback()
 
     def execute_read_query(self, query, values=set()) -> list:
         cursor = self.connection.cursor()

@@ -20,6 +20,8 @@ from repository.genre_repository import GenreRepository
 from repository.group_repository import GroupRepository
 from repository.place_repository import PlaceRepository
 
+from utils.datetime_util import str_to_int
+
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
@@ -29,7 +31,10 @@ db_provider = DbProvider(
     password=PSQL_PASSWORD
 )
 user_repository = UserRepository(db_provider)
-
+match_repository = MatchRepository(db_provider)
+genre_repository = GenreRepository(db_provider)
+group_repository = GroupRepository(db_provider)
+place_repository = PlaceRepository(db_provider)
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -42,7 +47,7 @@ def start(message):
         user_repository.create(user)
     except Exception as e:
         print(e)
-        db_provider.rollback()
+        #db_provider.rollback()
     markup = types.InlineKeyboardMarkup()
     markup.add(create_button(ButtonName.SCHEDULE, ButtonCallback.SCHEDULE))
     markup.add(create_button(ButtonName.HOW_TO, ButtonCallback.HOW_TO))
@@ -99,9 +104,36 @@ def callback_operator(callback):
                     bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.message_id, text=MessageText.ORGANISER_APPLICATION)
                     bot.edit_message_reply_markup(chat_id=callback.message.chat.id, message_id=callback.message.message_id, reply_markup=markup)
             
-            elif callback.data == ButtonCallback.NEW_GAME:
-                pass
+            elif callback.data == ButtonCallback.NEW_GAME: #Убейте меня...
+                markup = types.InlineKeyboardMarkup()
+                match = Match()
+                genres = genre_repository.read_all()
+                groups = group_repository.read_all()
+                places = place_repository.read_all()
+                bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.message_id, text=MessageText.PRINT_DATETIME)
+                bot.edit_message_reply_markup(chat_id=callback.message.chat.id, message_id=callback.message.message_id, reply_markup=markup)
+                
+                @bot.message_handler(regexp='\d{4}-\d{2}-\d{2} \d{2}:\d{2}')
+                def start_time_handler(message):
+                    match.start_time = str_to_int(message.text)
+                    markup = types.InlineKeyboardMarkup()
+                    for genre in genres:
+                        button = create_button(f'{genre.name}', ButtonCallback.CHOOSE_GENRE + f'{genre.id}')
+                        button.data = genre
+                        markup.add(button)
+                    bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.message_id, text=MessageText.CHOOSE_GENRE)
+                    bot.edit_message_reply_markup(chat_id=callback.message.chat.id, message_id=callback.message.message_id, reply_markup=markup)
 
+                @bot.callback_query_handler(func=lambda callback: True)
+                def game_creator(callback):
+                    try:
+                        if callback.message:
+                            if callback.data == ButtonCallback.CHOOSE_GENRE + f'{callback.data.id}':
+                                match.genre_id = callback.data.id
+                                # to do
+                    except Exception as e:
+                        print(e)
+                                
             elif callback.data == ButtonCallback.UPDATE_GAME:
                 pass
     
