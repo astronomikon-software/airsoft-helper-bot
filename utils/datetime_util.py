@@ -17,3 +17,7 @@ def int_to_str(int_datetime: int) -> str:
     primary_str = str(int_datetime)
     secondary_str = primary_str[:4] + '-' + primary_str[4:6] + '-' + primary_str[6:8] + ' ' + primary_str[8:10] + ':' + primary_str[10:12] + ':' + primary_str[12:len(primary_str)]
     return secondary_str
+
+def str_to_int(str_datetime: str) -> int:
+    int_datetime = int(str_datetime[0:4] + str_datetime[5:7] + str_datetime[8:10] + str_datetime[11:13] + str_datetime[14:17] + '00')
+    return int_datetime

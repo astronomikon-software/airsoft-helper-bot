@@ -1,5 +1,5 @@
 class ButtonName:
-    TO_MAIN_MENU = 'Главное меню'
+    MAIN_MENU = 'Главное меню'
     SCHEDULE = 'Расписание игр'
     HOW_TO = 'Как начать играть в страйкбол'
     MARKET = 'Барахолка'
