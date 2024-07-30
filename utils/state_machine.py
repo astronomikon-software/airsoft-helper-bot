@@ -2,13 +2,13 @@ from typing import Type
 from abc import ABC
 
 
-
 class State(ABC):
     pass
+
 class Event(ABC):
     pass
 
-class StateMachine:   
+class StateMachine:
     def __init__(self):
         self.handlers = {}
 
@@ -16,10 +16,13 @@ class StateMachine:
         self.handlers.update({event_class: {state_class: handler}})
 
     def handle(self, old_state: State, event: Event):
-        if type(event) in self.handlers:
-            if type(old_state) in self.handlers[type(event)]:
-                return self.handlers[type(event)][type(old_state)](old_state, event)
-            
+        for event_class, state_dict in self.handlers.items():
+            if isinstance(event, event_class):
+                for state_class, handler in state_dict.items():
+                    if isinstance(old_state, state_class):
+                        return handler(old_state, event)
+        return old_state
+
 
 '''
 def market_button_handler(old_state: State, event: Event) -> State:

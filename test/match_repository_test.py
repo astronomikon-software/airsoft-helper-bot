@@ -33,96 +33,155 @@ class TestMatchRepository:
         assert renewed_matches[-1].is_loneliness_friendly == match.is_loneliness_friendly
 
     def test_update(self, match_repository_fixture):
-        match = Match()
-        match.id = 1
-        match.start_time = 20240506200000
-        match.duration = 20240506210000
-        match.place_id = 2
-        match.group_id = 2
-        match.genre_id = 4
-        match.is_loneliness_friendly = False
+        old_match = Match()
+        old_match.id = 1
+        old_match.start_time = 20240506200000
+        old_match.duration = 20240506210000
+        old_match.place_id = 2
+        old_match.group_id = 2
+        old_match.genre_id = 4
+        old_match.is_loneliness_friendly = False
+        match_repository_fixture.create(old_match)
 
-        match_repository_fixture.update(match)
+        new_match = Match()
+        new_match.id = 1
+        new_match.start_time = 20240506203000
+        new_match.duration = 20240506210300
+        new_match.place_id = 1
+        new_match.group_id = 1
+        new_match.genre_id = 2
+        new_match.is_loneliness_friendly = True
+        match_repository_fixture.update(new_match)
+
         matches = match_repository_fixture.read_all()
 
-        assert matches[-1].id == match.id
-        assert matches[-1].place_id == match.place_id
-        assert matches[-1].group_id == match.group_id
-        assert matches[-1].duration == match.duration
-        assert matches[-1].start_time == match.start_time
-        assert matches[-1].genre_id == match.genre_id
-        assert matches[-1].is_loneliness_friendly == match.is_loneliness_friendly
+        assert matches[-1].id == new_match.id
+        assert matches[-1].place_id == new_match.place_id
+        assert matches[-1].group_id == new_match.group_id
+        assert matches[-1].duration == new_match.duration
+        assert matches[-1].start_time == new_match.start_time
+        assert matches[-1].genre_id == new_match.genre_id
+        assert matches[-1].is_loneliness_friendly == new_match.is_loneliness_friendly
 
     def test_read_by_genre(self, match_repository_fixture):
-        first_genre = Genre()
-        first_genre.id = 1
-        second_genre = Genre()
-        second_genre.id = 2
-        third_genre = Genre()
-        third_genre.id = 3
+        first_match = Match()
+        first_match.id = 1
+        first_match.start_time = 20240506200000
+        first_match.duration = 20240506210000
+        first_match.place_id = 1
+        first_match.group_id = 1
+        first_match.genre_id = 1
+        first_match.is_loneliness_friendly = False
+        match_repository_fixture.create(first_match)
 
-        first_genre_matches = match_repository_fixture.read_by_genre(first_genre)
-        second_genre_matches = match_repository_fixture.read_by_genre(second_genre)
-        third_genre_matches = match_repository_fixture.read_by_genre(third_genre)
+        second_match = Match()
+        second_match.id = 2
+        second_match.start_time = 20240506203000
+        second_match.duration = 20240506210300
+        second_match.place_id = 1
+        second_match.group_id = 1
+        second_match.genre_id = 1
+        second_match.is_loneliness_friendly = True
+        match_repository_fixture.create(second_match)
 
-        assert len(first_genre_matches) == 1
-        assert len(second_genre_matches) == 1
-        assert len(third_genre_matches) == 1
+        third_match = Match()
+        third_match.id = 3
+        third_match.start_time = 20240506203000
+        third_match.duration = 20240506210300
+        third_match.place_id = 2
+        third_match.group_id = 2
+        third_match.genre_id = 2
+        third_match.is_loneliness_friendly = True
+        match_repository_fixture.create(third_match)
 
-        assert first_genre_matches[0].genre_id == 1
-        assert second_genre_matches[0].genre_id == 2
-        assert third_genre_matches[0].genre_id == 3
+        genre = Genre()
+        genre.id = 1
+        matches = match_repository_fixture.read_by_genre(genre)
 
-        assert first_genre_matches[0].id == 1
-        assert second_genre_matches[0].id == 2
-        assert third_genre_matches[0].id == 3
+        assert len(matches) == 2
+        assert matches[0].genre_id == 1
+        assert matches[1].genre_id == 1
+        assert matches[0].id == 1
+        assert matches[1].id == 2
 
     def test_read_by_group(self, match_repository_fixture):
-        first_group = Group()
-        first_group.id = 1
-        second_group = Group()
-        second_group.id = 2
-        third_group = Group()
-        third_group.id = 3
+        first_match = Match()
+        first_match.id = 1
+        first_match.start_time = 20240506200000
+        first_match.duration = 20240506210000
+        first_match.place_id = 1
+        first_match.group_id = 1
+        first_match.genre_id = 1
+        first_match.is_loneliness_friendly = False
+        match_repository_fixture.create(first_match)
 
-        repository = match_repository_fixture
-        first_group_matches = repository.read_by_group(first_group)
-        second_group_matches = repository.read_by_group(second_group)
-        third_group_matches = repository.read_by_group(third_group)
+        second_match = Match()
+        second_match.id = 2
+        second_match.start_time = 20240506203000
+        second_match.duration = 20240506210300
+        second_match.place_id = 1
+        second_match.group_id = 1
+        second_match.genre_id = 1
+        second_match.is_loneliness_friendly = True
+        match_repository_fixture.create(second_match)
 
-        assert len(first_group_matches) == 1
-        assert len(second_group_matches) == 1
-        assert len(third_group_matches) == 1
+        third_match = Match()
+        third_match.id = 3
+        third_match.start_time = 20240506203000
+        third_match.duration = 20240506210300
+        third_match.place_id = 2
+        third_match.group_id = 2
+        third_match.genre_id = 2
+        third_match.is_loneliness_friendly = True
+        match_repository_fixture.create(third_match)
 
-        assert first_group_matches[0].group_id == 1
-        assert second_group_matches[0].group_id == 2
-        assert third_group_matches[0].group_id == 3
+        group = Group()
+        group.id = 1
+        matches = match_repository_fixture.read_by_group(group)
 
-        assert first_group_matches[0].id == 1
-        assert second_group_matches[0].id == 2
-        assert third_group_matches[0].id == 3
+        assert len(matches) == 2
+        assert matches[0].group_id == 1
+        assert matches[1].group_id == 1
+        assert matches[0].id == 1
+        assert matches[1].id == 2
 
     def test_read_by_place(self, match_repository_fixture):
-        first_place = Place()
-        first_place.id = 1
-        second_place = Place()
-        second_place.id = 2
-        third_place = Place()
-        third_place.id = 3
+        first_match = Match()
+        first_match.id = 1
+        first_match.start_time = 20240506200000
+        first_match.duration = 20240506210000
+        first_match.place_id = 1
+        first_match.group_id = 1
+        first_match.genre_id = 1
+        first_match.is_loneliness_friendly = False
+        match_repository_fixture.create(first_match)
 
-        repository = match_repository_fixture
-        first_place_matches = repository.read_by_place(first_place)
-        second_place_matches = repository.read_by_place(second_place)
-        third_place_matches = repository.read_by_place(third_place)
+        second_match = Match()
+        second_match.id = 2
+        second_match.start_time = 20240506203000
+        second_match.duration = 20240506210300
+        second_match.place_id = 1
+        second_match.group_id = 1
+        second_match.genre_id = 1
+        second_match.is_loneliness_friendly = True
+        match_repository_fixture.create(second_match)
 
-        assert len(first_place_matches) == 1
-        assert len(second_place_matches) == 1
-        assert len(third_place_matches) == 1
+        third_match = Match()
+        third_match.id = 3
+        third_match.start_time = 20240506203000
+        third_match.duration = 20240506210300
+        third_match.place_id = 2
+        third_match.group_id = 2
+        third_match.genre_id = 2
+        third_match.is_loneliness_friendly = True
+        match_repository_fixture.create(third_match)
 
-        assert first_place_matches[0].place_id == 1
-        assert second_place_matches[0].place_id == 2
-        assert third_place_matches[0].place_id == 3
+        place = Place()
+        place.id = 1
+        matches = match_repository_fixture.read_by_genre(place)
 
-        assert first_place_matches[0].id == 1
-        assert second_place_matches[0].id == 2
-        assert third_place_matches[0].id == 3
+        assert len(matches) == 2
+        assert matches[0].place_id == 1
+        assert matches[1].place_id == 1
+        assert matches[0].id == 1
+        assert matches[1].id == 2

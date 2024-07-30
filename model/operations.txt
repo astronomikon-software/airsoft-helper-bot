@@ -1,0 +1,28 @@
+User::create()
+User::read_by_id(int)
+User::change_state_id(int)
+User::is_admin_check(bool)
+User::is_true_admin_check(bool) #may be combined with is_admin_check?..
+User::set_admin()
+User::dismiss_admin()
+
+Match::create()
+Match::delete()
+Match::update()
+Match::read_all() #sort by date, basically
+Match::filter_by_genre()
+Match::filter_by_place()
+Match::filter_by_group()
+Match::filter_by_solo_friendliness()
+
+Genre::read_by_id(int)
+Genre::read_all()
+
+Place::read_by_id(int)
+Place::read_all()
+
+Group::read_by_id(int)
+Group::read_all()
+Group::create() #if not set in the code
+Group::delete() #exact same situation
+

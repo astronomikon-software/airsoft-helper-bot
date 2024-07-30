@@ -36,3 +36,10 @@ class UserRepository:
                 user.id,
             )
         )   
+
+    def read_or_create(self, user: User) -> User:
+        try:
+            return self.read_by_id(user.id)
+        except:
+            self.create(user)
+            return user
