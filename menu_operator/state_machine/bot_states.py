@@ -13,6 +13,9 @@ class BotState(State):
 class StartState(BotState):
     pass
 
+class ErrorState(BotState):
+    message_text = 'Функция на стадии разработки'
+
 class MainMenuState(BotState):
     buttons = [
         Button(ButtonName.SCHEDULE, ButtonCallback.SCHEDULE), 
@@ -34,10 +37,56 @@ class HowToState(BotState):
     message_text = MessageText.HOW_TO
 
 class ScheduleState(BotState):
+    buttons = [
+        Button(ButtonName.CALENDAR, ButtonCallback.CALENDAR),
+        Button(ButtonName.FILTERS, ButtonCallback.FILTERS),
+        Button(ButtonName.ORGANISERS, ButtonCallback.ORGANISERS),
+        Button(ButtonName.MAIN_MENU, ButtonCallback.MAIN_MENU),
+    ]
     message_text = MessageText.CHOOSE_FUNCTION
 
 class CalendarState(BotState):
-    message_text = MessageText.CHOOSE_FUNCTION
+    buttons = [
+        Button(ButtonName.GO_BACK, ButtonCallback.SCHEDULE),
+        Button(ButtonName.MAIN_MENU, ButtonCallback.MAIN_MENU)
+    ]
+    message_text = MessageText.CALENDAR
 
 class FiltersState(BotState):
+    buttons = [
+        Button(ButtonName.PLACES, ButtonCallback.PLACES),
+        Button(ButtonName.GROUPS, ButtonCallback.GROUPS),
+        Button(ButtonName.GENRES, ButtonCallback.GENRES),
+        Button(ButtonName.GO_BACK, ButtonCallback.SCHEDULE),
+        Button(ButtonName.MAIN_MENU, ButtonCallback.MAIN_MENU),
+    ]
+    message_text = MessageText.FILTERS
+
+class LowOrganisersState(BotState):
+    buttons = [
+        Button(ButtonName.GO_BACK, ButtonCallback.SCHEDULE),
+        Button(ButtonName.MAIN_MENU, ButtonCallback.MAIN_MENU),
+    ]
+    message_text = MessageText.ORGANISER_APPLICATION
+
+class MiddleOrganisersState(BotState):
+    buttons = [
+        Button(ButtonName.NEW_GAME, ButtonCallback.CHOOSE_PLACE),
+        Button(ButtonName.NEW_GAME, ButtonCallback.CHOOSE_GAME_TO_UPDATE),
+        Button(ButtonName.GO_BACK, ButtonCallback.SCHEDULE),
+        Button(ButtonName.MAIN_MENU, ButtonCallback.MAIN_MENU),
+    ]
     message_text = MessageText.CHOOSE_FUNCTION
+
+class HighOrganisersState(BotState):
+    buttons = [
+        Button(ButtonName.NEW_GAME, ButtonCallback.SET_DATETIME),
+        Button(ButtonName.UPDATE_GAME, ButtonCallback.CHOOSE_GAME_TO_UPDATE),
+        Button(ButtonName.SET_ADMIN, ButtonCallback.CHOOSE_GAME_TO_UPDATE),
+        Button(ButtonName.GO_BACK, ButtonCallback.SCHEDULE),
+        Button(ButtonName.MAIN_MENU, ButtonCallback.MAIN_MENU),
+    ]
+    message_text = MessageText.CHOOSE_FUNCTION
+
+class SetDatetimeState(BotState):
+    message_text = MessageText.SET_DATETIME

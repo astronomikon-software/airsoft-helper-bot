@@ -22,7 +22,7 @@ CREATE TABLE genres(
 
 CREATE TABLE users(
     id BIGINT NOT NULL PRIMARY KEY,
-    state_id VARCHAR NOT NULL, -- to think
+    state_id VARCHAR NOT NULL,
     is_admin BOOLEAN NOT NULL,
     is_true_admin BOOLEAN NOT NULL
 );
