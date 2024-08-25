@@ -4,38 +4,37 @@ from abc import ABC
 class BotEvent(ABC):
     pass
 
-#or to do two other subclasses in the middle of this scheme:
-#
-#class ButtonEvent(BotEvent):
-#    pass
-#
-#class MessageEvent(BotEvent):
-#    pass
-
-class MainMenuEvent(BotEvent):
+class ButtonEvent(BotEvent):
     pass
 
-class MarketEvent(BotEvent):
+class MessageEvent(BotEvent):
     pass
 
-class HowToEvent(BotEvent):
+class MainMenuEvent(ButtonEvent):
     pass
 
-class ScheduleEvent(BotEvent):
+class MarketEvent(ButtonEvent):
     pass
 
-class CalendarEvent(BotEvent):
+class HowToEvent(ButtonEvent):
     pass
 
-class FiltersEvent(BotEvent):
+class ScheduleEvent(ButtonEvent):
     pass
 
-class OrganisersEvent(BotEvent):
+class CalendarEvent(ButtonEvent):
     pass
 
-class SetDatetimeEvent(BotEvent):
+class FiltersEvent(ButtonEvent):
     pass
 
+class OrganisersEvent(ButtonEvent):
+    pass
+
+class SetDatetimeEvent(ButtonEvent):
+    pass
+
+#work in progress
 class SetPlaceEvent(BotEvent):
     pass
 
