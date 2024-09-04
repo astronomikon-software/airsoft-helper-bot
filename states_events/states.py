@@ -1,7 +1,10 @@
 from abc import ABC
+from enum import Enum
+
+from model.match import Match
 
 
-class BotState(ABC):
+class BotState():
     pass
 
 class StartState(BotState):
@@ -28,18 +31,23 @@ class FiltersState(BotState):
 class OrganisersState(BotState):
     pass
 
-class SetDatetimeState(BotState):
-    pass
-    #some data
+class EditMatchState(BotState):
+    class Progress(Enum):
+        START_TIME = 'START_TIME'
+        DURATION = 'DURATION'
+        PLACE ='PLACE'
+        GROUP ='GROUP'
+        GENRE = 'GENRE'
+        IS_LONELINESS_FRIENDLY = 'IS_L_F'
+        CONFIRMATION ='CONFIRMATION'
+    
+    match: Match
+    progress: Progress
 
-class SetPlaceState(BotState):
-    pass
-
-class SetGroupState(BotState):
-    pass
-
-class SetGenreState(BotState):
-    pass
-
-class SetLonelinessState(BotState):
-    pass
+    def __init__(
+        self,
+        match: Match,
+        EditMatchProgress: Progress,
+    ):
+        self.match = match
+        self.progress = EditMatchProgress

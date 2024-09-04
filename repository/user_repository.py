@@ -11,10 +11,9 @@ class UserRepository:
 
     def create(self, user: User):
         self.db_provider.execute_query(
-            '''INSERT INTO users (id, state_id, is_admin, is_true_admin) VALUES (%s, %s, %s, %s)''',
+            '''INSERT INTO users (id, is_admin, is_true_admin) VALUES (%s, %s, %s)''',
             (
                 user.id,
-                user.state_id,
                 user.is_admin,
                 user.is_true_admin,
             )
@@ -29,9 +28,8 @@ class UserRepository:
 
     def update(self, user: User):
         self.db_provider.execute_query(
-            '''UPDATE users SET state_id = %s, is_admin = %s WHERE id = %s''', 
+            '''UPDATE users SET is_admin = %s WHERE id = %s''', 
             (
-                user.state_id,
                 user.is_admin,
                 user.id,
             )

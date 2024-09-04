@@ -1,46 +1,40 @@
 import telebot
-from telebot import types
-from configuration import BOT_TOKEN, PSQL_DATABASE, PSQL_USER, PSQL_PASSWORD
 
-from data.db_provider import DbProvider
-from repository.user_repository import UserRepository
+from configuration import BOT_TOKEN
 
-from states_events.events import MainMenuEvent
-from states_events.event_handler import handle_event
+from repository.repository_initiation import *
+
+from states_events.events import BotEvent, ButtonEvent, MessageEvent
+from states_events.event_handler import get_new_state
 from states_events.states import StartState
-from states_events.state_handler import handle_state
+from states_events.presentation import ScreenPresentation, get_presentation
 
 from utils.user_util import get_default_user
-from utils.event_difiner import define_button_event, define_message_event
 
-
-#maybe relocation of all repository initiations to separate module isn't a bad idea
-db_provider = DbProvider(
-    database=PSQL_DATABASE,
-    user=PSQL_USER,
-    password=PSQL_PASSWORD
-)
-user_repository = UserRepository(db_provider)
-
-user_states = {}
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
 
-@bot.message_handler(commands=['start'])
+def handle_event(event: BotEvent, user_id: int) -> ScreenPresentation:
+    user = user_repository.read_or_create(get_default_user(user_id=user_id))
+    state = state_repository.read_or_create(state=StartState(), user_id=user.id)
+    state = get_new_state(state=state, event=event, user=user)
+    screen_presentation = get_presentation(state=state, user=user)
+    state_repository.update(state=state, user_id=user.id)
+    return screen_presentation
+
+@bot.message_handler()
 def toll_the_great_bell_once(message):
     try:
-        user = user_repository.read_or_create(get_default_user(message.from_user.id))
-        global user_states
-        user_states[user.id] = StartState()
-        state = handle_event(user_states[user.id], MainMenuEvent())
-        screen_content = handle_state(state)
-        bot.send_message(message.chat.id, screen_content.message_text, reply_markup=screen_content.markup)
-        #handle_state(state)
-        #user.state_id = state_to_json_str(state)
-        #user_repository.update(user)
-        user_states[user.id] = state
-        # ^ temporary mera
+        screen_presentation = handle_event(
+            event=MessageEvent(text=message.text),
+            user_id=message.from_user.id
+        )
+        bot.send_message(
+            chat_id=message.chat.id, 
+            text=screen_presentation.message_text, 
+            reply_markup=screen_presentation.markup
+        )
     except Exception as E:
         print(E)
 
@@ -48,15 +42,20 @@ def toll_the_great_bell_once(message):
 @bot.callback_query_handler(func=lambda callback: True)
 def toll_the_great_bell_twice(callback):
     try:
-        user = user_repository.read_or_create(get_default_user(callback.message.from_user.id))
-        global user_states
-        old_state = user_states[user.id]
-        event = define_button_event(callback.data)
-        state = handle_event(old_state, event)
-        screen_content = handle_state(state)
-        bot.edit_message_text(chat_id=callback.message.chat.id, message_id=callback.message.message_id, text=screen_content.message_text)
-        bot.edit_message_reply_markup(chat_id=callback.message.chat.id, message_id=callback.message.message_id, reply_markup=screen_content.markup)
-        user_states[user.id] = state
+        screen_presentation = handle_event(
+            event=ButtonEvent(callback=callback.data),
+            user_id=callback.message.from_user.id
+        )
+        bot.edit_message_text(
+            chat_id=callback.message.chat.id, 
+            message_id=callback.message.message_id, 
+            text=screen_presentation.message_text
+        )
+        bot.edit_message_reply_markup(
+            chat_id=callback.message.chat.id, 
+            message_id=callback.message.message_id, 
+            reply_markup=screen_presentation.markup
+        )
     except Exception as E:
         print(E)
 

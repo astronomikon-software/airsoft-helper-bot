@@ -5,44 +5,13 @@ class BotEvent(ABC):
     pass
 
 class ButtonEvent(BotEvent):
-    pass
+    callback: str
+    
+    def __init__(self, callback: str):
+        self.callback = callback
 
 class MessageEvent(BotEvent):
-    pass
+    text: str
 
-class MainMenuEvent(ButtonEvent):
-    pass
-
-class MarketEvent(ButtonEvent):
-    pass
-
-class HowToEvent(ButtonEvent):
-    pass
-
-class ScheduleEvent(ButtonEvent):
-    pass
-
-class CalendarEvent(ButtonEvent):
-    pass
-
-class FiltersEvent(ButtonEvent):
-    pass
-
-class OrganisersEvent(ButtonEvent):
-    pass
-
-class SetDatetimeEvent(ButtonEvent):
-    pass
-
-#work in progress
-class SetPlaceEvent(BotEvent):
-    pass
-
-class SetGroupEvent(BotEvent):
-    pass
-
-class SetGenreEvent(BotEvent):
-    pass
-
-class SetLonelinessEvent(BotEvent):
-    pass
+    def __init__(self, text: str):
+        self.text = text

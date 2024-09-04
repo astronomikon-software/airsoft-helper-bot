@@ -4,6 +4,7 @@ DROP TABLE groups;
 DROP TABLE genres;
 DROP TABLE users;
 DROP TABLE matches;
+DROP TABLE user_bot_states;
 
 CREATE TABLE places(
     id BIGSERIAL NOT NULL PRIMARY KEY,
@@ -22,9 +23,13 @@ CREATE TABLE genres(
 
 CREATE TABLE users(
     id BIGINT NOT NULL PRIMARY KEY,
-    state_id VARCHAR NOT NULL,
     is_admin BOOLEAN NOT NULL,
     is_true_admin BOOLEAN NOT NULL
+);
+
+CREATE TABLE user_bot_states(
+    user_id BIGINT NOT NULL PRIMARY KEY,
+    state_json VARCHAR NOT NULL
 );
 
 CREATE TABLE matches(
