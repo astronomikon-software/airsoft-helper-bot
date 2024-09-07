@@ -35,10 +35,10 @@ class EditMatchState(BotState):
     class Progress(Enum):
         START_TIME = 'START_TIME'
         DURATION = 'DURATION'
-        PLACE ='PLACE'
+        PLACE = 'PLACE'
         GROUP ='GROUP'
         GENRE = 'GENRE'
-        IS_LONELINESS_FRIENDLY = 'IS_L_F'
+        IS_LONELINESS_FRIENDLY = 'IS_LONELINESS_FRIENDLY'
         CONFIRMATION ='CONFIRMATION'
     
     match: Match
@@ -47,7 +47,10 @@ class EditMatchState(BotState):
     def __init__(
         self,
         match: Match,
-        EditMatchProgress: Progress,
+        progress: Progress,
     ):
         self.match = match
-        self.progress = EditMatchProgress
+        self.progress = progress
+
+class AfterConfirmationState():
+    pass

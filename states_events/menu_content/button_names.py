@@ -14,3 +14,8 @@ class ButtonName:
     NEW_GAME = 'Внесение новой игры'
     UPDATE_GAME = 'Редактирование существующей игры'
     SET_ADMIN = 'Назначить организатора'
+    YES = 'Да'
+    NO = 'Нет'
+    SAVE_GAME = 'Сохранить игру'
+    CANCEL_GAME_EDITING = 'Отмена'
+    BACK_TO_ORGANISERS = 'Меню организатора'

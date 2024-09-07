@@ -1,4 +1,5 @@
 import json
+from mapping.progress_mapping import progress_to_str, str_to_progress
 from states_events.states import *
 
 
@@ -27,7 +28,7 @@ def edit_match_state_to_dict(state: EditMatchState) -> dict:
             'genre_id': state.match.genre_id,
             'is_loneliness_friendly': state.match.is_loneliness_friendly
         },
-        'progress': state.progress,
+        'progress': progress_to_str(state.progress),
     }
 
 
@@ -47,6 +48,7 @@ def dict_to_simple_state(dict_state: dict) -> BotState:
         'CalendarState': CalendarState,
         'FiltersState': FiltersState,
         'OrganisersState': OrganisersState,
+        'AfterConfirmationState': AfterConfirmationState,
     }.get(
         dict_state['state_name'],
         MainMenuState
@@ -54,14 +56,16 @@ def dict_to_simple_state(dict_state: dict) -> BotState:
 
 
 def dict_to_edit_match_state(dict_state: dict) -> EditMatchState:
-    state = EditMatchState()
-    state.match = Match()
-    state.match.id = dict_state['match']['id']
-    state.match.start_time = dict_state['match']['start_time']
-    state.match.duration = dict_state['match']['duration']
-    state.match.place_id = dict_state['match']['place_id']
-    state.match.group_id = dict_state['match']['group_id']
-    state.match.genre_id = dict_state['match']['genre_id']
-    state.match.is_loneliness_friendly = dict_state['match']['is_loneliness_friendly']
-    state.progress = dict_state['progress']
+    match = Match()
+    match.id = dict_state['match']['id']
+    match.start_time = dict_state['match']['start_time']
+    match.duration = dict_state['match']['duration']
+    match.place_id = dict_state['match']['place_id']
+    match.group_id = dict_state['match']['group_id']
+    match.genre_id = dict_state['match']['genre_id']
+    match.is_loneliness_friendly = dict_state['match']['is_loneliness_friendly']    
+    state = EditMatchState(
+        match=match,
+        progress=str_to_progress(dict_state['progress']),
+    )
     return state

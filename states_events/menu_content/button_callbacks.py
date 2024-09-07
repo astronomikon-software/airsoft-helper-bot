@@ -18,3 +18,7 @@ class ButtonCallback: #Enūma Eliš?..
     CHOOSE_GROUP = 'choose_group'
     CHOOSE_PLACE = 'choose_place'
     CHOOSE_GAME_TO_UPDATE = 'choose_game_to_update'
+    TRUE = 'True'
+    FALSE = 'False'
+    SAVE_GAME = 'save_game'
+    CANCEL_GAME_EDITING = 'cancel_game_editing'

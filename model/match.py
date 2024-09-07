@@ -6,4 +6,3 @@ class Match:
     group_id: int
     genre_id: int
     is_loneliness_friendly: bool
-    

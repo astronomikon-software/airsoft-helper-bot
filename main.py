@@ -28,7 +28,7 @@ def toll_the_great_bell_once(message):
     try:
         screen_presentation = handle_event(
             event=MessageEvent(text=message.text),
-            user_id=message.from_user.id
+            user_id=message.chat.id
         )
         bot.send_message(
             chat_id=message.chat.id, 
@@ -44,7 +44,7 @@ def toll_the_great_bell_twice(callback):
     try:
         screen_presentation = handle_event(
             event=ButtonEvent(callback=callback.data),
-            user_id=callback.message.from_user.id
+            user_id=callback.message.chat.id
         )
         bot.edit_message_text(
             chat_id=callback.message.chat.id, 
