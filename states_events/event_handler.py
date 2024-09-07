@@ -52,7 +52,7 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
             match.start_time = str_datetime_to_int(event.text)
             return EditMatchState(
                 match=match,
-                progress=EditMatchState.Progress.GENRE,
+                progress=EditMatchState.Progress.PLACE,
             )
         else:
             return EditMatchState(
@@ -85,11 +85,13 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
         match.is_loneliness_friendly = str_to_loneliness(event.callback)
         return EditMatchState(
             match=match,
-            progress=EditMatchState.Progress.IS_LONELINESS_FRIENDLY,
+            progress=EditMatchState.Progress.CONFIRMATION,
         )
     elif (state.progress == EditMatchState.Progress.CONFIRMATION) \
         and isinstance(event, ButtonEvent):
         is_confirmed = str_to_confirmation(event.callback)
         if is_confirmed:
             match_repository.create(match=match)
-            return AfterConfirmationState()
+            return GameIsSavedState()
+        else:
+            return GameIsCancelledState()

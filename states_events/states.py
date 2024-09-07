@@ -52,5 +52,8 @@ class EditMatchState(BotState):
         self.match = match
         self.progress = progress
 
-class AfterConfirmationState():
+class GameIsSavedState(BotState):
+    pass
+
+class GameIsCancelledState(BotState):
     pass

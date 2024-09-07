@@ -207,7 +207,7 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
             return ScreenPresentation(markup, MessageText.CONFIRM_DATA + \
                 '\n' + '\n' + MessageText.match_data(state.match))
 
-    elif isinstance(state, AfterConfirmationState):
+    elif isinstance(state, GameIsSavedState):
         markup = types.InlineKeyboardMarkup()
         markup.add(
             create_button(
@@ -222,6 +222,22 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
             )
         )
         return ScreenPresentation(markup, MessageText.NEW_GAME_CREATED)
+    
+    elif isinstance(state, GameIsCancelledState):
+        markup = types.InlineKeyboardMarkup()
+        markup.add(
+            create_button(
+                text=ButtonName.BACK_TO_ORGANISERS, 
+                callback=ButtonCallback.ORGANISERS
+            )
+        ) 
+        markup.add(
+            create_button(
+                text=ButtonName.MAIN_MENU, 
+                callback=ButtonCallback.MAIN_MENU
+            )
+        )
+        return ScreenPresentation(markup, MessageText.NEW_GAME_CANCELLED)
 
     else:
         markup = types.InlineKeyboardMarkup()

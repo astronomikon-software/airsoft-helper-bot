@@ -48,7 +48,8 @@ def dict_to_simple_state(dict_state: dict) -> BotState:
         'CalendarState': CalendarState,
         'FiltersState': FiltersState,
         'OrganisersState': OrganisersState,
-        'AfterConfirmationState': AfterConfirmationState,
+        'GameIsSavedState': GameIsSavedState,
+        'GameIsCancelledState': GameIsCancelledState
     }.get(
         dict_state['state_name'],
         MainMenuState

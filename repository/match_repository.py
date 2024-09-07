@@ -14,12 +14,11 @@ class MatchRepository:
 
     def create(self, match: Match):
         start_time_obj = int_to_datetime(match.start_time)
-        duration_obj = int_to_datetime(match.duration)
+        # duration_obj = int_to_datetime(match.duration)
         self.db_provider.execute_query(
-            '''INSERT INTO matches (start_time, duration, place_id, group_id, genre_id, is_loneliness_friendly) VALUES (%s, %s, %s, %s, %s, %s)''',
+            '''INSERT INTO matches (start_time, place_id, group_id, genre_id, is_loneliness_friendly) VALUES (%s, %s, %s, %s, %s)''',
             (
                 start_time_obj,
-                duration_obj,
                 match.place_id,
                 match.group_id,
                 match.genre_id,

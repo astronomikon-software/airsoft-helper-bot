@@ -22,10 +22,11 @@ class MessageText:
     SET_LONELINESS = 'Подходит ли игра для одиночек?'
     CONFIRM_DATA = 'Подтвердите правильность введения данных'
     NEW_GAME_CREATED = 'Новая игра успешно создана!'
+    NEW_GAME_CANCELLED = 'Отмена создания новой игры'
 
     def match_data(match: Match) -> str:
-        return 'Дата и время начала:' + int_datetime_to_str(match.start_time) + \
-            '\n' + 'Полигон:' + place_repository.read_by_id(match.place_id) + \
-            '\n' + 'Организационная группа:' + group_repository.read_by_id(match.group_id) + \
-            '\n' + 'Жанр игры:' + genre_repository.read_by_id(match.genre_id) + \
-            '\n' + 'Подходит ли для одиночек:' + loneliness_to_str(match.is_loneliness_friendly)
+        return 'Дата и время начала:' + ' ' + int_datetime_to_str(match.start_time) + \
+            '\n' + 'Полигон:' + ' ' + place_repository.read_by_id(match.place_id).name + \
+            '\n' + 'Организационная группа:' + ' ' + group_repository.read_by_id(match.group_id).name + \
+            '\n' + 'Жанр игры:' + ' ' + genre_repository.read_by_id(match.genre_id).name + \
+            '\n' + 'Подходит ли для одиночек:' + ' ' + loneliness_to_str(match.is_loneliness_friendly)
