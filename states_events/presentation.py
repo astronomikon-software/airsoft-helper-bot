@@ -143,6 +143,9 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
         if state.progress == EditMatchState.Progress.START_TIME:
             markup = types.InlineKeyboardMarkup()
             return ScreenPresentation(markup, MessageText.SET_DATETIME)
+        elif state.progress == EditMatchState.Progress.START_TIME_AGAIN:
+            markup = types.InlineKeyboardMarkup()
+            return ScreenPresentation(markup, MessageText.SET_DATETIME_AGAIN)
         elif state.progress == EditMatchState.Progress.PLACE:
             markup = types.InlineKeyboardMarkup()
             places = place_repository.read_all()
@@ -252,6 +255,16 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
                         callback=match.id
                     )
                 )
+            markup.add(
+                create_button(
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.SCHEDULE
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
+                )
+            )
             return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
         elif state.progress == CalendarState.Progress.VEIW_ONE:
             markup = types.InlineKeyboardMarkup()
@@ -276,4 +289,4 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
                 callback=ButtonCallback.MAIN_MENU
             )
         )
-        return ScreenPresentation(markup, 'Представление не определено')
+        return ScreenPresentation(markup, 'Экран находится в разработке')

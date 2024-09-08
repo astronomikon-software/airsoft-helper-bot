@@ -10,10 +10,16 @@ from mapping.confirmation_mapping import str_to_confirmation
 
 
 def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
+    if isinstance(event, ButtonEvent) and event.callback == ButtonCallback.MAIN_MENU:
+        return MainMenuState()
+    
+    if isinstance(event, MessageEvent) and event.text == '/start':
+        return MainMenuState()
+    
     if isinstance(state, EditMatchState) and user.is_admin:
         return on_edit_match_state(state, event, user)
     
-    if isinstance(state, CalendarState) and state.progress == CalendarState.Progress.VEIW_ALL:
+    if isinstance(state, CalendarState) and isinstance(event, ButtonEvent) and state.progress == CalendarState.Progress.VEIW_ALL:
         return on_calendar_state(state, event)
     
     if isinstance(event, ButtonEvent):
@@ -55,16 +61,29 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
     match = state.match
     if (state.progress == EditMatchState.Progress.START_TIME) \
         and isinstance(event, MessageEvent):
-        if check_datetime_format(event.text):
+        try:
             match.start_time = str_time_to_int(event.text)
             return EditMatchState(
                 match=match,
                 progress=EditMatchState.Progress.PLACE,
             )
-        else:
+        except:
             return EditMatchState(
                 match=match,
-                progress=EditMatchState.Progress.START_TIME,
+                progress=EditMatchState.Progress.START_TIME_AGAIN,
+            )
+    elif (state.progress == EditMatchState.Progress.START_TIME_AGAIN) \
+        and isinstance(event, MessageEvent):
+        try:
+            match.start_time = str_time_to_int(event.text)
+            return EditMatchState(
+                match=match,
+                progress=EditMatchState.Progress.PLACE,
+            )
+        except:
+            return EditMatchState(
+                match=match,
+                progress=EditMatchState.Progress.START_TIME_AGAIN,
             )
     elif (state.progress == EditMatchState.Progress.PLACE) \
         and isinstance(event, ButtonEvent):
@@ -105,6 +124,8 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
 
 
 def on_calendar_state(state: CalendarState, event: ButtonEvent):
+    if event.callback == ButtonCallback.SCHEDULE:
+        return ScheduleState()
     if state.progress == CalendarState.Progress.VEIW_ALL:
         return CalendarState(
             match_id=int(event.callback), 
