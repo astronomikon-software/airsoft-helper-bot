@@ -4,7 +4,7 @@ from model.group import Group
 from model.place import Place
 from data.db_provider import DbProvider
 from mapping.match_mapping import match_from_row
-from utils.datetime_util import int_to_datetime
+from mapping.datetime_mapping import int_to_datetime
 
 
 class MatchRepository:
@@ -26,14 +26,21 @@ class MatchRepository:
             )
         )
     
+    def read(self, match_id: int) -> Match:
+        row = self.db_provider.execute_read_query(
+            '''SELECT * from matches WHERE id = %s''',
+            (match_id,)
+        )[0]
+        return match_from_row(row)
+
     def update(self, match: Match):
         start_time_obj = int_to_datetime(match.start_time)
-        duration_obj = int_to_datetime(match.duration)
+        # duration_obj = int_to_datetime(match.duration)
         self.db_provider.execute_query(
             '''UPDATE matches SET start_time = %s, duration = %s, place_id = %s, group_id = %s, genre_id = %s, is_loneliness_friendly = %s WHERE id = %s''',
             (
                 start_time_obj,
-                duration_obj,
+                # duration_obj,
                 match.place_id,
                 match.group_id,
                 match.genre_id,

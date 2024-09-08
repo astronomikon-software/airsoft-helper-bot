@@ -1,3 +1,4 @@
+from mapping.datetime_mapping import int_time_to_str
 from model.user import User
 from states_events.states import *
 from telebot import types
@@ -238,6 +239,34 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
             )
         )
         return ScreenPresentation(markup, MessageText.NEW_GAME_CANCELLED)
+
+    elif isinstance(state, CalendarState):
+        if state.progress == CalendarState.Progress.VEIW_ALL:
+            markup = types.InlineKeyboardMarkup()
+            matches = match_repository.read_all()
+            matches.sort(key=lambda match: match.start_time)
+            for match in matches:
+                markup.add(
+                    create_button(
+                        text=ButtonName.small_match_data(match), 
+                        callback=match.id
+                    )
+                )
+            return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
+        elif state.progress == CalendarState.Progress.VEIW_ONE:
+            markup = types.InlineKeyboardMarkup()
+            match = match_repository.read(state.match_id)
+            markup.add(
+                create_button(
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.CALENDAR
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
+                )
+            )
+            return ScreenPresentation(markup, MessageText.match_data(match))
 
     else:
         markup = types.InlineKeyboardMarkup()

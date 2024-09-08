@@ -55,3 +55,5 @@ INSERT INTO groups(group_name) VALUES('Suicide Squad');
 INSERT INTO genres(genre_name) VALUES('Battle-Royal');
 INSERT INTO genres(genre_name) VALUES('King of the Mount');
 INSERT INTO genres(genre_name) VALUES('All Against All');
+
+INSERT INTO users(id, is_admin, is_true_admin) VALUES('434294239', 'True', 'True')

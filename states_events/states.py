@@ -23,7 +23,16 @@ class ScheduleState(BotState):
     pass
 
 class CalendarState(BotState):
-    pass
+    class Progress(Enum):
+        VEIW_ALL = 'VEIW_ALL'
+        VEIW_ONE = 'VEIW_ONE'
+    
+    progress: Progress
+    match_id: int
+
+    def __init__(self, match_id, progress):
+        self.match_id = match_id
+        self.progress = progress
 
 class FiltersState(BotState):
     pass
@@ -34,6 +43,7 @@ class OrganisersState(BotState):
 class EditMatchState(BotState):
     class Progress(Enum):
         START_TIME = 'START_TIME'
+        START_TIME_AGAIN = 'START_TIME_AGAIN'
         DURATION = 'DURATION'
         PLACE = 'PLACE'
         GROUP ='GROUP'
@@ -57,3 +67,5 @@ class GameIsSavedState(BotState):
 
 class GameIsCancelledState(BotState):
     pass
+    
+

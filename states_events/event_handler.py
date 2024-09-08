@@ -3,7 +3,8 @@ from repository.repository_initiation import match_repository
 from states_events.menu_content.button_callbacks import ButtonCallback
 from states_events.states import *
 from states_events.events import *
-from utils.datetime_util import str_datetime_to_int, check_datetime_format
+from utils.datetime_util import check_datetime_format
+from mapping.datetime_mapping import str_time_to_int
 from mapping.loneliness_mapping import str_to_loneliness
 from mapping.confirmation_mapping import str_to_confirmation
 
@@ -11,6 +12,9 @@ from mapping.confirmation_mapping import str_to_confirmation
 def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
     if isinstance(state, EditMatchState) and user.is_admin:
         return on_edit_match_state(state, event, user)
+    
+    if isinstance(state, CalendarState) and state.progress == CalendarState.Progress.VEIW_ALL:
+        return on_calendar_state(state, event)
     
     if isinstance(event, ButtonEvent):
         state_class = {
@@ -22,19 +26,22 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
             ButtonCallback.ORGANISERS: OrganisersState,
             ButtonCallback.FILTERS: FiltersState,
             ButtonCallback.SET_DATETIME: EditMatchState,
+            ButtonCallback.CALENDAR: CalendarState,
         }[event.callback]
         if state_class is not None:
             if state_class is EditMatchState:
                 match = Match()
-                match.id = None
-                match.start_time = None
-                match.start_time = None
-                match.duration = None
-                match.place_id = None
-                match.group_id = None
-                match.genre_id = None
-                match.is_loneliness_friendly = None
+                match.id = 0
+                match.start_time = 0
+                match.start_time = 0
+                match.duration = 0
+                match.place_id = 0
+                match.group_id = 0
+                match.genre_id = 0
+                match.is_loneliness_friendly = False
                 return state_class(match=match, progress=EditMatchState.Progress.START_TIME)
+            elif state_class is CalendarState:
+                return state_class(0, CalendarState.Progress.VEIW_ALL)
             else:
                 return state_class()
     
@@ -49,7 +56,7 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
     if (state.progress == EditMatchState.Progress.START_TIME) \
         and isinstance(event, MessageEvent):
         if check_datetime_format(event.text):
-            match.start_time = str_datetime_to_int(event.text)
+            match.start_time = str_time_to_int(event.text)
             return EditMatchState(
                 match=match,
                 progress=EditMatchState.Progress.PLACE,
@@ -95,3 +102,11 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
             return GameIsSavedState()
         else:
             return GameIsCancelledState()
+
+
+def on_calendar_state(state: CalendarState, event: ButtonEvent):
+    if state.progress == CalendarState.Progress.VEIW_ALL:
+        return CalendarState(
+            match_id=int(event.callback), 
+            progress=CalendarState.Progress.VEIW_ONE
+        )

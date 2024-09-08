@@ -1,3 +1,8 @@
+from model.match import Match
+from repository.repository_initiation import place_repository
+from mapping.datetime_mapping import int_time_to_str
+
+
 class ButtonName:
     MAIN_MENU = 'Главное меню'
     SCHEDULE = 'Расписание игр'
@@ -19,3 +24,6 @@ class ButtonName:
     SAVE_GAME = 'Сохранить игру'
     CANCEL_GAME_EDITING = 'Отмена'
     BACK_TO_ORGANISERS = 'Меню организатора'
+
+    def small_match_data(match: Match) -> str:
+        return int_time_to_str(match.start_time) + ', ' + place_repository.read_by_id(match.place_id).name

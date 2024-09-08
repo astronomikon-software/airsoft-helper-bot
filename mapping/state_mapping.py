@@ -6,6 +6,8 @@ from states_events.states import *
 def state_to_dict(state: BotState) -> dict:
     if isinstance(state, EditMatchState):
         return edit_match_state_to_dict(state)
+    elif isinstance(state, CalendarState):
+        return calendar_state_to_dict(state)
     else:
         return simple_state_to_dict(state)
 
@@ -32,9 +34,19 @@ def edit_match_state_to_dict(state: EditMatchState) -> dict:
     }
 
 
+def calendar_state_to_dict(state: CalendarState):
+    return {
+        'state_name': 'CalendarState',
+        'match_id': state.match_id,
+        'progress': progress_to_str(state.progress)
+    }
+
+
 def dict_to_state(dict_state: dict) -> BotState:
     if dict_state['state_name'] == 'EditMatchState':
         return dict_to_edit_match_state(dict_state)
+    elif dict_state['state_name'] == 'CalendarState':
+        return dict_to_calendar_state(dict_state)
     else:
         return dict_to_simple_state(dict_state)
 
@@ -70,3 +82,10 @@ def dict_to_edit_match_state(dict_state: dict) -> EditMatchState:
         progress=str_to_progress(dict_state['progress']),
     )
     return state
+
+
+def dict_to_calendar_state(dict_state: dict) -> CalendarState:
+    return CalendarState(
+        match_id=dict_state['match_id'],
+        progress=str_to_progress(dict_state['progress'])
+    ) 
