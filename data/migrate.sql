@@ -56,6 +56,6 @@ INSERT INTO genres(genre_name) VALUES('Battle-Royal');
 INSERT INTO genres(genre_name) VALUES('King of the Mount');
 INSERT INTO genres(genre_name) VALUES('All Against All');
 
-INSERT INTO users(id, is_admin, is_true_admin) VALUES('434294239', 'True', 'True')
-INSERT INTO users(id, is_admin, is_true_admin) VALUES('1733814577', 'True', 'True')
-INSERT INTO users(id, is_admin, is_true_admin) VALUES('395233149', 'True', 'False')
+INSERT INTO users(id, is_admin, is_true_admin) VALUES(434294239, 'TRUE', 'TRUE');
+INSERT INTO users(id, is_admin, is_true_admin) VALUES(1733814577, 'TRUE', 'TRUE');
+INSERT INTO users(id, is_admin, is_true_admin) VALUES(395233149, 'TRUE', 'FALSE');

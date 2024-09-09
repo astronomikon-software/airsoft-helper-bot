@@ -59,30 +59,30 @@ class MatchRepository:
         rows = self.db_provider.execute_read_query('''SELECT * from matches''')
         return list(map(match_from_row, rows))
 
-    def read_by_genre(self, genre: Genre) -> list[Match]:
+    def read_by_genre(self, genre_id: int) -> list[Match]:
         rows = self.db_provider.execute_read_query(
             '''SELECT * from matches WHERE genre_id = %s''',
-            (genre.id,)
+            (genre_id,)
         )
         return list(map(match_from_row, rows))
 
-    def read_by_place(self, place: Place) -> list[Match]:
+    def read_by_place(self, place_id: int) -> list[Match]:
         rows = self.db_provider.execute_read_query(
             '''SELECT * from matches WHERE place_id = %s''',
-            (place.id,)
+            (place_id,)
         )
         return list(map(match_from_row, rows))
 
-    def read_by_group(self, group: Group) -> list[Match]:
+    def read_by_group(self, group_id: int) -> list[Match]:
         rows = self.db_provider.execute_read_query(
             '''SELECT * from matches WHERE group_id = %s''',
-            (group.id,)
+            (group_id,)
         )
         return list(map(match_from_row, rows))
 
-    def read_by_solo_friendliness(self) -> list[Match]:
+    def read_by_loneliness(self, loneliness_status) -> list[Match]:
         rows = self.db_provider.execute_read_query(
             '''SELECT * from matches WHERE is_loneliness_friendly is %s''',
-            (True,)
+            (loneliness_status,)
         )
         return list(map(match_from_row, rows))

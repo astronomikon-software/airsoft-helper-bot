@@ -25,7 +25,8 @@ class MessageText:
     NEW_GAME_CANCELLED = 'Отмена создания новой игры'
     SET_DATETIME_AGAIN = 'Формат данных неверен или введена некорректная дата. Попробуйте снова.' + '\n' + '\n' + \
         'Введите дату и время в формате "ДД-ММ-ГГГГ ЧЧ:ММ":'
-    LIST_OF_MATCHES = 'Выберите матч по дате, чтобы увидеть полную информацию:'
+    LIST_OF_MATCHES = 'Выберите матч, чтобы увидеть полную информацию:'
+    CHOOSE_LONELINESS_STATUS = 'Выберите, должна ли игра подходить одиночкам:'
 
     def match_data(match: Match) -> str:
         return 'Дата и время начала:' + ' ' + int_time_to_str(match.start_time) + \

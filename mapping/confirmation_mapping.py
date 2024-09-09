@@ -6,3 +6,9 @@ def str_to_confirmation(callback: str) -> bool:
         return True
     else:
         return False
+
+def str_to_bool(callback: str) -> bool:
+    if callback == ButtonCallback.TRUE:
+        return True
+    else:
+        return False
