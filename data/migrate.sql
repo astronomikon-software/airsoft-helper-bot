@@ -35,7 +35,6 @@ CREATE TABLE user_bot_states(
 CREATE TABLE matches(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     start_time TIMESTAMP NOT NULL,
-    duration TIMESTAMP,
     place_id BIGINT NOT NULL,
     group_id BIGINT NOT NULL,
     genre_id BIGINT NOT NULL,

@@ -35,12 +35,10 @@ class MatchRepository:
 
     def update(self, match: Match):
         start_time_obj = int_to_datetime(match.start_time)
-        # duration_obj = int_to_datetime(match.duration)
         self.db_provider.execute_query(
-            '''UPDATE matches SET start_time = %s, duration = %s, place_id = %s, group_id = %s, genre_id = %s, is_loneliness_friendly = %s WHERE id = %s''',
+            '''UPDATE matches SET start_time = %s, place_id = %s, group_id = %s, genre_id = %s, is_loneliness_friendly = %s WHERE id = %s''',
             (
                 start_time_obj,
-                # duration_obj,
                 match.place_id,
                 match.group_id,
                 match.genre_id,

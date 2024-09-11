@@ -566,7 +566,7 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
         if state.progress == UpdateMatchState.Progress.CHOOSE_GAME:
             markup = types.InlineKeyboardMarkup()
             matches = match_repository.read_all()
-            for match in matches:
+            for match in reversed(matches):
                 markup.add(
                     create_button(
                         text=ButtonName.small_match_data(match), 
@@ -603,8 +603,23 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
                     callback=ButtonCallback.MAIN_MENU
                 )
             )
-            return ScreenPresentation(markup, MessageText.match_data(match))
+            return ScreenPresentation(markup, MessageText.match_data(match))        
         
+    elif isinstance(state, GameIsUpdatedState):
+        markup = types.InlineKeyboardMarkup()
+        markup.add(
+            create_button(
+                text=ButtonName.BACK_TO_ORGANISERS, 
+                callback=ButtonCallback.ORGANISERS
+            )
+        )
+        markup.add(
+            create_button(
+                text=ButtonName.MAIN_MENU, 
+                callback=ButtonCallback.MAIN_MENU
+            )
+        )
+        return ScreenPresentation(markup, MessageText.GAME_UPDATED)
         # YOU ARE HERE
 
     else:

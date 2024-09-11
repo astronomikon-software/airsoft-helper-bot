@@ -27,6 +27,7 @@ class MessageText:
         'Введите дату и время в формате "ДД-ММ-ГГГГ ЧЧ:ММ":'
     LIST_OF_MATCHES = 'Выберите матч, чтобы увидеть полную информацию:'
     CHOOSE_LONELINESS_STATUS = 'Выберите, должна ли игра подходить одиночкам:'
+    GAME_UPDATED = 'Данные об игре успешно изменены!'
 
     def match_data(match: Match) -> str:
         return 'Дата и время начала:' + ' ' + int_time_to_str(match.start_time) + \
