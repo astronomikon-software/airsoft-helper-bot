@@ -16,7 +16,7 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
     if isinstance(event, MessageEvent) and event.text == '/start':
         return MainMenuState()
 
-    if isinstance(state, SetNewMatchState) and user.is_admin:
+    if isinstance(state, EditMatchState) and user.is_admin:
         return on_edit_match_state(state, event, user)
 
     if isinstance(state, CalendarState) and isinstance(event, ButtonEvent) and state.progress == CalendarState.Progress.VEIW_ALL:
@@ -33,6 +33,9 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
     
     if isinstance(state, VeiwByLonelinessState):
         return on_veiw_by_loneliness_state(state, event)
+    
+    if isinstance(state, UpdateMatchState):
+        return on_update_match_state(state, event)
 
     if isinstance(event, ButtonEvent):
         state_class = {
@@ -47,21 +50,21 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
             ButtonCallback.CHOOSE_GENRE: VeiwByGenreState,
             ButtonCallback.LONELINESS: VeiwByLonelinessState,
             ButtonCallback.ORGANISERS: OrganisersState,
-            ButtonCallback.SET_DATETIME: SetNewMatchState,
+            ButtonCallback.SET_DATETIME: EditMatchState,
             ButtonCallback.CALENDAR: CalendarState,
+            ButtonCallback.CHOOSE_GAME_TO_UPDATE: UpdateMatchState,
         }[event.callback]
         if state_class is not None:
-            if state_class is SetNewMatchState:
+            if state_class is EditMatchState:
                 match = Match()
                 match.id = 0
                 match.start_time = 0
-                match.start_time = 0
-                match.duration = 0
+                # match.duration = 0
                 match.place_id = 0
                 match.group_id = 0
                 match.genre_id = 0
                 match.is_loneliness_friendly = False
-                return state_class(match=match, progress=SetNewMatchState.Progress.START_TIME)
+                return state_class(match=match, progress=EditMatchState.Progress.START_TIME)
             elif state_class is CalendarState:
                 return state_class(0, CalendarState.Progress.VEIW_ALL)
             elif state_class is VeiwByPlaceState:
@@ -72,6 +75,8 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
                 return state_class(0, 0, VeiwByGenreState.Progress.VEIW_GENRES)
             elif state_class is VeiwByLonelinessState:
                 return state_class(ButtonCallback.FALSE, 0, VeiwByLonelinessState.Progress.CHOOSE_LONELINESS_STATUS)
+            elif state_class is UpdateMatchState:
+                return state_class(0, UpdateMatchState.Progress.CHOOSE_GAME)
             else:
                 return state_class()
     
@@ -81,68 +86,72 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
         # elif event.text == some regexp 
     
         
-def on_edit_match_state(state: SetNewMatchState, event: BotEvent, user: User):
+def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
     match = state.match
-    if (state.progress == SetNewMatchState.Progress.START_TIME) \
+    if (state.progress == EditMatchState.Progress.START_TIME) \
         and isinstance(event, MessageEvent):
         try:
             match.start_time = str_time_to_int(event.text)
-            return SetNewMatchState(
+            return EditMatchState(
                 match=match,
-                progress=SetNewMatchState.Progress.PLACE,
+                progress=EditMatchState.Progress.PLACE,
             )
         except:
-            return SetNewMatchState(
+            return EditMatchState(
                 match=match,
-                progress=SetNewMatchState.Progress.START_TIME_AGAIN,
+                progress=EditMatchState.Progress.START_TIME_AGAIN,
             )
-    elif (state.progress == SetNewMatchState.Progress.START_TIME_AGAIN) \
+    elif (state.progress == EditMatchState.Progress.START_TIME_AGAIN) \
         and isinstance(event, MessageEvent):
         try:
             match.start_time = str_time_to_int(event.text)
-            return SetNewMatchState(
+            return EditMatchState(
                 match=match,
-                progress=SetNewMatchState.Progress.PLACE,
+                progress=EditMatchState.Progress.PLACE,
             )
         except:
-            return SetNewMatchState(
+            return EditMatchState(
                 match=match,
-                progress=SetNewMatchState.Progress.START_TIME_AGAIN,
+                progress=EditMatchState.Progress.START_TIME_AGAIN,
             )
-    elif (state.progress == SetNewMatchState.Progress.PLACE) \
+    elif (state.progress == EditMatchState.Progress.PLACE) \
         and isinstance(event, ButtonEvent):
         match.place_id = int(event.callback)
-        return SetNewMatchState(
+        return EditMatchState(
             match=match,
-            progress=SetNewMatchState.Progress.GROUP,
+            progress=EditMatchState.Progress.GROUP,
         )
-    elif (state.progress == SetNewMatchState.Progress.GROUP) \
+    elif (state.progress == EditMatchState.Progress.GROUP) \
         and isinstance(event, ButtonEvent):
         match.group_id = int(event.callback)
-        return SetNewMatchState(
+        return EditMatchState(
             match=match,
-            progress=SetNewMatchState.Progress.GENRE,
+            progress=EditMatchState.Progress.GENRE,
         )
-    elif (state.progress == SetNewMatchState.Progress.GENRE) \
+    elif (state.progress == EditMatchState.Progress.GENRE) \
         and isinstance(event, ButtonEvent):
         match.genre_id = int(event.callback)
-        return SetNewMatchState(
+        return EditMatchState(
             match=match,
-            progress=SetNewMatchState.Progress.IS_LONELINESS_FRIENDLY,
+            progress=EditMatchState.Progress.IS_LONELINESS_FRIENDLY,
         )
-    elif (state.progress == SetNewMatchState.Progress.IS_LONELINESS_FRIENDLY) \
+    elif (state.progress == EditMatchState.Progress.IS_LONELINESS_FRIENDLY) \
         and isinstance(event, ButtonEvent):
         match.is_loneliness_friendly = str_to_loneliness(event.callback)
-        return SetNewMatchState(
+        return EditMatchState(
             match=match,
-            progress=SetNewMatchState.Progress.CONFIRMATION,
+            progress=EditMatchState.Progress.CONFIRMATION,
         )
-    elif (state.progress == SetNewMatchState.Progress.CONFIRMATION) \
+    elif (state.progress == EditMatchState.Progress.CONFIRMATION) \
         and isinstance(event, ButtonEvent):
         is_confirmed = str_to_confirmation(event.callback)
         if is_confirmed:
-            match_repository.create(match=match)
-            return GameIsSavedState()
+            if match.id != 0:
+                match_repository.update(match)
+                return GameIsUpdatedState()
+            else:
+                match_repository.create(match=match)
+                return GameIsSavedState()
         else:
             return GameIsCancelledState()
 
@@ -279,3 +288,26 @@ def on_veiw_by_loneliness_state(state: VeiwByLonelinessState, event: ButtonEvent
             match_id=event.callback,
             progress=VeiwByLonelinessState.Progress.VEIW_ONE_FILTERED_BY_LONELINESS
         )
+    
+def on_update_match_state(state: UpdateMatchState, event: ButtonEvent) -> EditMatchState:
+    if event.callback == ButtonCallback.ORGANISERS:
+        return OrganisersState()
+    if event.callback == ButtonCallback.SPECIAL_GO_BACK \
+        and state.progress == UpdateMatchState.Progress.CONFIRM_UPDATING:
+        return UpdateMatchState(
+            match_id=0,
+            progress=UpdateMatchState.Progress.CHOOSE_GAME
+        )
+    if state.progress == UpdateMatchState.Progress.CHOOSE_GAME:
+        return UpdateMatchState(
+            match_id=event.callback,
+            progress=UpdateMatchState.Progress.CONFIRM_UPDATING
+        )
+    if state.progress == UpdateMatchState.Progress.CONFIRM_UPDATING \
+        and event.callback == ButtonCallback.START_UPDATING:
+        return EditMatchState(
+            match=match_repository.read(state.match_id), 
+            progress=EditMatchState.Progress.START_TIME
+        )
+
+# Вспоминаются времена, когда я лежал в больнице. Как я гулял по территории. Как ждал Анну. Мне её очень не хватает.

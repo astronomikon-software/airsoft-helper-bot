@@ -4,7 +4,7 @@ from states_events.states import *
 
 
 def state_to_dict(state: BotState) -> dict:
-    if isinstance(state, SetNewMatchState):
+    if isinstance(state, EditMatchState):
         return edit_match_state_to_dict(state)
     elif isinstance(state, CalendarState):
         return calendar_state_to_dict(state)
@@ -16,6 +16,8 @@ def state_to_dict(state: BotState) -> dict:
         return veiw_by_genre_state_to_dict(state)
     elif isinstance(state, VeiwByLonelinessState):
         return veiw_by_loneliness_state_to_dict(state)
+    elif isinstance(state, UpdateMatchState):
+        return update_match_state_to_dict(state)
     else:
         return simple_state_to_dict(state)
 
@@ -26,13 +28,13 @@ def simple_state_to_dict(state: BotState) -> dict:
     }
 
 
-def edit_match_state_to_dict(state: SetNewMatchState) -> dict:
+def edit_match_state_to_dict(state: EditMatchState) -> dict:
     return {
         'state_name': 'EditMatchState',
         'match': {
             'id': state.match.id,
             'start_time': state.match.start_time,
-            'duration': state.match.duration,
+            # 'duration': state.match.duration,
             'place_id': state.match.place_id,
             'group_id': state.match.group_id,
             'genre_id': state.match.genre_id,
@@ -82,6 +84,13 @@ def veiw_by_loneliness_state_to_dict(state: VeiwByLonelinessState) -> dict:
         'progress': progress_to_str(state.progress)
     }
 
+def update_match_state_to_dict(state: UpdateMatchState) -> dict:
+    return {
+        'state_name': 'UpdateMatchState',
+        'match_id': state.match_id,
+        'progress': progress_to_str(state.progress)
+    }
+
 # reverse
 
 def dict_to_state(dict_state: dict) -> BotState:
@@ -97,6 +106,8 @@ def dict_to_state(dict_state: dict) -> BotState:
         return dict_to_veiw_by_genre_state(dict_state)
     elif dict_state['state_name'] == 'VeiwByLonelinessState':
         return dict_to_veiw_by_loneliness_state(dict_state)
+    elif dict_state['state_name'] == 'UpdateMatchState':
+        return dict_to_update_match_state(dict_state)
     else:
         return dict_to_simple_state(dict_state)
 
@@ -118,16 +129,16 @@ def dict_to_simple_state(dict_state: dict) -> BotState:
     )()
 
 
-def dict_to_edit_match_state(dict_state: dict) -> SetNewMatchState:
+def dict_to_edit_match_state(dict_state: dict) -> EditMatchState:
     match = Match()
     match.id = dict_state['match']['id']
     match.start_time = dict_state['match']['start_time']
-    match.duration = dict_state['match']['duration']
+    # match.duration = dict_state['match']['duration']
     match.place_id = dict_state['match']['place_id']
     match.group_id = dict_state['match']['group_id']
     match.genre_id = dict_state['match']['genre_id']
     match.is_loneliness_friendly = dict_state['match']['is_loneliness_friendly']    
-    state = SetNewMatchState(
+    state = EditMatchState(
         match=match,
         progress=str_to_progress(dict_state['progress']),
     )
@@ -164,6 +175,12 @@ def dict_to_veiw_by_genre_state(dict_state: dict) -> VeiwByGenreState:
 def dict_to_veiw_by_loneliness_state(dict_state: dict) -> VeiwByLonelinessState:
     return VeiwByLonelinessState(
         status=dict_state['status'],
+        match_id=dict_state['match_id'],
+        progress=str_to_progress(dict_state['progress'])
+    )
+
+def dict_to_update_match_state(dict_state: dict) -> UpdateMatchState:
+    return UpdateMatchState(
         match_id=dict_state['match_id'],
         progress=str_to_progress(dict_state['progress'])
     )

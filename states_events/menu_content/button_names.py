@@ -24,6 +24,7 @@ class ButtonName:
     SAVE_GAME = 'Сохранить игру'
     CANCEL_GAME_EDITING = 'Отмена'
     BACK_TO_ORGANISERS = 'Меню организатора'
+    START_UPDATING = 'Начать редактирование'
 
     def small_match_data(match: Match) -> str:
         return int_time_to_str(match.start_time) + ', ' + place_repository.read_by_id(match.place_id).name

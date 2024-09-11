@@ -108,7 +108,7 @@ class OrganisersState(BotState):
 
 # new game
 
-class SetNewMatchState(BotState):
+class EditMatchState(BotState):
     class Progress(Enum):
         START_TIME = 'START_TIME'
         START_TIME_AGAIN = 'START_TIME_AGAIN'
@@ -137,3 +137,22 @@ class GameIsCancelledState(BotState):
     pass
     
 # edit game
+
+class UpdateMatchState(BotState):
+    class Progress(Enum):
+        CHOOSE_GAME = 'CHOOSE_GAME'
+        CONFIRM_UPDATING = 'CONFIRM_UPDATING'
+    
+    match_id: int
+    progress: Progress
+
+    def __init__(
+        self,
+        match_id: int,
+        progress: Progress,
+    ):
+        self.match_id = match_id
+        self.progress = progress
+
+class GameIsUpdatedState(BotState):
+    pass

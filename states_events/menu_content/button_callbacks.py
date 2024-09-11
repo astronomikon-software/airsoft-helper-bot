@@ -23,3 +23,4 @@ class ButtonCallback: #Enūma Eliš?..
     SAVE_GAME = 'save_game'
     CANCEL_GAME_EDITING = 'cancel_game_editing'
     SPECIAL_GO_BACK = 'special_go_back'
+    START_UPDATING = 'start_updating'

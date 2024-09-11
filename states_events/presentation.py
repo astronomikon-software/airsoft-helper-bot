@@ -140,14 +140,14 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
             )
             return ScreenPresentation(markup, MessageText.ORGANISER_APPLICATION)
         
-    elif isinstance(state, SetNewMatchState):
-        if state.progress == SetNewMatchState.Progress.START_TIME:
+    elif isinstance(state, EditMatchState):
+        if state.progress == EditMatchState.Progress.START_TIME:
             markup = types.InlineKeyboardMarkup()
             return ScreenPresentation(markup, MessageText.SET_DATETIME)
-        elif state.progress == SetNewMatchState.Progress.START_TIME_AGAIN:
+        elif state.progress == EditMatchState.Progress.START_TIME_AGAIN:
             markup = types.InlineKeyboardMarkup()
             return ScreenPresentation(markup, MessageText.SET_DATETIME_AGAIN)
-        elif state.progress == SetNewMatchState.Progress.PLACE:
+        elif state.progress == EditMatchState.Progress.PLACE:
             markup = types.InlineKeyboardMarkup()
             places = place_repository.read_all()
             for place in places:
@@ -158,7 +158,7 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
                     )
                 )
             return ScreenPresentation(markup, MessageText.SET_PLACE)
-        elif state.progress == SetNewMatchState.Progress.GROUP:
+        elif state.progress == EditMatchState.Progress.GROUP:
             markup = types.InlineKeyboardMarkup()
             groups = group_repository.read_all()
             for group in groups:
@@ -169,7 +169,7 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
                     )
                 )
             return ScreenPresentation(markup, MessageText.SET_GROUP)
-        elif state.progress == SetNewMatchState.Progress.GENRE:
+        elif state.progress == EditMatchState.Progress.GENRE:
             markup = types.InlineKeyboardMarkup()
             genres = genre_repository.read_all()
             for genre in genres:
@@ -180,7 +180,7 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
                     )
                 )
             return ScreenPresentation(markup, MessageText.SET_GENRE)
-        elif state.progress == SetNewMatchState.Progress.IS_LONELINESS_FRIENDLY:
+        elif state.progress == EditMatchState.Progress.IS_LONELINESS_FRIENDLY:
             markup = types.InlineKeyboardMarkup()
             markup.add(
                 create_button(
@@ -195,7 +195,7 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
                 ) 
             )
             return ScreenPresentation(markup, MessageText.SET_LONELINESS)
-        elif state.progress == SetNewMatchState.Progress.CONFIRMATION:
+        elif state.progress == EditMatchState.Progress.CONFIRMATION:
             markup = types.InlineKeyboardMarkup()
             markup.add(
                 create_button(
@@ -497,8 +497,6 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
             )
             return ScreenPresentation(markup, MessageText.match_data(match))
 
-        # YOU WERE HERE
-
     elif isinstance(state, VeiwByLonelinessState):
         if state.progress == VeiwByLonelinessState.Progress.CHOOSE_LONELINESS_STATUS:
             markup = types.InlineKeyboardMarkup()
@@ -561,6 +559,52 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
                 )
             )
             return ScreenPresentation(markup, MessageText.match_data(match))
+
+        # YOU WERE HERE
+    
+    elif isinstance(state, UpdateMatchState):
+        if state.progress == UpdateMatchState.Progress.CHOOSE_GAME:
+            markup = types.InlineKeyboardMarkup()
+            matches = match_repository.read_all()
+            for match in matches:
+                markup.add(
+                    create_button(
+                        text=ButtonName.small_match_data(match), 
+                        callback=match.id
+                    )
+                )
+            markup.add(
+                create_button(
+                    text=ButtonName.GO_BACK,
+                    callback=ButtonCallback.ORGANISERS
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
+                )
+            )
+            return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
+        elif state.progress == UpdateMatchState.Progress.CONFIRM_UPDATING:
+            match = match_repository.read(state.match_id)
+            markup = types.InlineKeyboardMarkup()
+            markup.add(
+                create_button(
+                    text=ButtonName.START_UPDATING,
+                    callback=ButtonCallback.START_UPDATING
+                )
+            )
+            markup.add(
+                create_button(
+                    text=ButtonName.GO_BACK,
+                    callback=ButtonCallback.SPECIAL_GO_BACK
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
+                )
+            )
+            return ScreenPresentation(markup, MessageText.match_data(match))
+        
         # YOU ARE HERE
 
     else:
