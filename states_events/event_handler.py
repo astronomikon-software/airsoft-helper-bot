@@ -19,7 +19,7 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
     if isinstance(state, EditMatchState) and user.is_admin:
         return on_edit_match_state(state, event, user)
 
-    if isinstance(state, CalendarState) and isinstance(event, ButtonEvent) and state.progress == CalendarState.Progress.VEIW_ALL:
+    if isinstance(state, CalendarState):
         return on_calendar_state(state, event)
 
     if isinstance(state, VeiwByPlaceState):
@@ -59,14 +59,13 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
                 match = Match()
                 match.id = 0
                 match.start_time = 0
-                # match.duration = 0
                 match.place_id = 0
                 match.group_id = 0
                 match.genre_id = 0
                 match.is_loneliness_friendly = False
                 return state_class(match=match, progress=EditMatchState.Progress.START_TIME)
             elif state_class is CalendarState:
-                return state_class(0, CalendarState.Progress.VEIW_ALL)
+                return state_class(match_id=0, page_number=1, progress=CalendarState.Progress.VEIW_ALL)
             elif state_class is VeiwByPlaceState:
                 return state_class(0, 0, VeiwByPlaceState.Progress.VEIW_PLACES)
             elif state_class is VeiwByGroupState:
@@ -159,9 +158,33 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
 def on_calendar_state(state: CalendarState, event: ButtonEvent):
     if event.callback == ButtonCallback.SCHEDULE:
         return ScheduleState()
+    if event.callback == ButtonCallback.SPECIAL_GO_BACK \
+        and state.progress == CalendarState.Progress.VEIW_ONE:
+        return CalendarState(
+            match_id=0,
+            page_number=state.page_number,
+            progress=CalendarState.Progress.VEIW_ALL
+        )
+    if event.callback == ButtonCallback.NEXT_PAGE:
+        return CalendarState(
+            match_id=0,
+            page_number=state.page_number+1,
+            progress=CalendarState.Progress.VEIW_ALL
+        )
+    if event.callback == ButtonCallback.PREVIOUS_PAGE:
+        return CalendarState(
+            match_id=0,
+            page_number=state.page_number-1,
+            progress=CalendarState.Progress.VEIW_ALL
+        )
+    if event.callback == ButtonCallback.VOID \
+        and state.progress == CalendarState.Progress.VEIW_ALL:
+        print(event.callback)
+        print('may the void be with you eternally')
     if state.progress == CalendarState.Progress.VEIW_ALL:
         return CalendarState(
-            match_id=int(event.callback), 
+            match_id=int(event.callback),
+            page_number=state.page_number,
             progress=CalendarState.Progress.VEIW_ONE
         )
 

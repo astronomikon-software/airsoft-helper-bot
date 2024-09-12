@@ -24,3 +24,6 @@ class ButtonCallback: #Enūma Eliš?..
     CANCEL_GAME_EDITING = 'cancel_game_editing'
     SPECIAL_GO_BACK = 'special_go_back'
     START_UPDATING = 'start_updating'
+    NEXT_PAGE = 'next_page'
+    PREVIOUS_PAGE = 'previous_page'
+    VOID = 'embrace_the_void'

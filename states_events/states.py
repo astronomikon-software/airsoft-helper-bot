@@ -33,10 +33,13 @@ class CalendarState(BotState):
     
     progress: Progress
     match_id: int
+    page_number: int
 
-    def __init__(self, match_id, progress):
+    def __init__(self, match_id, progress, page_number):
         self.match_id = match_id
+        self.page_number = page_number
         self.progress = progress
+
 
 class FiltersState(BotState):
     pass

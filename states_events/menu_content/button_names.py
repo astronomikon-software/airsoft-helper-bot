@@ -11,7 +11,7 @@ class ButtonName:
     CALENDAR = 'Просмотр календаря'
     FILTERS = 'Просмотр по фильтрам'
     ORGANISERS = 'Организаторам'
-    GO_BACK = '◀️'
+    GO_BACK = 'Назад' # ◀️
     GENRES = 'Просмотр по жанрам'
     GROUPS = 'Просмотр по орг.группам'
     PLACES = 'Просмотр по полигонам'
@@ -25,6 +25,8 @@ class ButtonName:
     CANCEL_GAME_EDITING = 'Отмена'
     BACK_TO_ORGANISERS = 'Меню организатора'
     START_UPDATING = 'Начать редактирование'
+    NEXT_PAGE = '>'
+    PREVIOUS_PAGE = '<'
 
     def small_match_data(match: Match) -> str:
         return int_time_to_str(match.start_time) + ', ' + place_repository.read_by_id(match.place_id).name

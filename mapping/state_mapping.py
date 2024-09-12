@@ -48,6 +48,7 @@ def calendar_state_to_dict(state: CalendarState) -> dict:
     return {
         'state_name': 'CalendarState',
         'match_id': state.match_id,
+        'page_number': state.page_number,
         'progress': progress_to_str(state.progress)
     }
 
@@ -133,7 +134,6 @@ def dict_to_edit_match_state(dict_state: dict) -> EditMatchState:
     match = Match()
     match.id = dict_state['match']['id']
     match.start_time = dict_state['match']['start_time']
-    # match.duration = dict_state['match']['duration']
     match.place_id = dict_state['match']['place_id']
     match.group_id = dict_state['match']['group_id']
     match.genre_id = dict_state['match']['genre_id']
@@ -148,6 +148,7 @@ def dict_to_edit_match_state(dict_state: dict) -> EditMatchState:
 def dict_to_calendar_state(dict_state: dict) -> CalendarState:
     return CalendarState(
         match_id=dict_state['match_id'],
+        page_number=dict_state['page_number'],
         progress=str_to_progress(dict_state['progress'])
     ) 
 
