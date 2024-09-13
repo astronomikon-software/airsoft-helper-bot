@@ -11,6 +11,7 @@ from states_events.menu_content.message_texts import MessageText
 from repository.repository_initiation import *
 
 from utils.button_util import create_button
+from utils.paging_util import add_navigation
 
 
 class ScreenPresentation:
@@ -249,7 +250,6 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
             markup = types.InlineKeyboardMarkup()
             page_size = 8
             matches = match_repository.read_ongoing(limit=page_size, offset=((state.page_number - 1) * page_size))
-            number_of_matches = match_repository.count_all_ongoings()
             
             for match in matches:
                 markup.add(
@@ -258,47 +258,12 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
                         callback=match.id
                     )
                 )
-
-            if state.page_number == 1 and number_of_matches > page_size: # first page
-                markup.add(
-                    create_button(
-                        text=str(state.page_number), 
-                        callback=ButtonCallback.VOID
-                    ),
-                    create_button(
-                        text=ButtonName.NEXT_PAGE,
-                        callback=ButtonCallback.NEXT_PAGE
-                    )
-                )
-            elif state.page_number > 1 and state.page_number < (number_of_matches + page_size - 1) // page_size: # page in middle
-                markup.add(
-                    create_button(
-                        text=ButtonName.PREVIOUS_PAGE, 
-                        callback=ButtonCallback.PREVIOUS_PAGE
-                    ),
-                    create_button(
-                        text=str(state.page_number), 
-                        callback=ButtonCallback.VOID
-                    ),
-                    create_button(
-                        text=ButtonName.NEXT_PAGE, 
-                        callback=ButtonCallback.NEXT_PAGE
-                    )
-                )
-            elif state.page_number > 1 and state.page_number == (number_of_matches + page_size - 1) // page_size: # last page !!!
-                markup.add(
-                    create_button(
-                        text=ButtonName.PREVIOUS_PAGE,
-                        callback=ButtonCallback.PREVIOUS_PAGE
-                    ),
-                    create_button(
-                        text=str(state.page_number), 
-                        callback=ButtonCallback.VOID
-                    )
-                )
-            elif number_of_matches <= page_size: # the only page 
-                pass
-            
+            markup = add_navigation(
+                markup=markup,
+                page_size=page_size,
+                page_number=state.page_number,
+                number_of_matches=match_repository.count_all_ongoings()
+            )
             markup.add(
                 create_button(
                     text=ButtonName.GO_BACK, 
@@ -387,8 +352,12 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
             return ScreenPresentation(markup, MessageText.CHOOSE_PLACE)
         elif state.progress == VeiwByPlaceState.Progress.VEIW_FILTERED_BY_PLACE:
             markup = types.InlineKeyboardMarkup()
-            matches = match_repository.read_by_place(state.item_id)
-            matches.sort(key=lambda match: match.start_time)
+            page_size = 8
+            matches = match_repository.read_by_place(
+                place_id=state.item_id, 
+                limit=page_size, 
+                offset=((state.page_number - 1) * page_size)
+            )
             for match in matches:
                 markup.add(
                     create_button(
@@ -396,6 +365,12 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
                         callback=match.id
                     )
                 )
+            markup = add_navigation(
+                markup=markup,
+                page_size=page_size,
+                page_number=state.page_number,
+                number_of_matches=match_repository.count_by_place(state.item_id)
+            )
             markup.add(
                 create_button(
                     text=ButtonName.GO_BACK, 
@@ -446,8 +421,12 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
             return ScreenPresentation(markup, MessageText.CHOOSE_GROUP)
         elif state.progress == VeiwByGroupState.Progress.VEIW_FILTERED_BY_GROUP:
             markup = types.InlineKeyboardMarkup()
-            matches = match_repository.read_by_group(state.item_id)
-            matches.sort(key=lambda match: match.start_time)
+            page_size = 8
+            matches = match_repository.read_by_group(
+                group_id=state.item_id,
+                limit=page_size, 
+                offset=((state.page_number - 1) * page_size)
+            )
             for match in matches:
                 markup.add(
                     create_button(
@@ -455,6 +434,12 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
                         callback=match.id
                     )
                 )
+            markup = add_navigation(
+                markup=markup,
+                page_size=page_size,
+                page_number=state.page_number,
+                number_of_matches=match_repository.count_by_group(state.item_id)
+            )
             markup.add(
                 create_button(
                     text=ButtonName.GO_BACK, 
@@ -505,8 +490,12 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
             return ScreenPresentation(markup, MessageText.CHOOSE_GENRE)
         elif state.progress == VeiwByGenreState.Progress.VEIW_FILTERED_BY_GENRE:
             markup = types.InlineKeyboardMarkup()
-            matches = match_repository.read_by_genre(state.item_id)
-            matches.sort(key=lambda match: match.start_time)
+            page_size = 8
+            matches = match_repository.read_by_genre(
+                genre_id=state.item_id,
+                limit=page_size, 
+                offset=((state.page_number - 1) * page_size)
+            )
             for match in matches:
                 markup.add(
                     create_button(
@@ -514,6 +503,12 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
                         callback=match.id
                     )
                 )
+            markup = add_navigation(
+                markup=markup,
+                page_size=page_size,
+                page_number=state.page_number,
+                number_of_matches=match_repository.count_by_genre(state.item_id)
+            )
             markup.add(
                 create_button(
                     text=ButtonName.GO_BACK, 
@@ -568,8 +563,12 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
             return ScreenPresentation(markup, MessageText.CHOOSE_LONELINESS_STATUS)
         elif state.progress == VeiwByLonelinessState.Progress.VEIW_FILTERED_BY_LONELINESS:
             markup = types.InlineKeyboardMarkup()
-            matches = match_repository.read_by_loneliness(str_to_bool(state.status))
-            matches.sort(key=lambda match: match.start_time)
+            page_size = 8
+            matches = match_repository.read_by_loneliness(
+                loneliness_status=str_to_bool(state.status),
+                limit=page_size, 
+                offset=((state.page_number - 1) * page_size)
+            )
             for match in matches:
                 markup.add(
                     create_button(
@@ -577,6 +576,12 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
                         callback=match.id
                     )
                 )
+            markup = add_navigation(
+                markup=markup,
+                page_size=page_size,
+                page_number=state.page_number,
+                number_of_matches=match_repository.count_by_loneliness(state.status)
+            )
             markup.add(
                 create_button(
                     text=ButtonName.GO_BACK, 
@@ -608,14 +613,24 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
     elif isinstance(state, UpdateMatchState):
         if state.progress == UpdateMatchState.Progress.CHOOSE_GAME:
             markup = types.InlineKeyboardMarkup()
-            matches = match_repository.read_all()
-            for match in reversed(matches):
+            page_size = 8
+            matches = match_repository.read_by_updating(
+                limit=page_size, 
+                offset=((state.page_number - 1) * page_size)
+            )
+            for match in matches:
                 markup.add(
                     create_button(
                         text=ButtonName.small_match_data(match), 
                         callback=match.id
                     )
                 )
+            markup = add_navigation(
+                markup=markup,
+                page_size=page_size,
+                page_number=state.page_number,
+                number_of_matches=match_repository.count_all()
+            )
             markup.add(
                 create_button(
                     text=ButtonName.GO_BACK,

@@ -53,11 +53,13 @@ class VeiwByPlaceState(BotState):
     progress: Progress
     item_id: int
     match_id: int
+    page_number: int
 
-    def __init__(self, item_id, match_id, progress):
+    def __init__(self, item_id, match_id, progress, page_number):
         self.item_id = item_id
         self.match_id = match_id
         self.progress = progress
+        self.page_number = page_number
 
 class VeiwByGroupState(BotState):
     class Progress(Enum):
@@ -68,11 +70,13 @@ class VeiwByGroupState(BotState):
     progress: Progress
     item_id: int
     match_id: int
+    page_number: int
 
-    def __init__(self, item_id, match_id, progress):
+    def __init__(self, item_id, match_id, progress, page_number):
         self.item_id = item_id
         self.match_id = match_id
         self.progress = progress
+        self.page_number = page_number
 
 class VeiwByGenreState(BotState):
     class Progress(Enum):
@@ -83,11 +87,13 @@ class VeiwByGenreState(BotState):
     progress: Progress
     item_id: int
     match_id: int
+    page_number: int
 
-    def __init__(self, item_id, match_id, progress):
+    def __init__(self, item_id, match_id, progress, page_number):
         self.item_id = item_id
         self.match_id = match_id
         self.progress = progress
+        self.page_number = page_number
 
 class VeiwByLonelinessState(BotState):
     class Progress(Enum):
@@ -98,11 +104,13 @@ class VeiwByLonelinessState(BotState):
     progress: Progress
     match_id: int
     status: str
+    page_number: int
 
-    def __init__(self, status: str, match_id, progress):
+    def __init__(self, status: str, match_id, progress, page_number):
         self.status = status
         self.match_id = match_id
         self.progress = progress
+        self.page_number = page_number
 
 # organisers branches
 
@@ -148,14 +156,18 @@ class UpdateMatchState(BotState):
     
     match_id: int
     progress: Progress
+    page_number: int
+    
 
     def __init__(
         self,
         match_id: int,
         progress: Progress,
+        page_number: int
     ):
         self.match_id = match_id
         self.progress = progress
+        self.page_number = page_number
 
 class GameIsUpdatedState(BotState):
     pass

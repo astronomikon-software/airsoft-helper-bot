@@ -19,22 +19,22 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
     if isinstance(state, EditMatchState) and user.is_admin:
         return on_edit_match_state(state, event, user)
 
-    if isinstance(state, CalendarState):
+    if isinstance(state, CalendarState) and isinstance(event, ButtonEvent):
         return on_calendar_state(state, event)
 
-    if isinstance(state, VeiwByPlaceState):
+    if isinstance(state, VeiwByPlaceState) and isinstance(event, ButtonEvent):
         return on_veiw_by_place_state(state, event)
 
-    if isinstance(state, VeiwByGroupState):
+    if isinstance(state, VeiwByGroupState) and isinstance(event, ButtonEvent):
         return on_veiw_by_group_state(state, event)
 
-    if isinstance(state, VeiwByGenreState):
+    if isinstance(state, VeiwByGenreState) and isinstance(event, ButtonEvent):
         return on_veiw_by_genre_state(state, event)
     
-    if isinstance(state, VeiwByLonelinessState):
+    if isinstance(state, VeiwByLonelinessState) and isinstance(event, ButtonEvent):
         return on_veiw_by_loneliness_state(state, event)
     
-    if isinstance(state, UpdateMatchState):
+    if isinstance(state, UpdateMatchState) and isinstance(event, ButtonEvent):
         return on_update_match_state(state, event)
 
     if isinstance(event, ButtonEvent):
@@ -67,15 +67,15 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
             elif state_class is CalendarState:
                 return state_class(match_id=0, page_number=1, progress=CalendarState.Progress.VEIW_ALL)
             elif state_class is VeiwByPlaceState:
-                return state_class(0, 0, VeiwByPlaceState.Progress.VEIW_PLACES)
+                return state_class(0, 0, VeiwByPlaceState.Progress.VEIW_PLACES, 1)
             elif state_class is VeiwByGroupState:
-                return state_class(0, 0, VeiwByGroupState.Progress.VEIW_GROUPS)
+                return state_class(0, 0, VeiwByGroupState.Progress.VEIW_GROUPS, 1)
             elif state_class is VeiwByGenreState:
-                return state_class(0, 0, VeiwByGenreState.Progress.VEIW_GENRES)
+                return state_class(0, 0, VeiwByGenreState.Progress.VEIW_GENRES, 1)
             elif state_class is VeiwByLonelinessState:
-                return state_class(ButtonCallback.FALSE, 0, VeiwByLonelinessState.Progress.CHOOSE_LONELINESS_STATUS)
+                return state_class(ButtonCallback.FALSE, 0, VeiwByLonelinessState.Progress.CHOOSE_LONELINESS_STATUS, 1)
             elif state_class is UpdateMatchState:
-                return state_class(0, UpdateMatchState.Progress.CHOOSE_GAME)
+                return state_class(0, UpdateMatchState.Progress.CHOOSE_GAME, 1)
             else:
                 return state_class()
     
@@ -178,7 +178,7 @@ def on_calendar_state(state: CalendarState, event: ButtonEvent):
             progress=CalendarState.Progress.VEIW_ALL
         )
     if event.callback == ButtonCallback.VOID \
-        and state.progress == CalendarState.Progress.VEIW_ALL:
+        and state.progress == CalendarState.Progress.VEIW_ALL: # Шутка юмора. Но я не знаю, что тут ещё придумать
         print(event.callback)
         print('may the void be with you eternally')
     if state.progress == CalendarState.Progress.VEIW_ALL:
@@ -197,6 +197,7 @@ def on_veiw_by_place_state(state: VeiwByPlaceState, event: ButtonEvent):
         return VeiwByPlaceState(
             item_id=0,
             match_id=0,
+            page_number=0,
             progress=VeiwByPlaceState.Progress.VEIW_PLACES
         )
     if event.callback == ButtonCallback.SPECIAL_GO_BACK \
@@ -204,18 +205,35 @@ def on_veiw_by_place_state(state: VeiwByPlaceState, event: ButtonEvent):
         return VeiwByPlaceState(
             item_id=state.item_id,
             match_id=0,
+            page_number=state.page_number,
+            progress=VeiwByPlaceState.Progress.VEIW_FILTERED_BY_PLACE
+        )
+    if event.callback == ButtonCallback.NEXT_PAGE:
+        return VeiwByPlaceState(
+            item_id=state.item_id,
+            match_id=0,
+            page_number=state.page_number+1,
+            progress=VeiwByPlaceState.Progress.VEIW_FILTERED_BY_PLACE
+        )
+    if event.callback == ButtonCallback.PREVIOUS_PAGE:
+        return VeiwByPlaceState(
+            item_id=state.item_id,
+            match_id=0,
+            page_number=state.page_number-1,
             progress=VeiwByPlaceState.Progress.VEIW_FILTERED_BY_PLACE
         )
     if state.progress == VeiwByPlaceState.Progress.VEIW_PLACES:
         return VeiwByPlaceState(
             item_id=event.callback,
             match_id=0,
+            page_number=1,
             progress=VeiwByPlaceState.Progress.VEIW_FILTERED_BY_PLACE
         )
     if state.progress == VeiwByPlaceState.Progress.VEIW_FILTERED_BY_PLACE:
         return VeiwByPlaceState(
             item_id=state.item_id,
             match_id=event.callback,
+            page_number=state.page_number,
             progress=VeiwByPlaceState.Progress.VEIW_ONE_FILTERED_BY_PLACE
         )
 
@@ -228,6 +246,7 @@ def on_veiw_by_group_state(state: VeiwByGroupState, event: ButtonEvent):
         return VeiwByGroupState(
             item_id=0,
             match_id=0,
+            page_number=0,
             progress=VeiwByGroupState.Progress.VEIW_GROUPS
         )
     if event.callback == ButtonCallback.SPECIAL_GO_BACK \
@@ -235,18 +254,35 @@ def on_veiw_by_group_state(state: VeiwByGroupState, event: ButtonEvent):
         return VeiwByGroupState(
             item_id=state.item_id,
             match_id=0,
+            page_number=state.page_number,
+            progress=VeiwByGroupState.Progress.VEIW_FILTERED_BY_GROUP
+        )
+    if event.callback == ButtonCallback.NEXT_PAGE:
+        return VeiwByGroupState(
+            item_id=state.item_id,
+            match_id=0,
+            page_number=state.page_number+1,
+            progress=VeiwByGroupState.Progress.VEIW_FILTERED_BY_GROUP
+        )
+    if event.callback == ButtonCallback.PREVIOUS_PAGE:
+        return VeiwByGroupState(
+            item_id=state.item_id,
+            match_id=0,
+            page_number=state.page_number-1,
             progress=VeiwByGroupState.Progress.VEIW_FILTERED_BY_GROUP
         )
     if state.progress == VeiwByGroupState.Progress.VEIW_GROUPS:
         return VeiwByGroupState(
             item_id=event.callback,
             match_id=0,
+            page_number=1,
             progress=VeiwByGroupState.Progress.VEIW_FILTERED_BY_GROUP
         )
     if state.progress == VeiwByGroupState.Progress.VEIW_FILTERED_BY_GROUP:
         return VeiwByGroupState(
             item_id=state.item_id,
             match_id=event.callback,
+            page_number=state.page_number,
             progress=VeiwByGroupState.Progress.VEIW_ONE_FILTERED_BY_GROUP
         )
     
@@ -259,6 +295,7 @@ def on_veiw_by_genre_state(state: VeiwByGenreState, event: ButtonEvent):
         return VeiwByGenreState(
             item_id=0,
             match_id=0,
+            page_number=0,
             progress=VeiwByGenreState.Progress.VEIW_GENRES
         )
     if event.callback == ButtonCallback.SPECIAL_GO_BACK \
@@ -266,18 +303,35 @@ def on_veiw_by_genre_state(state: VeiwByGenreState, event: ButtonEvent):
         return VeiwByGenreState(
             item_id=state.item_id,
             match_id=0,
+            page_number=state.page_number,
+            progress=VeiwByGenreState.Progress.VEIW_FILTERED_BY_GENRE
+        )
+    if event.callback == ButtonCallback.NEXT_PAGE:
+        return VeiwByGenreState(
+            item_id=state.item_id,
+            match_id=0,
+            page_number=state.page_number+1,
+            progress=VeiwByGenreState.Progress.VEIW_FILTERED_BY_GENRE
+        )
+    if event.callback == ButtonCallback.PREVIOUS_PAGE:
+        return VeiwByGenreState(
+            item_id=state.item_id,
+            match_id=0,
+            page_number=state.page_number-1,
             progress=VeiwByGenreState.Progress.VEIW_FILTERED_BY_GENRE
         )
     if state.progress == VeiwByGenreState.Progress.VEIW_GENRES:
         return VeiwByGenreState(
             item_id=event.callback,
             match_id=0,
+            page_number=1,
             progress=VeiwByGenreState.Progress.VEIW_FILTERED_BY_GENRE
         )
     if state.progress == VeiwByGenreState.Progress.VEIW_FILTERED_BY_GENRE:
         return VeiwByGenreState(
             item_id=state.item_id,
             match_id=event.callback,
+            page_number=state.page_number,
             progress=VeiwByGenreState.Progress.VEIW_ONE_FILTERED_BY_GENRE
         )
 
@@ -290,6 +344,7 @@ def on_veiw_by_loneliness_state(state: VeiwByLonelinessState, event: ButtonEvent
         return VeiwByLonelinessState(
             status=ButtonCallback.FALSE,
             match_id=0,
+            page_number=0,
             progress=VeiwByLonelinessState.Progress.CHOOSE_LONELINESS_STATUS
         )
     if event.callback == ButtonCallback.SPECIAL_GO_BACK \
@@ -297,33 +352,64 @@ def on_veiw_by_loneliness_state(state: VeiwByLonelinessState, event: ButtonEvent
         return VeiwByLonelinessState(
             status=state.status,
             match_id=0,
+            page_number=state.page_number,
+            progress=VeiwByLonelinessState.Progress.VEIW_FILTERED_BY_LONELINESS
+        )
+    if event.callback == ButtonCallback.NEXT_PAGE:
+        return VeiwByLonelinessState(
+            status=state.status,
+            match_id=0,
+            page_number=state.page_number+1,
+            progress=VeiwByLonelinessState.Progress.VEIW_FILTERED_BY_LONELINESS
+        )
+    if event.callback == ButtonCallback.PREVIOUS_PAGE:
+        return VeiwByLonelinessState(
+            status=state.status,
+            match_id=0,
+            page_number=state.page_number-1,
             progress=VeiwByLonelinessState.Progress.VEIW_FILTERED_BY_LONELINESS
         )
     if state.progress == VeiwByLonelinessState.Progress.CHOOSE_LONELINESS_STATUS:
         return VeiwByLonelinessState(
             status=event.callback,
             match_id=0,
+            page_number=1,
             progress=VeiwByLonelinessState.Progress.VEIW_FILTERED_BY_LONELINESS
         )
     if state.progress == VeiwByLonelinessState.Progress.VEIW_FILTERED_BY_LONELINESS:
         return VeiwByLonelinessState(
             status=state.status,
             match_id=event.callback,
+            page_number=state.page_number,
             progress=VeiwByLonelinessState.Progress.VEIW_ONE_FILTERED_BY_LONELINESS
         )
     
-def on_update_match_state(state: UpdateMatchState, event: ButtonEvent) -> EditMatchState:
+def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
     if event.callback == ButtonCallback.ORGANISERS:
         return OrganisersState()
     if event.callback == ButtonCallback.SPECIAL_GO_BACK \
         and state.progress == UpdateMatchState.Progress.CONFIRM_UPDATING:
         return UpdateMatchState(
             match_id=0,
+            page_number=state.page_number,
+            progress=UpdateMatchState.Progress.CHOOSE_GAME
+        )
+    if event.callback == ButtonCallback.NEXT_PAGE:
+        return UpdateMatchState(
+            match_id=0,
+            page_number=state.page_number+1,
+            progress=UpdateMatchState.Progress.CHOOSE_GAME
+        )
+    if event.callback == ButtonCallback.PREVIOUS_PAGE:
+        return UpdateMatchState(
+            match_id=0,
+            page_number=state.page_number-1,
             progress=UpdateMatchState.Progress.CHOOSE_GAME
         )
     if state.progress == UpdateMatchState.Progress.CHOOSE_GAME:
         return UpdateMatchState(
             match_id=event.callback,
+            page_number=state.page_number,
             progress=UpdateMatchState.Progress.CONFIRM_UPDATING
         )
     if state.progress == UpdateMatchState.Progress.CONFIRM_UPDATING \

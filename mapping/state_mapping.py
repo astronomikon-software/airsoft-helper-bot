@@ -34,7 +34,6 @@ def edit_match_state_to_dict(state: EditMatchState) -> dict:
         'match': {
             'id': state.match.id,
             'start_time': state.match.start_time,
-            # 'duration': state.match.duration,
             'place_id': state.match.place_id,
             'group_id': state.match.group_id,
             'genre_id': state.match.genre_id,
@@ -58,6 +57,7 @@ def veiw_by_place_state_to_dict(state: VeiwByPlaceState) -> dict:
         'state_name': 'VeiwByPlaceState',
         'item_id': state.item_id,
         'match_id': state.match_id,
+        'page_number': state.page_number,
         'progress': progress_to_str(state.progress)
     }
 
@@ -66,6 +66,7 @@ def veiw_by_group_state_to_dict(state: VeiwByGroupState) -> dict:
         'state_name': 'VeiwByGroupState',
         'item_id': state.item_id,
         'match_id': state.match_id,
+        'page_number': state.page_number,
         'progress': progress_to_str(state.progress)
     }
 
@@ -74,6 +75,7 @@ def veiw_by_genre_state_to_dict(state: VeiwByGenreState) -> dict:
         'state_name': 'VeiwByGenreState',
         'item_id': state.item_id,
         'match_id': state.match_id,
+        'page_number': state.page_number,
         'progress': progress_to_str(state.progress)
     }
 
@@ -82,6 +84,7 @@ def veiw_by_loneliness_state_to_dict(state: VeiwByLonelinessState) -> dict:
         'state_name': 'VeiwByLonelinessState',
         'status': state.status,
         'match_id': state.match_id,
+        'page_number': state.page_number,
         'progress': progress_to_str(state.progress)
     }
 
@@ -89,6 +92,7 @@ def update_match_state_to_dict(state: UpdateMatchState) -> dict:
     return {
         'state_name': 'UpdateMatchState',
         'match_id': state.match_id,
+        'page_number': state.page_number,
         'progress': progress_to_str(state.progress)
     }
 
@@ -156,6 +160,7 @@ def dict_to_veiw_by_place_state(dict_state: dict) -> VeiwByPlaceState:
     return VeiwByPlaceState(
         item_id=dict_state['item_id'],
         match_id=dict_state['match_id'],
+        page_number=dict_state['page_number'],
         progress=str_to_progress(dict_state['progress'])
     )
 
@@ -163,6 +168,7 @@ def dict_to_veiw_by_group_state(dict_state: dict) -> VeiwByGroupState:
     return VeiwByGroupState(
         item_id=dict_state['item_id'],
         match_id=dict_state['match_id'],
+        page_number=dict_state['page_number'],
         progress=str_to_progress(dict_state['progress'])
     )
 
@@ -170,6 +176,7 @@ def dict_to_veiw_by_genre_state(dict_state: dict) -> VeiwByGenreState:
     return VeiwByGenreState(
         item_id=dict_state['item_id'],
         match_id=dict_state['match_id'],
+        page_number=dict_state['page_number'],
         progress=str_to_progress(dict_state['progress'])
     )
 
@@ -177,11 +184,13 @@ def dict_to_veiw_by_loneliness_state(dict_state: dict) -> VeiwByLonelinessState:
     return VeiwByLonelinessState(
         status=dict_state['status'],
         match_id=dict_state['match_id'],
+        page_number=dict_state['page_number'],
         progress=str_to_progress(dict_state['progress'])
     )
 
 def dict_to_update_match_state(dict_state: dict) -> UpdateMatchState:
     return UpdateMatchState(
         match_id=dict_state['match_id'],
+        page_number=dict_state['page_number'],
         progress=str_to_progress(dict_state['progress'])
     )

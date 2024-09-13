@@ -53,39 +53,78 @@ class MatchRepository:
             (match.id,)
         )
 
-    def read_by_genre(self, genre_id: int) -> list[Match]:
+    def read_by_genre(self, genre_id: int, limit: int, offset: int) -> list[Match]:
         rows = self.db_provider.execute_read_query(
-            '''SELECT * from matches WHERE genre_id = %s''',
-            (genre_id,)
+            '''SELECT * from matches WHERE start_time > NOW() AND genre_id = %s ORDER BY start_time LIMIT %s OFFSET %s;''',
+            (
+                genre_id,
+                limit,
+                offset,
+            )
         )
         return list(map(match_from_row, rows))
+    
+    def count_by_genre(self, genre_id: int) -> int:
+        number = self.db_provider.execute_read_query(
+            '''SELECT COUNT(*) FROM matches WHERE start_time > NOW() AND genre_id = %s;''',
+            (genre_id,)
+        )[0][0]
+        return number
 
-    def read_by_place(self, place_id: int) -> list[Match]:
+    def read_by_place(self, place_id: int, limit: int, offset: int) -> list[Match]:
         rows = self.db_provider.execute_read_query(
-            '''SELECT * from matches WHERE place_id = %s''',
+            '''SELECT * from matches WHERE start_time > NOW() AND place_id = %s ORDER BY start_time LIMIT %s OFFSET %s;''',
+            (
+                place_id,
+                limit,
+                offset,
+            )
+        )
+        return list(map(match_from_row, rows))
+    
+    def count_by_place(self, place_id: int) -> int:
+        number = self.db_provider.execute_read_query(
+            '''SELECT COUNT(*) FROM matches WHERE start_time > NOW() AND place_id = %s;''',
             (place_id,)
-        )
-        return list(map(match_from_row, rows)) # TODO
+        )[0][0]
+        return number
 
-    def read_by_group(self, group_id: int, start_index: int, end_index: int) -> list[Match]:
+
+    def read_by_group(self, group_id: int, limit: int, offset: int) -> list[Match]:
         rows = self.db_provider.execute_read_query(
-            '''SELECT * from matches WHERE group_id = %s''',
+            '''SELECT * from matches WHERE start_time > NOW() AND group_id = %s ORDER BY start_time LIMIT %s OFFSET %s;''',
+            (
+                group_id,
+                limit,
+                offset,
+            )
+        )
+        return list(map(match_from_row, rows))
+    
+    def count_by_group(self, group_id: int) -> int:
+        number = self.db_provider.execute_read_query(
+            '''SELECT COUNT(*) FROM matches WHERE start_time > NOW() AND group_id = %s;''',
             (group_id,)
-        )
-        matches = list(map(match_from_row, rows))
-        matches_from_now_on = list(filter(lambda match: match.start_time > datetime.datetime.now().timestamp(), matches))
-        matches_from_now_on.sort(key=lambda match: match.start_time)
-        return matches_from_now_on[start_index:end_index]
+        )[0][0]
+        return number
 
-    def read_by_loneliness(self, loneliness_status, start_index: int, end_index: int) -> list[Match]:
+    def read_by_loneliness(self, loneliness_status, limit: int, offset: int) -> list[Match]:
         rows = self.db_provider.execute_read_query(
-            '''SELECT * from matches WHERE is_loneliness_friendly is %s''',
-            (loneliness_status,)
+            '''SELECT * from matches WHERE start_time > NOW() AND is_loneliness_friendly is %s ORDER BY start_time LIMIT %s OFFSET %s;''',
+            (
+                loneliness_status,
+                limit,
+                offset,
+            )
         )
-        matches = list(map(match_from_row, rows))
-        matches_from_now_on = list(filter(lambda match: match.start_time > datetime.datetime.now().timestamp(), matches))
-        matches_from_now_on.sort(key=lambda match: match.start_time)
-        return matches_from_now_on[start_index:end_index]
+        return list(map(match_from_row, rows))
+    
+    def count_by_loneliness(self, loneliness_status) -> int:
+        number = self.db_provider.execute_read_query(
+            '''SELECT COUNT(*) FROM matches WHERE start_time > NOW() AND is_loneliness_friendly is %s;''',
+            (loneliness_status,)
+        )[0][0]
+        return number
     
     def read_ongoing(self, limit: int, offset: int) -> list[Match]:
         rows = self.db_provider.execute_read_query(
@@ -106,3 +145,9 @@ class MatchRepository:
             (limit, offset,)
         )
         return list(map(match_from_row, rows))
+    
+    def count_all(self) -> int:
+        number = self.db_provider.execute_read_query(
+            '''SELECT COUNT(*) FROM matches;'''
+        )[0][0]
+        return number
