@@ -3,6 +3,7 @@ from data.db_provider import DbProvider
 from states_events.states import *
 from states_events.events import *
 from mapping.state_mapping import *
+from utils.json_object_serializer import serialize, deserialize
 
 
 class StateRepository:
@@ -11,7 +12,7 @@ class StateRepository:
         self.db_provider = db_provider
     
     def create(self, state: BotState, user_id: int):
-        state_json = json.dumps(state_to_dict(state))
+        state_json = json.dumps(serialize(state))
         self.db_provider.execute_query(
             '''INSERT INTO user_bot_states (user_id, state_json) VALUES (%s, %s)''',
             (
@@ -21,7 +22,7 @@ class StateRepository:
         )
 
     def update(self, state: BotState, user_id: int):
-        state_json = json.dumps(state_to_dict(state))
+        state_json = json.dumps(serialize(state))
         self.db_provider.execute_query(
             '''UPDATE user_bot_states SET state_json = %s WHERE user_id = %s''',
             (
@@ -36,7 +37,7 @@ class StateRepository:
             (user_id,)
         )[0]
         dict_json = json.loads(row[1])
-        return dict_to_state(dict_json)
+        return deserialize(dict_json)
 
     def read_or_create(self, state: BotState, user_id: int) -> BotState:
         try:

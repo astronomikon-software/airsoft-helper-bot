@@ -1,8 +1,15 @@
+from states_events.states import *
+from model.match import Match
+
+
 CLASSNAME_FIELD = '__classname__'
+ENUM_FIELD = '__enumname__'
 
 
 def serialize(obj):
-    if isinstance(obj, str):
+    if obj is None:
+        return None
+    elif isinstance(obj, str):
         return obj
     elif isinstance(obj, bool):
         return obj
@@ -18,6 +25,10 @@ def serialize(obj):
         return {
             key: serialize(value) for key, value in obj.items()
         }
+    # elif isinstance(obj, Enum):
+    #     return {
+    #         ENUM_FIELD: serialize(value) for 
+    #     }
     else:
         return {
             CLASSNAME_FIELD: obj.__class__.__name__,
@@ -25,7 +36,9 @@ def serialize(obj):
 
   
 def deserialize(obj):
-    if isinstance(obj, str):
+    if obj is None:
+        return None
+    elif isinstance(obj, str):
         return obj
     elif isinstance(obj, bool):
         return obj
