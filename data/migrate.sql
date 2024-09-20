@@ -38,7 +38,8 @@ CREATE TABLE matches(
     place_id BIGINT NOT NULL,
     group_id BIGINT NOT NULL,
     genre_id BIGINT NOT NULL,
-    is_loneliness_friendly BOOLEAN NOT NULL
+    is_loneliness_friendly BOOLEAN NOT NULL,
+    last_edit_time TIMESTAMP NOT NULL
 );
 
 INSERT INTO places(place_name) VALUES('Totskiy Polygon');
@@ -58,3 +59,58 @@ INSERT INTO genres(genre_name) VALUES('All Against All');
 INSERT INTO users(id, is_admin, is_true_admin) VALUES(434294239, 'TRUE', 'TRUE');
 INSERT INTO users(id, is_admin, is_true_admin) VALUES(1733814577, 'TRUE', 'TRUE');
 INSERT INTO users(id, is_admin, is_true_admin) VALUES(395233149, 'TRUE', 'FALSE');
+
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-22 20:00:00', 2, 2, 2, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-22 20:00:00', 2, 2, 2, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-22 20:00:00', 2, 2, 2, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-22 20:00:00', 2, 2, 2, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-22 20:00:00', 2, 2, 2, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-22 20:00:00', 2, 2, 2, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-22 20:00:00', 2, 2, 2, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-22 20:00:00', 2, 2, 2, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-22 20:00:00', 2, 2, 2, 'FALSE', NOW());
+INSERT INTO matches(start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time)
+VALUES('2025-02-21 20:00:00', 1, 1, 1, 'FALSE', NOW());

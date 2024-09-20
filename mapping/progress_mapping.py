@@ -27,6 +27,14 @@ def progress_to_str(progress) -> str:
         VeiwByLonelinessProgress.VEIW_ONE_FILTERED_BY_LONELINESS: 'VEIW_ONE_FILTERED_BY_LONELINESS',
         UpdateMatchProgress.CHOOSE_GAME: 'CHOOSE_GAME',
         UpdateMatchProgress.CONFIRM_UPDATING: 'CONFIRM_UPDATING',
+        UpdateMatchProgress.UPDATE_START_TIME: 'UPDATE_START_TIME',
+        UpdateMatchProgress.UPDATE_START_TIME_AGAIN: 'UPDATE_START_TIME_AGAIN',
+        UpdateMatchProgress.UPDATE_PLACE: 'UPDATE_PLACE',
+        UpdateMatchProgress.UPDATE_GROUP: 'UPDATE_GROUP',
+        UpdateMatchProgress.UPDATE_GENRE: 'UPDATE_GENRE',
+        UpdateMatchProgress.UPDATE_LONELINESS: 'UPDATE_LONELINESS',
+        UpdateMatchProgress.COMPARING_EDITIONS: 'COMPARING_EDITIONS',
+        UpdateMatchProgress.FINISH_UPDATING: 'FINISH_UPDATING',
     }[progress]
 
 
@@ -56,4 +64,12 @@ def str_to_progress(str_progress: str):
         'VEIW_ONE_FILTERED_BY_LONELINESS': VeiwByLonelinessProgress.VEIW_ONE_FILTERED_BY_LONELINESS,
         'CHOOSE_GAME': UpdateMatchProgress.CHOOSE_GAME,
         'CONFIRM_UPDATING': UpdateMatchProgress.CONFIRM_UPDATING,
+        'UPDATE_START_TIME': UpdateMatchProgress.UPDATE_START_TIME,
+        'UPDATE_START_TIME_AGAIN': UpdateMatchProgress.UPDATE_START_TIME_AGAIN,
+        'UPDATE_PLACE': UpdateMatchProgress.UPDATE_PLACE,
+        'UPDATE_GROUP': UpdateMatchProgress.UPDATE_GROUP,
+        'UPDATE_GENRE': UpdateMatchProgress.UPDATE_GENRE,
+        'UPDATE_LONELINESS': UpdateMatchProgress.UPDATE_LONELINESS,
+        'COMPARING_EDITIONS': UpdateMatchProgress.COMPARING_EDITIONS,
+        'FINISH_UPDATING': UpdateMatchProgress.FINISH_UPDATING,
     }[str_progress]

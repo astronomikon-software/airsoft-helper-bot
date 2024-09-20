@@ -12,7 +12,7 @@ def str_time_to_int(str_time: str) -> int:
 
 
 def str_to_datetime(str_time: str) -> datetime:
-    return datetime.datetime.strptime(str_time, '%d-%m-%Y %H:%M')
+    return datetime.datetime.strptime(str_time, '%d.%m.%Y %H:%M')
 
 
 def datetime_to_int(datetime_time: datetime) -> int:
@@ -23,4 +23,4 @@ def int_to_datetime(int_time: int) -> datetime:
 
 
 def datetime_to_str(datetime_time: datetime) -> str:
-    return datetime_time.strftime('%d-%m-%Y %H:%M')
+    return datetime_time.strftime('%d.%m.%Y %H:%M')

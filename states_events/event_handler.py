@@ -34,7 +34,7 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
     if isinstance(state, VeiwByLonelinessState) and isinstance(event, ButtonEvent):
         return on_veiw_by_loneliness_state(state, event)
     
-    if isinstance(state, UpdateMatchState) and isinstance(event, ButtonEvent):
+    if isinstance(state, UpdateMatchState) and user.is_admin:
         return on_update_match_state(state, event)
 
     if isinstance(event, ButtonEvent):
@@ -75,7 +75,7 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
             elif state_class is VeiwByLonelinessState:
                 return state_class(ButtonCallback.FALSE, 0, VeiwByLonelinessProgress.CHOOSE_LONELINESS_STATUS, 1)
             elif state_class is UpdateMatchState:
-                return state_class(0, UpdateMatchProgress.CHOOSE_GAME, 1)
+                return UpdateMatchState(old_match=0, new_match=0, progress=UpdateMatchProgress.CHOOSE_GAME, page_number=1)
             else:
                 return state_class()
     
@@ -383,40 +383,176 @@ def on_veiw_by_loneliness_state(state: VeiwByLonelinessState, event: ButtonEvent
             page_number=state.page_number,
             progress=VeiwByLonelinessProgress.VEIW_ONE_FILTERED_BY_LONELINESS
         )
-    
+
+
+# Вспоминаются времена, когда я лежал в больнице. Как я гулял по территории. Как ждал Анну. Мне её очень не хватает.
+
+
 def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
-    if event.callback == ButtonCallback.ORGANISERS:
+    if state.progress == UpdateMatchProgress.CHOOSE_GAME \
+        and event.callback == ButtonCallback.ORGANISERS:
         return OrganisersState()
-    if event.callback == ButtonCallback.SPECIAL_GO_BACK \
-        and state.progress == UpdateMatchProgress.CONFIRM_UPDATING:
+    if state.progress == UpdateMatchProgress.CONFIRM_UPDATING \
+        and event.callback == ButtonCallback.SPECIAL_GO_BACK:
         return UpdateMatchState(
-            match_id=0,
-            page_number=state.page_number,
-            progress=UpdateMatchProgress.CHOOSE_GAME
+            old_match=0,
+            new_match=0,
+            progress=UpdateMatchProgress.CHOOSE_GAME,
+            page_number=state.page_number
         )
-    if event.callback == ButtonCallback.NEXT_PAGE:
+    if state.progress == UpdateMatchProgress.CHOOSE_GAME \
+        and event.callback == ButtonCallback.NEXT_PAGE:
         return UpdateMatchState(
-            match_id=0,
+            old_match=0,
+            new_match=0,
+            progress=UpdateMatchProgress.CHOOSE_GAME,
             page_number=state.page_number+1,
-            progress=UpdateMatchProgress.CHOOSE_GAME
         )
-    if event.callback == ButtonCallback.PREVIOUS_PAGE:
+    if state.progress == UpdateMatchProgress.CHOOSE_GAME \
+        and event.callback == ButtonCallback.PREVIOUS_PAGE:
         return UpdateMatchState(
-            match_id=0,
+            old_match=0,
+            new_match=0,
+            progress=UpdateMatchProgress.CHOOSE_GAME,
             page_number=state.page_number-1,
-            progress=UpdateMatchProgress.CHOOSE_GAME
         )
     if state.progress == UpdateMatchProgress.CHOOSE_GAME:
         return UpdateMatchState(
-            match_id=event.callback,
+            old_match=match_repository.read(event.callback),
+            new_match=match_repository.read(event.callback),
+            progress=UpdateMatchProgress.CONFIRM_UPDATING,
             page_number=state.page_number,
-            progress=UpdateMatchProgress.CONFIRM_UPDATING
         )
     if state.progress == UpdateMatchProgress.CONFIRM_UPDATING \
         and event.callback == ButtonCallback.START_UPDATING:
-        return EditMatchState(
-            match=match_repository.read(state.match_id), 
-            progress=EditMatchProgress.START_TIME
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=state.new_match,
+            progress=UpdateMatchProgress.COMPARING_EDITIONS,
+            page_number=1,
+        )
+    if state.progress == UpdateMatchProgress.UPDATE_START_TIME \
+        and isinstance(event, MessageEvent):
+        try:
+            updating_match = state.new_match
+            updating_match.start_time = str_time_to_int(event.text)
+            return UpdateMatchState(
+                old_match=state.old_match,
+                new_match=updating_match,
+                progress=UpdateMatchProgress.COMPARING_EDITIONS,
+                page_number=1,
+            )
+        except:
+            return UpdateMatchState(
+                old_match=state.old_match,
+                new_match=state.new_match,
+                progress=UpdateMatchProgress.UPDATE_START_TIME_AGAIN,
+                page_number=1,
+            )
+    elif state.progress == UpdateMatchProgress.UPDATE_START_TIME_AGAIN \
+        and isinstance(event, MessageEvent):
+        try:
+            updating_match = state.new_match
+            updating_match.start_time = str_time_to_int(event.text)
+            return UpdateMatchState(
+                old_match=state.old_match,
+                new_match=updating_match,
+                progress=UpdateMatchProgress.COMPARING_EDITIONS,
+                page_number=1,
+            )
+        except:
+            return UpdateMatchState(
+                old_match=state.old_match,
+                new_match=state.new_match,
+                progress=UpdateMatchProgress.UPDATE_START_TIME_AGAIN,
+                page_number=1,
+            )
+    elif state.progress == UpdateMatchProgress.UPDATE_PLACE \
+        and isinstance(event, ButtonEvent):
+        updating_match = state.new_match
+        updating_match.place_id = int(event.callback)
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=updating_match,
+            progress=UpdateMatchProgress.COMPARING_EDITIONS,
+            page_number=1,
+        )
+    elif state.progress == UpdateMatchProgress.UPDATE_GROUP \
+        and isinstance(event, ButtonEvent):
+        updating_match = state.new_match
+        updating_match.group_id = int(event.callback)
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=updating_match,
+            progress=UpdateMatchProgress.COMPARING_EDITIONS,
+            page_number=1,
+        )
+    elif state.progress == UpdateMatchProgress.UPDATE_GENRE\
+        and isinstance(event, ButtonEvent):
+        updating_match = state.new_match
+        updating_match.genre_id = int(event.callback)
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=updating_match,
+            progress=UpdateMatchProgress.COMPARING_EDITIONS,
+            page_number=1,
+        )
+    elif state.progress == UpdateMatchProgress.UPDATE_LONELINESS \
+        and isinstance(event, ButtonEvent):
+        updating_match = state.new_match
+        updating_match.is_loneliness_friendly = str_to_loneliness(event.callback)
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=state.new_match,
+            progress=UpdateMatchProgress.COMPARING_EDITIONS,
+            page_number=1,
+        )
+    elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
+        and event.callback == ButtonCallback.UPDATE_START_TIME:
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=state.new_match,
+            progress=UpdateMatchProgress.UPDATE_START_TIME,
+            page_number=1,
+        )
+    elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
+        and event.callback == ButtonCallback.UPDATE_PLACE:
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=state.new_match,
+            progress=UpdateMatchProgress.UPDATE_PLACE,
+            page_number=1,
+        )
+    elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
+        and event.callback == ButtonCallback.UPDATE_GROUP:
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=state.new_match,
+            progress=UpdateMatchProgress.UPDATE_GROUP,
+            page_number=1,
+        )
+    elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
+        and event.callback == ButtonCallback.UPDATE_GENRE:
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=state.new_match,
+            progress=UpdateMatchProgress.UPDATE_GENRE,
+            page_number=1,
+        )
+    elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
+        and event.callback == ButtonCallback.UPDATE_LONELINESS:
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=state.new_match,
+            progress=UpdateMatchProgress.UPDATE_LONELINESS,
+            page_number=1,
         )
 
-# Вспоминаются времена, когда я лежал в больнице. Как я гулял по территории. Как ждал Анну. Мне её очень не хватает.
+    elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
+        and event.callback == ButtonCallback.CANCEL_GAME_EDITING:
+        return GameUpdatingIsCancelledState()
+
+    elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
+        and event.callback == ButtonCallback.SAVE_GAME:
+        match_repository.update(state.new_match)
+        return GameIsUpdatedState()

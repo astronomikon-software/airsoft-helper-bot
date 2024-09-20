@@ -152,21 +152,50 @@ class GameIsCancelledState(BotState):
 class UpdateMatchProgress():
     CHOOSE_GAME = 'CHOOSE_GAME'
     CONFIRM_UPDATING = 'CONFIRM_UPDATING'
+    UPDATE_START_TIME = 'UPDATE_START_TIME'
+    UPDATE_START_TIME_AGAIN = 'UPDATE_START_TIME_AGAIN'
+    UPDATE_PLACE = 'UPDATE_PLACE'
+    UPDATE_GROUP = 'UPDATE_GROUP'
+    UPDATE_GENRE = 'UPDATE_GENRE'
+    UPDATE_LONELINESS = 'UPDATE_LONELINESS'
+    COMPARING_EDITIONS = 'COMPARING_EDITIONS'
+    FINISH_UPDATING = 'FINISH_UPDATING'
+
+# class UpdateMatchState(BotState):
+#     match_id: int
+#     progress: UpdateMatchProgress
+#     page_number: int
+
+#     def __init__(
+#         self,
+#         match_id: int,
+#         progress: UpdateMatchProgress,
+#         page_number: int
+#     ):
+#         self.match_id = match_id
+#         self.progress = progress
+#         self.page_number = page_number
 
 class UpdateMatchState(BotState):
-    match_id: int
+    old_match: Match
+    new_match: Match
     progress: UpdateMatchProgress
     page_number: int
 
     def __init__(
         self,
-        match_id: int,
+        old_match: Match,
+        new_match: Match,
         progress: UpdateMatchProgress,
         page_number: int
     ):
-        self.match_id = match_id
+        self.old_match = old_match
+        self.new_match = new_match
         self.progress = progress
         self.page_number = page_number
 
 class GameIsUpdatedState(BotState):
+    pass
+
+class GameUpdatingIsCancelledState(BotState):
     pass

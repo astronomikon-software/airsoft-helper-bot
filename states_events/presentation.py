@@ -71,6 +71,9 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
         
     elif isinstance(state, GameIsUpdatedState):
         return game_is_updated_presentation(state)
+    
+    elif isinstance(state, GameUpdatingIsCancelledState):
+        return game_updating_is_cancelled_presentation(state)
 
     else:
         return error_presentation(state)
@@ -707,7 +710,7 @@ def update_match_presentation(state: UpdateMatchState):
         )
         return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
     elif state.progress == UpdateMatchProgress.CONFIRM_UPDATING:
-        match = match_repository.read(state.match_id)
+        match = state.old_match
         markup = types.InlineKeyboardMarkup()
         markup.add(
             create_button(
@@ -726,6 +729,134 @@ def update_match_presentation(state: UpdateMatchState):
             )
         )
         return ScreenPresentation(markup, MessageText.match_data(match))
+    elif state.progress == UpdateMatchProgress.UPDATE_START_TIME:
+        markup = types.InlineKeyboardMarkup()
+        return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
+            MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                MessageText.SET_DATETIME)
+    elif state.progress == UpdateMatchProgress.UPDATE_START_TIME_AGAIN:
+        markup = types.InlineKeyboardMarkup()
+        return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
+            MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                MessageText.SET_DATETIME_AGAIN)
+    elif state.progress == UpdateMatchProgress.UPDATE_PLACE:
+        markup = types.InlineKeyboardMarkup()
+        places = place_repository.read_all()
+        for place in places:
+            markup.add(
+                create_button(
+                    text=place.name, 
+                    callback=place.id
+                )
+            )
+        return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
+            MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                MessageText.SET_PLACE)
+    elif state.progress == UpdateMatchProgress.UPDATE_GROUP:
+        markup = types.InlineKeyboardMarkup()
+        groups = group_repository.read_all()
+        for group in groups:
+            markup.add(
+                create_button(
+                    text=group.name, 
+                    callback=group.id
+                )
+            )
+        return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
+            MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                MessageText.SET_GROUP)
+    elif state.progress == UpdateMatchProgress.UPDATE_GENRE:
+        markup = types.InlineKeyboardMarkup()
+        genres = genre_repository.read_all()
+        for genre in genres:
+            markup.add(
+                create_button(
+                    text=genre.name, 
+                    callback=genre.id
+                )
+            )
+        return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
+            MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                MessageText.SET_GENRE)
+    elif state.progress == UpdateMatchProgress.UPDATE_LONELINESS:
+        markup = types.InlineKeyboardMarkup()
+        markup.add(
+            create_button(
+                text=ButtonName.YES,
+                callback=ButtonCallback.TRUE
+            ) 
+        )
+        markup.add(
+            create_button(
+                text=ButtonName.NO,
+                callback=ButtonCallback.FALSE
+            ) 
+        )
+        return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
+            MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                MessageText.SET_LONELINESS)
+    elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS:
+        markup = types.InlineKeyboardMarkup()
+        markup.add(
+            create_button(
+                text=ButtonName.UPDATE_START_TIME,
+                callback=ButtonCallback.UPDATE_START_TIME
+            )
+        )
+        markup.add(
+            create_button(
+                text=ButtonName.UPDATE_PLACE,
+                callback=ButtonCallback.UPDATE_PLACE
+            )
+        )
+        markup.add(
+            create_button(
+                text=ButtonName.UPDATE_GROUP,
+                callback=ButtonCallback.UPDATE_GROUP
+            )
+        )
+        markup.add(
+            create_button(
+                text=ButtonName.UPDATE_GENRE,
+                callback=ButtonCallback.UPDATE_GENRE
+            )
+        )
+        markup.add(
+            create_button(
+                text=ButtonName.UPDATE_LONELINESS,
+                callback=ButtonCallback.UPDATE_LONELINESS
+            )
+        )
+        markup.add(
+            create_button(
+                text=ButtonName.CANCEL_GAME_EDITING,
+                callback=ButtonCallback.CANCEL_GAME_EDITING
+            ),
+            create_button(
+                text=ButtonName.SAVE_GAME,
+                callback=ButtonCallback.SAVE_GAME
+            )
+        )
+        return ScreenPresentation(markup, MessageText.CURRENT_MATCH + '\n' + '\n' + \
+            MessageText.match_data(state.old_match) + '\n' + '\n' + \
+            MessageText.UPDATING_MATCH + '\n' + '\n' + \
+            MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                MessageText.UPDATING_PROCESS)
+    elif state.progress == UpdateMatchProgress.FINISH_UPDATING:
+        markup = types.InlineKeyboardMarkup()
+        markup.add(
+            create_button(
+                text=ButtonName.YES,
+                callback=ButtonCallback.FINISH_UPDATING
+            )
+        )
+        markup.add(
+            create_button(
+                text=ButtonName.NO,
+                callback=ButtonCallback.CANCEL_UPDATING
+            )
+        )
+        return ScreenPresentation(markup, MessageText.INSURE_UPDATING)
     
 
 def game_is_updated_presentation(state: GameIsUpdatedState):
@@ -743,6 +874,23 @@ def game_is_updated_presentation(state: GameIsUpdatedState):
         )
     )
     return ScreenPresentation(markup, MessageText.GAME_UPDATED)
+
+
+def game_updating_is_cancelled_presentation(state: GameUpdatingIsCancelledState):
+    markup = types.InlineKeyboardMarkup()
+    markup.add(
+        create_button(
+            text=ButtonName.BACK_TO_ORGANISERS, 
+            callback=ButtonCallback.ORGANISERS
+        )
+    )
+    markup.add(
+        create_button(
+            text=ButtonName.MAIN_MENU, 
+            callback=ButtonCallback.MAIN_MENU
+        )
+    )
+    return ScreenPresentation(markup, MessageText.GAME_UPDATING_IS_CANCELLED)
 
 
 def error_presentation(state):

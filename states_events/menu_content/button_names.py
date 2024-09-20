@@ -27,6 +27,12 @@ class ButtonName:
     START_UPDATING = 'Начать редактирование'
     NEXT_PAGE = '>'
     PREVIOUS_PAGE = '<'
+    UPDATE_START_TIME = 'Изменить дату и время начала'
+    UPDATE_PLACE = 'Изменить полигон'
+    UPDATE_GROUP = 'Изменить огр.группу'
+    UPDATE_GENRE = 'Изменить жанр'
+    UPDATE_LONELINESS = 'Изменить одиноковость'
+
 
     def small_match_data(match: Match) -> str:
         return int_time_to_str(match.start_time) + ', ' + place_repository.read_by_id(match.place_id).name
