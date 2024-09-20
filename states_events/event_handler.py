@@ -56,13 +56,14 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
         }[event.callback]
         if state_class is not None:
             if state_class is EditMatchState:
-                match = Match()
-                match.id = 0
-                match.start_time = 0
-                match.place_id = 0
-                match.group_id = 0
-                match.genre_id = 0
-                match.is_loneliness_friendly = False
+                match = Match(
+                id=0,
+                start_time=0,
+                place_id=0,
+                group_id=0,
+                genre_id=0,
+                is_loneliness_friendly=False,
+                )
                 return state_class(match=match, progress=EditMatchProgress.START_TIME)
             elif state_class is CalendarState:
                 return state_class(match_id=0, page_number=1, progress=CalendarProgress.VEIW_ALL)
