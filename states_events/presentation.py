@@ -35,6 +35,9 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
     
     elif isinstance(state, ScheduleState):
         return schedule_presentation(state)
+    
+    elif isinstance(state, HelpState):
+        return help_presentation(state)
 
     elif isinstance(state, OrganisersState):
         return organisers_presentation(state, user)
@@ -99,6 +102,12 @@ def main_menu_presentation(state: MainMenuState):
             callback=ButtonCallback.MARKET
         )
     )
+    markup.add(
+        create_button(
+            text=ButtonName.HELP,
+            callback=ButtonCallback.HELP
+        )
+    )
     return ScreenPresentation(markup, MessageText.HELLO)
 
 
@@ -122,6 +131,17 @@ def market_presentation(state: MarketState):
         )
     )
     return ScreenPresentation(markup, MessageText.MARKET)
+
+
+def help_presentation(state: HelpState):
+    markup = types.InlineKeyboardMarkup()
+    markup.add(
+        create_button(
+            text=ButtonName.MAIN_MENU, 
+            callback=ButtonCallback.MAIN_MENU
+        )
+    )
+    return ScreenPresentation(markup, MessageText.HELP)
 
 
 def schedule_presentation(state: ScheduleState):
@@ -150,7 +170,7 @@ def schedule_presentation(state: ScheduleState):
             callback=ButtonCallback.MAIN_MENU
         )
     )
-    return ScreenPresentation(markup, MessageText.CHOOSE_FUNCTION)
+    return ScreenPresentation(markup, MessageText.SCHEDULE)
 
 
 def organisers_presentation(state, user: User):
@@ -256,6 +276,9 @@ def edit_match_presentation(state: EditMatchState):
             ) 
         )
         return ScreenPresentation(markup, MessageText.SET_LONELINESS)
+    if state.progress == EditMatchProgress.URL:
+        markup = types.InlineKeyboardMarkup()
+        return ScreenPresentation(markup, MessageText.SET_URL)
     elif state.progress == EditMatchProgress.CONFIRMATION:
         markup = types.InlineKeyboardMarkup()
         markup.add(
@@ -633,7 +656,7 @@ def veiw_by_loneliness_presentation(state: VeiwByLonelinessState):
         markup = types.InlineKeyboardMarkup()
         page_size = 8
         matches = match_repository.read_by_loneliness(
-            loneliness_status=str_to_bool(state.status),
+            loneliness_status=state.status,
             limit=page_size, 
             offset=((state.page_number - 1) * page_size)
         )
@@ -795,6 +818,11 @@ def update_match_presentation(state: UpdateMatchState):
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
             MessageText.match_data(state.new_match) + '\n' + '\n' + \
                 MessageText.SET_LONELINESS)
+    elif state.progress == UpdateMatchProgress.UPDATE_URL:
+        markup = types.InlineKeyboardMarkup()
+        return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
+            MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                MessageText.SET_URL)
     elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS:
         markup = types.InlineKeyboardMarkup()
         markup.add(
@@ -825,6 +853,12 @@ def update_match_presentation(state: UpdateMatchState):
             create_button(
                 text=ButtonName.UPDATE_LONELINESS,
                 callback=ButtonCallback.UPDATE_LONELINESS
+            )
+        )
+        markup.add(
+            create_button(
+                text=ButtonName.UPDATE_URL,
+                callback=ButtonCallback.UPDATE_URL
             )
         )
         markup.add(

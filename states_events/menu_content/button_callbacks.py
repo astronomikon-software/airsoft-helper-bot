@@ -1,6 +1,7 @@
 class ButtonCallback: #Enūma Eliš?..
     SCHEDULE = 'schedule'
     MARKET = 'market'
+    HELP = 'help'
     CALENDAR = 'calendar'
     FILTERS = 'filters'
     ORGANISERS = 'organisers'
@@ -32,5 +33,6 @@ class ButtonCallback: #Enūma Eliš?..
     UPDATE_GROUP = 'update_group'
     UPDATE_GENRE = 'update_genre'
     UPDATE_LONELINESS = 'update_loneliness'
+    UPDATE_URL = 'update_url'
     FINISH_UPDATING = 'finish_updating'
     CANCEL_UPDATING = 'cancel_updating'

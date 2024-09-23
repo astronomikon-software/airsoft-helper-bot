@@ -21,6 +21,9 @@ class MarketState(BotState):
 class HowToState(BotState):
     pass
 
+class HelpState(BotState):
+    pass
+
 #schedule branch
 
 class ScheduleState(BotState):
@@ -127,6 +130,7 @@ class EditMatchProgress():
     GROUP ='GROUP'
     GENRE = 'GENRE'
     IS_LONELINESS_FRIENDLY = 'IS_LONELINESS_FRIENDLY'
+    URL = 'URL'
     CONFIRMATION ='CONFIRMATION'
 
 class EditMatchState(BotState):
@@ -158,6 +162,7 @@ class UpdateMatchProgress():
     UPDATE_GROUP = 'UPDATE_GROUP'
     UPDATE_GENRE = 'UPDATE_GENRE'
     UPDATE_LONELINESS = 'UPDATE_LONELINESS'
+    UPDATE_URL = 'UPDATE_URL'
     COMPARING_EDITIONS = 'COMPARING_EDITIONS'
     FINISH_UPDATING = 'FINISH_UPDATING'
 

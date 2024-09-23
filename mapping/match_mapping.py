@@ -10,6 +10,7 @@ def match_from_row(row: tuple) -> Match:
         group_id = row[3],
         genre_id = row[4],
         is_loneliness_friendly = row[5],
+        url = row[6]
     )
 
 def row_from_match(match: Match) -> tuple:
@@ -19,6 +20,7 @@ def row_from_match(match: Match) -> tuple:
         match.place_id,
         match.group_id,
         match.genre_id,
-        match.is_loneliness_friendly
+        match.is_loneliness_friendly,
+        match.url,
     )
     return row

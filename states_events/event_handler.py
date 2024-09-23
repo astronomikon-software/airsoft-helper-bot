@@ -53,6 +53,7 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
             ButtonCallback.SET_DATETIME: EditMatchState,
             ButtonCallback.CALENDAR: CalendarState,
             ButtonCallback.CHOOSE_GAME_TO_UPDATE: UpdateMatchState,
+            ButtonCallback.HELP: HelpState,
         }[event.callback]
         if state_class is not None:
             if state_class is EditMatchState:
@@ -63,6 +64,7 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
                 group_id=0,
                 genre_id=0,
                 is_loneliness_friendly=False,
+                url=''
                 )
                 return state_class(match=match, progress=EditMatchProgress.START_TIME)
             elif state_class is CalendarState:
@@ -138,6 +140,13 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
     elif (state.progress == EditMatchProgress.IS_LONELINESS_FRIENDLY) \
         and isinstance(event, ButtonEvent):
         match.is_loneliness_friendly = str_to_loneliness(event.callback)
+        return EditMatchState(
+            match=match,
+            progress=EditMatchProgress.URL,
+        )
+    elif (state.progress == EditMatchProgress.URL) \
+        and isinstance(event, MessageEvent):
+        match.url = event.text
         return EditMatchState(
             match=match,
             progress=EditMatchProgress.CONFIRMATION,
@@ -508,6 +517,16 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
             progress=UpdateMatchProgress.COMPARING_EDITIONS,
             page_number=1,
         )
+    elif state.progress == UpdateMatchProgress.UPDATE_URL \
+        and isinstance(event, MessageEvent):
+        updating_match = state.new_match
+        updating_match.url = event.text
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=state.new_match,
+            progress=UpdateMatchProgress.COMPARING_EDITIONS,
+            page_number=1,
+        )
     elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
         and event.callback == ButtonCallback.UPDATE_START_TIME:
         return UpdateMatchState(
@@ -548,11 +567,17 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
             progress=UpdateMatchProgress.UPDATE_LONELINESS,
             page_number=1,
         )
-
+    elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
+        and event.callback == ButtonCallback.UPDATE_URL:
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=state.new_match,
+            progress=UpdateMatchProgress.UPDATE_URL,
+            page_number=1,
+        )
     elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
         and event.callback == ButtonCallback.CANCEL_GAME_EDITING:
         return GameUpdatingIsCancelledState()
-
     elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
         and event.callback == ButtonCallback.SAVE_GAME:
         match_repository.update(state.new_match)
