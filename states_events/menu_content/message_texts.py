@@ -25,7 +25,7 @@ class MessageText:
 '''
     HELP = 'По всем вопросам пишите @bait_media!'
     MARKET = 'Барахолка и форум находятся в разработке. Следите за новостями!'
-    HOW_TO = 'О том, как начать играть, вы можете узнать по ссылке:' + '\n' + '\n' + 'https://www.youtube.com/watch?v=-LhUOF3XxBA'
+    HOW_TO = 'О том, как начать играть, вы можете узнать по ссылке:' + '\n' + '\n' + 'https://vk.com/@spbstraik-kak-nachat-igrat-v-straikbol'
     ORGANISER_APPLICATION = 'Чтобы получить статус организатора, пришлите свой дикпик сюда:' + '\n' + '@bait_media'
     SET_DATETIME = 'Введите дату и время в формате "ДД.ММ.ГГГГ ЧЧ:ММ":'
     CHOOSE_GENRE = 'Выберите жанр:'
