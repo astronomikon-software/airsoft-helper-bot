@@ -106,10 +106,10 @@ class VeiwByLonelinessProgress():
 class VeiwByLonelinessState(BotState):
     progress: VeiwByLonelinessProgress
     match_id: int
-    status: str
+    status: bool
     page_number: int
 
-    def __init__(self, status: str, match_id, progress, page_number):
+    def __init__(self, status: bool, match_id, progress, page_number):
         self.status = status
         self.match_id = match_id
         self.progress = progress

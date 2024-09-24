@@ -6,6 +6,8 @@ DROP TABLE users;
 DROP TABLE matches;
 DROP TABLE user_bot_states;
 
+SET client_encoding TO 'UTF8';
+
 CREATE TABLE places(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     place_name VARCHAR NOT NULL

@@ -381,7 +381,7 @@ def on_veiw_by_loneliness_state(state: VeiwByLonelinessState, event: ButtonEvent
         )
     if state.progress == VeiwByLonelinessProgress.CHOOSE_LONELINESS_STATUS:
         return VeiwByLonelinessState(
-            status=event.callback,
+            status=str_to_loneliness(event.callback),
             match_id=0,
             page_number=1,
             progress=VeiwByLonelinessProgress.VEIW_FILTERED_BY_LONELINESS
