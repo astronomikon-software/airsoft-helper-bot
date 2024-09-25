@@ -39,27 +39,6 @@ def toll_the_great_bell_once(message):
         print(E)
 
 
-# @bot.message_handler()
-# def toll_the_great_bell_twice(message):
-#     try:
-#         screen_presentation = handle_event(
-#             event=MessageEvent(text=message.text),
-#             user_id=message.chat.id
-#         )
-#         bot.edit_message_text(
-#             chat_id=message.chat.id, 
-#             message_id=message.message_id, 
-#             text=screen_presentation.message_text
-#         )
-#         bot.edit_message_reply_markup(
-#             chat_id=message.chat.id, 
-#             message_id=message.message_id, 
-#             reply_markup=screen_presentation.markup
-#         )
-#     except Exception as E:
-#         print(E)
-
-
 @bot.callback_query_handler(func=lambda callback: True)
 def toll_the_great_bell_thrice(callback):
     try:
@@ -81,3 +60,5 @@ def toll_the_great_bell_thrice(callback):
         print(E)
 
 bot.infinity_polling()
+
+# Я посвящаю эту работу своим великим учителям: Артемию и Анне.
