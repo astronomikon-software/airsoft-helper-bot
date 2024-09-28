@@ -43,4 +43,4 @@ def add_navigation(markup: types.InlineKeyboardMarkup, page_size: int, page_numb
             )
         )
     elif number_of_matches <= page_size: # the only page 
-        pass
+        return markup
