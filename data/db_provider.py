@@ -4,15 +4,28 @@ from psycopg2 import OperationalError
 
 class DbProvider:
 
-    def __init__(self, database, user, password, autocommit=True):
-        self.connection = psycopg2.connect(f'dbname={database} user={user} password={password}')
-        self.comm = autocommit
+    def __init__(
+            self,
+            database: str,
+            user: str,
+            password: str,
+            host: str,
+            autocommit=True
+        ):
+        # self.connection = psycopg2.connect(f'dbname={database} user={user} password={password}')
+        self.connection = psycopg2.connect(
+            dbname=database,
+            user=user,
+            password=password,
+            host=host,
+        )
+        self.autocommit = autocommit
     
     def execute_query(self, query, values=set()):
         cursor = self.connection.cursor()
         try:
             cursor.execute(query, values)
-            if self.comm == True:
+            if self.autocommit == True:
                 self.connection.commit()
         except OperationalError as e:
             self.connection.rollback()

@@ -10,9 +10,10 @@ from repository.user_repository import UserRepository
 
 
 db_provider = DbProvider(
-    database=PSQL_DATABASE,
-    user=PSQL_USER,
-    password=PSQL_PASSWORD
+	host=DB_HOST,
+	user=DB_USER,
+	password=DB_PASSWORD,
+	database=DB_NAME,
 )
 
 user_repository = UserRepository(db_provider)
@@ -21,4 +22,3 @@ match_repository = MatchRepository(db_provider)
 group_repository = GroupRepository(db_provider)
 genre_repository = GenreRepository(db_provider)
 place_repository = PlaceRepository(db_provider)
-
