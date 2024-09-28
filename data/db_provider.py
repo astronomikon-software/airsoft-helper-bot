@@ -42,7 +42,12 @@ class DbProvider:
             result = cursor.fetchall()
             return result
         except OperationalError as e:
+            self.connection.rollback()
             print(e)
+        finally:
+            cursor.close()
+            if not self.connection.closed:
+                self.connection.rollback() # copied from the function above
     
     def begin(self):
         cursor = self.connection.cursor()

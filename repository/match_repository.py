@@ -16,13 +16,14 @@ class MatchRepository:
     def create(self, match: Match):
         start_time_obj = int_to_datetime(match.start_time)
         self.db_provider.execute_query(
-            '''INSERT INTO matches (start_time, place_id, group_id, genre_id, is_loneliness_friendly, last_edit_time) VALUES (%s, %s, %s, %s, %s, NOW())''',
+            '''INSERT INTO matches (start_time, place_id, group_id, genre_id, is_loneliness_friendly, url, last_edit_time) VALUES (%s, %s, %s, %s, %s, %s, NOW())''',
             (
                 start_time_obj,
                 match.place_id,
                 match.group_id,
                 match.genre_id,
-                match.is_loneliness_friendly
+                match.is_loneliness_friendly,
+                match.url,
             )
         )
     
@@ -36,14 +37,15 @@ class MatchRepository:
     def update(self, match: Match):
         start_time_obj = int_to_datetime(match.start_time)
         self.db_provider.execute_query(
-            '''UPDATE matches SET start_time = %s, place_id = %s, group_id = %s, genre_id = %s, is_loneliness_friendly = %s, last_edit_time = NOW() WHERE id = %s''',
+            '''UPDATE matches SET start_time = %s, place_id = %s, group_id = %s, genre_id = %s, is_loneliness_friendly = %s, url = %s, last_edit_time = NOW() WHERE id = %s''',
             (
                 start_time_obj,
                 match.place_id,
                 match.group_id,
                 match.genre_id,
                 match.is_loneliness_friendly,
-                match.id
+                match.url,
+                match.id,
             )
         )
 
