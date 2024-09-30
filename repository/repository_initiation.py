@@ -1,4 +1,4 @@
-from configuration import *
+import config
 
 from data.db_provider import DbProvider
 from repository.genre_repository import GenreRepository
@@ -10,9 +10,10 @@ from repository.user_repository import UserRepository
 
 
 db_provider = DbProvider(
-    database=PSQL_DATABASE,
-    user=PSQL_USER,
-    password=PSQL_PASSWORD
+    database=config.DB_NAME,
+    user=config.DB_USER,
+    password=config.DB_PASSWORD,
+    host=config.DB_HOST,
 )
 
 user_repository = UserRepository(db_provider)

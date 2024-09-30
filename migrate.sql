@@ -1,4 +1,3 @@
-\c cross_shooting;
 DROP TABLE places;
 DROP TABLE groups;
 DROP TABLE genres;

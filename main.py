@@ -1,6 +1,6 @@
 import telebot
 
-from configuration import BOT_TOKEN
+import config
 
 from repository.repository_initiation import *
 
@@ -12,7 +12,7 @@ from states_events.presentation import ScreenPresentation, get_presentation
 from utils.user_util import get_default_user
 
 
-bot = telebot.TeleBot(BOT_TOKEN)
+bot = telebot.TeleBot(config.BOT_TOKEN)
 
 
 def handle_event(event: BotEvent, user_id: int) -> ScreenPresentation:
