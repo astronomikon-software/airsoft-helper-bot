@@ -22,4 +22,3 @@ match_repository = MatchRepository(db_provider)
 group_repository = GroupRepository(db_provider)
 genre_repository = GenreRepository(db_provider)
 place_repository = PlaceRepository(db_provider)
-
