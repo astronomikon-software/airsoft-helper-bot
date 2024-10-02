@@ -10,6 +10,7 @@ from states_events.states import StartState
 from states_events.presentation import ScreenPresentation, get_presentation
 
 from utils.user_util import get_default_user
+from flask import Flask
 
 
 bot = telebot.TeleBot(config.BOT_TOKEN)
@@ -59,6 +60,21 @@ def toll_the_great_bell_thrice(callback):
     except Exception as E:
         print(E)
 
-bot.infinity_polling()
+
+if config.USE_WEBHOOK:
+    app = Flask(__name__)
+
+    # TODO: Доделать вебхук...
+    @app.route("/")
+    def hello():
+        return "<b>Hello!</b>"
+    
+    app.run(
+        host=config.WEBHOOK_HOST,
+        port=config.WEBHOOK_PORT,
+        debug=True
+    )
+else:
+    bot.infinity_polling()
 
 # Я посвящаю эту работу своим великим учителям: Артемию и Анне.
