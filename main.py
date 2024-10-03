@@ -1,4 +1,6 @@
 import telebot
+import flask
+from flask import Flask
 
 import config
 
@@ -10,8 +12,9 @@ from states_events.states import StartState
 from states_events.presentation import ScreenPresentation, get_presentation
 
 from utils.user_util import get_default_user
-from flask import Flask
 
+WEBHOOK_URL_BASE = "https://%s:%s" % (config.WEBHOOK_HOST, config.WEBHOOK_PORT)
+WEBHOOK_URL_PATH = "/%s/" % (config.BOT_TOKEN)
 
 bot = telebot.TeleBot(config.BOT_TOKEN)
 
@@ -65,10 +68,21 @@ if config.USE_WEBHOOK:
     app = Flask(__name__)
 
     # TODO: Доделать вебхук...
-    @app.route("/")
-    def hello():
-        return "<b>Hello!</b>"
+    @app.route('/', methods=['GET', 'HEAD'])
+    def index():
+        return ''
     
+    @app.route(WEBHOOK_URL_PATH, methods=['POST'])
+    def webhook():
+        if flask.request.headers.get('content-type') == 'application/json':
+            json_string = flask.request.get_data().decode('utf-8')
+            update = telebot.types.Update.de_json(json_string)
+            bot.process_new_updates([update])
+            return ''
+        else:
+            flask.abort(403)
+    
+    bot.set_webhook(url=WEBHOOK_URL_BASE + WEBHOOK_URL_PATH)
     app.run(
         host=config.WEBHOOK_HOST,
         port=config.WEBHOOK_PORT,
