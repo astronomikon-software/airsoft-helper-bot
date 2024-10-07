@@ -28,6 +28,7 @@ class ButtonCallback: #Enūma Eliš?..
     NEXT_PAGE = 'next_page'
     PREVIOUS_PAGE = 'previous_page'
     VOID = 'embrace_the_void'
+    UPDATE_NAME = 'update_name'
     UPDATE_START_TIME = 'update_start_time'
     UPDATE_PLACE = 'update_place'
     UPDATE_GROUP = 'update_group'

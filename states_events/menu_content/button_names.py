@@ -20,15 +20,16 @@ class ButtonName:
     NEW_GAME = 'Внесение новой игры'
     UPDATE_GAME = 'Редактирование существующей игры'
     SET_ADMIN = 'Назначить организатора'
-    YES = '✅Да✅'
-    NO = '❌Нет❌'
+    YES = '✅ Да ✅'
+    NO = '❌ Нет ❌'
     SAVE_GAME = 'Сохранить игру'
     CANCEL_GAME_EDITING = 'Отмена'
     BACK_TO_ORGANISERS = 'Меню организатора'
     START_UPDATING = 'Начать редактирование'
     NEXT_PAGE = '>'
     PREVIOUS_PAGE = '<'
-    UPDATE_START_TIME = 'Изменить дату и время начала'
+    UPDATE_NAME = 'Изменить имя'
+    UPDATE_START_TIME = 'Изменить дату начала'
     UPDATE_PLACE = 'Изменить полигон'
     UPDATE_GROUP = 'Изменить огр.группу'
     UPDATE_GENRE = 'Изменить жанр'
@@ -37,4 +38,4 @@ class ButtonName:
 
 
     def small_match_data(match: Match) -> str:
-        return int_time_to_str(match.start_time) + ', ' + place_repository.read_by_id(match.place_id).name
+        return match.name + ', ' + int_time_to_str(match.start_time)

@@ -27,7 +27,8 @@ class MessageText:
     MARKET = 'Барахолка и форум находятся в разработке. Следите за новостями!'
     HOW_TO = 'О том, как начать играть, вы можете узнать по ссылке:' + '\n' + '\n' + 'https://vk.com/@spbstraik-kak-nachat-igrat-v-straikbol'
     ORGANISER_APPLICATION = 'Чтобы получить статус организатора, пришлите свой дикпик сюда:' + '\n' + '@bait_media'
-    SET_DATETIME = 'Введите дату и время в формате "ДД.ММ.ГГГГ ЧЧ:ММ":'
+    SET_NAME = 'Введите название игры:'
+    SET_DATETIME = 'Введите дату в формате "ДД.ММ.ГГГГ":'
     CHOOSE_GENRE = 'Выберите жанр:'
     CHOOSE_GROUP = 'Выберите орг.группу:'
     CHOOSE_PLACE = 'Выберите полигон:'
@@ -42,7 +43,7 @@ class MessageText:
     NEW_GAME_CREATED = 'Новая игра успешно создана!'
     NEW_GAME_CANCELLED = 'Отмена создания новой игры'
     SET_DATETIME_AGAIN = 'Формат данных неверен или введена некорректная дата. Попробуйте снова.' + '\n' + '\n' + \
-        'Введите дату и время в формате "ДД.ММ.ГГГГ ЧЧ:ММ":'
+        'Введите дату и время в формате "ДД.ММ.ГГГГ":'
     LIST_OF_MATCHES = 'Выберите матч, чтобы увидеть полную информацию:'
     CHOOSE_LONELINESS_STATUS = 'Выберите, должна ли игра подходить одиночкам:'
     GAME_UPDATED = 'Данные об игре успешно изменены!'
@@ -51,9 +52,11 @@ class MessageText:
     UPDATING_PROCESS = 'Выберите параметр для изменения или сохраните игру:'
     INSURE_UPDATING = 'Вы уверены, что хотите внести изменения в игру?'
     GAME_UPDATING_IS_CANCELLED = 'Редактирование игры отменено.'
+    NO_MATCHES_FOUND = 'Не найдено игр в данной категории'
 
     def match_data(match: Match) -> str:
-        return 'Дата и время начала:' + ' ' + int_time_to_str(match.start_time) + \
+        return 'Имя:' + ' ' + match.name + \
+            '\n' + 'Дата начала:' + ' ' + int_time_to_str(match.start_time) + \
             '\n' + 'Полигон:' + ' ' + place_repository.read_by_id(match.place_id).name + \
             '\n' + 'Организационная группа:' + ' ' + group_repository.read_by_id(match.group_id).name + \
             '\n' + 'Жанр игры:' + ' ' + genre_repository.read_by_id(match.genre_id).name + \

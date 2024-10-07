@@ -222,7 +222,10 @@ def organisers_presentation(state, user: User):
 
 
 def edit_match_presentation(state: EditMatchState):
-    if state.progress == EditMatchProgress.START_TIME:
+    if state.progress == EditMatchProgress.NAME:
+        markup = types.InlineKeyboardMarkup()
+        return ScreenPresentation(markup, MessageText.SET_NAME)
+    elif state.progress == EditMatchProgress.START_TIME:
         markup = types.InlineKeyboardMarkup()
         return ScreenPresentation(markup, MessageText.SET_DATETIME)
     elif state.progress == EditMatchProgress.START_TIME_AGAIN:
@@ -446,30 +449,44 @@ def veiw_by_place_presentation(state: VeiwByPlaceState):
             limit=page_size, 
             offset=((state.page_number - 1) * page_size)
         )
-        for match in matches:
+
+        if len(matches) == 0:
             markup.add(
                 create_button(
-                    text=ButtonName.small_match_data(match), 
-                    callback=match.id
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.SPECIAL_GO_BACK
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
                 )
             )
-        markup = add_navigation(
-            markup=markup,
-            page_size=page_size,
-            page_number=state.page_number,
-            number_of_matches=match_repository.count_by_place(state.item_id)
-        )
-        markup.add(
-            create_button(
-                text=ButtonName.GO_BACK, 
-                callback=ButtonCallback.SPECIAL_GO_BACK
-            ),
-            create_button(
-                text=ButtonName.MAIN_MENU, 
-                callback=ButtonCallback.MAIN_MENU
+            return ScreenPresentation(markup, MessageText.NO_MATCHES_FOUND)
+        elif len(matches) > 0:
+            for match in matches:
+                markup.add(
+                    create_button(
+                        text=ButtonName.small_match_data(match), 
+                        callback=match.id
+                    )
+                )
+            markup = add_navigation(
+                markup=markup,
+                page_size=page_size,
+                page_number=state.page_number,
+                number_of_matches=match_repository.count_by_place(state.item_id)
             )
-        )
-        return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
+            markup.add(
+                create_button(
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.SPECIAL_GO_BACK
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
+                )
+            )
+            return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
     elif state.progress == VeiwByPlaceProgress.VEIW_ONE_FILTERED_BY_PLACE:
         markup = types.InlineKeyboardMarkup()
         match = match_repository.read(state.match_id)
@@ -516,30 +533,43 @@ def veiw_by_group_presentation(state: VeiwByGroupState):
             limit=page_size, 
             offset=((state.page_number - 1) * page_size)
         )
-        for match in matches:
+        if len(matches) == 0:
             markup.add(
                 create_button(
-                    text=ButtonName.small_match_data(match), 
-                    callback=match.id
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.SPECIAL_GO_BACK
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
                 )
             )
-        markup = add_navigation(
-            markup=markup,
-            page_size=page_size,
-            page_number=state.page_number,
-            number_of_matches=match_repository.count_by_group(state.item_id)
-        )
-        markup.add(
-            create_button(
-                text=ButtonName.GO_BACK, 
-                callback=ButtonCallback.SPECIAL_GO_BACK
-            ),
-            create_button(
-                text=ButtonName.MAIN_MENU, 
-                callback=ButtonCallback.MAIN_MENU
+            return ScreenPresentation(markup, MessageText.NO_MATCHES_FOUND)
+        elif len(matches) > 0:
+            for match in matches:
+                markup.add(
+                    create_button(
+                        text=ButtonName.small_match_data(match), 
+                        callback=match.id
+                    )
+                )
+            markup = add_navigation(
+                markup=markup,
+                page_size=page_size,
+                page_number=state.page_number,
+                number_of_matches=match_repository.count_by_group(state.item_id)
             )
-        )
-        return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
+            markup.add(
+                create_button(
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.SPECIAL_GO_BACK
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
+                )
+            )
+            return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
     elif state.progress == VeiwByGroupProgress.VEIW_ONE_FILTERED_BY_GROUP:
         markup = types.InlineKeyboardMarkup()
         match = match_repository.read(state.match_id)
@@ -586,30 +616,44 @@ def veiw_by_genre_presentation(state: VeiwByGenreState):
             limit=page_size, 
             offset=((state.page_number - 1) * page_size)
         )
-        for match in matches:
+
+        if len(matches) == 0:
             markup.add(
                 create_button(
-                    text=ButtonName.small_match_data(match), 
-                    callback=match.id
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.SPECIAL_GO_BACK
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
                 )
             )
-        markup = add_navigation(
-            markup=markup,
-            page_size=page_size,
-            page_number=state.page_number,
-            number_of_matches=match_repository.count_by_genre(state.item_id)
-        )
-        markup.add(
-            create_button(
-                text=ButtonName.GO_BACK, 
-                callback=ButtonCallback.SPECIAL_GO_BACK
-            ),
-            create_button(
-                text=ButtonName.MAIN_MENU, 
-                callback=ButtonCallback.MAIN_MENU
+            return ScreenPresentation(markup, MessageText.NO_MATCHES_FOUND)
+        elif len(matches) > 0:
+            for match in matches:
+                markup.add(
+                    create_button(
+                        text=ButtonName.small_match_data(match), 
+                        callback=match.id
+                    )
+                )
+            markup = add_navigation(
+                markup=markup,
+                page_size=page_size,
+                page_number=state.page_number,
+                number_of_matches=match_repository.count_by_genre(state.item_id)
             )
-        )
-        return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
+            markup.add(
+                create_button(
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.SPECIAL_GO_BACK
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
+                )
+            )
+            return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
     elif state.progress == VeiwByGenreProgress.VEIW_ONE_FILTERED_BY_GENRE:
         markup = types.InlineKeyboardMarkup()
         match = match_repository.read(state.match_id)
@@ -660,30 +704,44 @@ def veiw_by_loneliness_presentation(state: VeiwByLonelinessState):
             limit=page_size, 
             offset=((state.page_number - 1) * page_size)
         )
-        for match in matches:
+
+        if len(matches) == 0:
             markup.add(
                 create_button(
-                    text=ButtonName.small_match_data(match), 
-                    callback=match.id
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.SPECIAL_GO_BACK
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
                 )
             )
-        markup = add_navigation(
-            markup=markup,
-            page_size=page_size,
-            page_number=state.page_number,
-            number_of_matches=match_repository.count_by_loneliness(state.status)
-        )
-        markup.add(
-            create_button(
-                text=ButtonName.GO_BACK, 
-                callback=ButtonCallback.SPECIAL_GO_BACK
-            ),
-            create_button(
-                text=ButtonName.MAIN_MENU, 
-                callback=ButtonCallback.MAIN_MENU
+            return ScreenPresentation(markup, MessageText.NO_MATCHES_FOUND)
+        elif len(matches) > 0:
+            for match in matches:
+                markup.add(
+                    create_button(
+                        text=ButtonName.small_match_data(match), 
+                        callback=match.id
+                    )
+                )
+            markup = add_navigation(
+                markup=markup,
+                page_size=page_size,
+                page_number=state.page_number,
+                number_of_matches=match_repository.count_by_loneliness(state.status)
             )
-        )
-        return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
+            markup.add(
+                create_button(
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.SPECIAL_GO_BACK
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
+                )
+            )
+            return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
     elif state.progress == VeiwByLonelinessProgress.VEIW_ONE_FILTERED_BY_LONELINESS:
         markup = types.InlineKeyboardMarkup()
         match = match_repository.read(state.match_id)
@@ -752,6 +810,11 @@ def update_match_presentation(state: UpdateMatchState):
             )
         )
         return ScreenPresentation(markup, MessageText.match_data(match))
+    elif state.progress == UpdateMatchProgress.UPDATE_NAME:
+        markup = types.InlineKeyboardMarkup()
+        return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
+            MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                MessageText.SET_NAME)
     elif state.progress == UpdateMatchProgress.UPDATE_START_TIME:
         markup = types.InlineKeyboardMarkup()
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
@@ -825,6 +888,12 @@ def update_match_presentation(state: UpdateMatchState):
                 MessageText.SET_URL)
     elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS:
         markup = types.InlineKeyboardMarkup()
+        markup.add(
+            create_button(
+                text=ButtonName.UPDATE_NAME,
+                callback=ButtonCallback.UPDATE_NAME
+            )
+        )
         markup.add(
             create_button(
                 text=ButtonName.UPDATE_START_TIME,

@@ -123,6 +123,7 @@ class OrganisersState(BotState):
 # new game
 
 class EditMatchProgress():
+    NAME = 'NAME'
     START_TIME = 'START_TIME'
     START_TIME_AGAIN = 'START_TIME_AGAIN'
     DURATION = 'DURATION'
@@ -156,6 +157,7 @@ class GameIsCancelledState(BotState):
 class UpdateMatchProgress():
     CHOOSE_GAME = 'CHOOSE_GAME'
     CONFIRM_UPDATING = 'CONFIRM_UPDATING'
+    UPDATE_NAME = 'UPDATE_NAME'
     UPDATE_START_TIME = 'UPDATE_START_TIME'
     UPDATE_START_TIME_AGAIN = 'UPDATE_START_TIME_AGAIN'
     UPDATE_PLACE = 'UPDATE_PLACE'

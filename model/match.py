@@ -1,5 +1,6 @@
 class Match:
     id: int
+    name: str
     start_time: int
     place_id: int
     group_id: int
@@ -10,6 +11,7 @@ class Match:
     def __init__(
             self,
             id: int,
+            name: str,
             start_time: int,
             place_id: int,
             group_id: int,
@@ -18,6 +20,7 @@ class Match:
             url: str,
     ):
         self.id = id
+        self.name = name
         self.start_time = start_time
         self.place_id = place_id
         self.group_id = group_id
