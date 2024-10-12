@@ -1,5 +1,2 @@
-def list_from_row(row: tuple) -> list:
-    lst = []
-    for item in row:
-        list.append(item)
-    return lst
+def place_name_from_row(row: tuple) -> str:
+    return row[0]
