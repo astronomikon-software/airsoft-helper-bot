@@ -233,14 +233,6 @@ def edit_match_presentation(state: EditMatchState):
         return ScreenPresentation(markup, MessageText.SET_DATETIME_AGAIN)
     elif state.progress == EditMatchProgress.PLACE:
         markup = types.InlineKeyboardMarkup()
-        places = place_repository.read_all()
-        for place in places:
-            markup.add(
-                create_button(
-                    text=place.name, 
-                    callback=place.id
-                )
-            )
         return ScreenPresentation(markup, MessageText.SET_PLACE)
     elif state.progress == EditMatchProgress.GROUP:
         markup = types.InlineKeyboardMarkup()
@@ -426,8 +418,8 @@ def veiw_by_place_presentation(state: VeiwByPlaceState):
         for place in places:
             markup.add(
                 create_button(
-                    text=place.name, 
-                    callback=place.id
+                    text=place, 
+                    callback=place
                 )
             )
         markup.add(
@@ -445,7 +437,7 @@ def veiw_by_place_presentation(state: VeiwByPlaceState):
         markup = types.InlineKeyboardMarkup()
         page_size = 8
         matches = match_repository.read_by_place(
-            place_id=state.item_id, 
+            place_name=state.item_id, 
             limit=page_size, 
             offset=((state.page_number - 1) * page_size)
         )
@@ -827,14 +819,6 @@ def update_match_presentation(state: UpdateMatchState):
                 MessageText.SET_DATETIME_AGAIN)
     elif state.progress == UpdateMatchProgress.UPDATE_PLACE:
         markup = types.InlineKeyboardMarkup()
-        places = place_repository.read_all()
-        for place in places:
-            markup.add(
-                create_button(
-                    text=place.name, 
-                    callback=place.id
-                )
-            )
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
             MessageText.match_data(state.new_match) + '\n' + '\n' + \
                 MessageText.SET_PLACE)
