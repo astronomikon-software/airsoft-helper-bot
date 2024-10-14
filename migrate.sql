@@ -37,7 +37,7 @@ CREATE TABLE matches(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     match_name VARCHAR NOT NULL,
     start_time TIMESTAMP NOT NULL,
-    place_id BIGINT NOT NULL,
+    place_name VARCHAR NOT NULL,
     group_id BIGINT NOT NULL,
     genre_id BIGINT NOT NULL,
     is_loneliness_friendly BOOLEAN NOT NULL,

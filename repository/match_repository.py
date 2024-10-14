@@ -16,11 +16,11 @@ class MatchRepository:
     def create(self, match: Match):
         start_time_obj = int_to_datetime(match.start_time)
         self.db_provider.execute_query(
-            '''INSERT INTO matches (match_name, start_time, place_id, group_id, genre_id, is_loneliness_friendly, url, last_edit_time) VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())''',
+            '''INSERT INTO matches (match_name, start_time, place_name, group_id, genre_id, is_loneliness_friendly, url, last_edit_time) VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())''',
             (
                 match.name,
                 start_time_obj,
-                match.place_id,
+                match.place_name,
                 match.group_id,
                 match.genre_id,
                 match.is_loneliness_friendly,
@@ -38,11 +38,11 @@ class MatchRepository:
     def update(self, match: Match):
         start_time_obj = int_to_datetime(match.start_time)
         self.db_provider.execute_query(
-            '''UPDATE matches SET match_name = %s, start_time = %s, place_id = %s, group_id = %s, genre_id = %s, is_loneliness_friendly = %s, url = %s, last_edit_time = NOW() WHERE id = %s''',
+            '''UPDATE matches SET match_name = %s, start_time = %s, place_name = %s, group_id = %s, genre_id = %s, is_loneliness_friendly = %s, url = %s, last_edit_time = NOW() WHERE id = %s''',
             (
                 match.name,
                 start_time_obj,
-                match.place_id,
+                match.place_name,
                 match.group_id,
                 match.genre_id,
                 match.is_loneliness_friendly,
@@ -75,21 +75,21 @@ class MatchRepository:
         )[0][0]
         return number
 
-    def read_by_place(self, place_id: int, limit: int, offset: int) -> list[Match]:
+    def read_by_place(self, place_name: str, limit: int, offset: int) -> list[Match]:
         rows = self.db_provider.execute_read_query(
-            '''SELECT * from matches WHERE start_time > NOW() AND place_id = %s ORDER BY start_time LIMIT %s OFFSET %s;''',
+            '''SELECT * from matches WHERE start_time > NOW() AND place_name = %s ORDER BY start_time LIMIT %s OFFSET %s;''',
             (
-                place_id,
+                place_name,
                 limit,
                 offset,
             )
         )
         return list(map(match_from_row, rows))
     
-    def count_by_place(self, place_id: int) -> int:
+    def count_by_place(self, place_name: str) -> int:
         number = self.db_provider.execute_read_query(
-            '''SELECT COUNT(*) FROM matches WHERE start_time > NOW() AND place_id = %s;''',
-            (place_id,)
+            '''SELECT COUNT(*) FROM matches WHERE start_time > NOW() AND place_name = %s;''',
+            (place_name,)
         )[0][0]
         return number
 

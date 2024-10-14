@@ -2,7 +2,7 @@ from model.match import Match
 from repository.repository_initiation import place_repository
 from mapping.datetime_mapping import int_time_to_str
 
- 
+
 class ButtonName:
     MAIN_MENU = 'Главное меню'
     SCHEDULE = '🗓️ Расписание игр 🗓️'

@@ -34,7 +34,7 @@ class MessageText:
     CHOOSE_PLACE = 'Выберите полигон:'
     CALENDAR = 'Календарь на стадии разработки'
     FILTERS = 'Выберите фильтр:'
-    SET_PLACE = 'Выберите полигон:'
+    SET_PLACE = 'Введите название места проведения:'
     SET_GROUP = 'Выберите организационную группу:'
     SET_GENRE = 'Выберите жанр игры:'
     SET_LONELINESS = 'Подходит ли игра для одиночек?'
@@ -57,7 +57,7 @@ class MessageText:
     def match_data(match: Match) -> str:
         return 'Имя:' + ' ' + match.name + \
             '\n' + 'Дата начала:' + ' ' + int_time_to_str(match.start_time) + \
-            '\n' + 'Полигон:' + ' ' + place_repository.read_by_id(match.place_id).name + \
+            '\n' + 'Полигон:' + ' ' + match.place_name + \
             '\n' + 'Организационная группа:' + ' ' + group_repository.read_by_id(match.group_id).name + \
             '\n' + 'Жанр игры:' + ' ' + genre_repository.read_by_id(match.genre_id).name + \
             '\n' + 'Подходит ли для одиночек:' + ' ' + loneliness_to_str(match.is_loneliness_friendly) + \

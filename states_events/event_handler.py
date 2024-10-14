@@ -61,7 +61,7 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
                 id=0,
                 name='',
                 start_time=0,
-                place_id=0,
+                place_name=0,
                 group_id=0,
                 genre_id=0,
                 is_loneliness_friendly=False,
@@ -125,8 +125,8 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
                 progress=EditMatchProgress.START_TIME_AGAIN,
             )
     elif (state.progress == EditMatchProgress.PLACE) \
-        and isinstance(event, ButtonEvent):
-        match.place_id = int(event.callback)
+        and isinstance(event, MessageEvent):
+        match.place_name = event.text
         return EditMatchState(
             match=match,
             progress=EditMatchProgress.GROUP,
@@ -496,9 +496,9 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
                 page_number=1,
             )
     elif state.progress == UpdateMatchProgress.UPDATE_PLACE \
-        and isinstance(event, ButtonEvent):
+        and isinstance(event, MessageEvent):
         updating_match = state.new_match
-        updating_match.place_id = int(event.callback)
+        updating_match.place_name = event.text
         return UpdateMatchState(
             old_match=state.old_match,
             new_match=updating_match,
