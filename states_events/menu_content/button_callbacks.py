@@ -37,3 +37,6 @@ class ButtonCallback: #Enūma Eliš?..
     UPDATE_URL = 'update_url'
     FINISH_UPDATING = 'finish_updating'
     CANCEL_UPDATING = 'cancel_updating'
+    SUBSCRIBE = 'subscribe'
+    CREATE_SUBSCRIPTION = 'create_subscription'
+    DELETE_SUBSCRIPTION = 'delete_subscription'

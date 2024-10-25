@@ -43,7 +43,6 @@ class CalendarState(BotState):
         self.page_number = page_number
         self.progress = progress
 
-
 class FiltersState(BotState):
     pass
 
@@ -114,6 +113,23 @@ class VeiwByLonelinessState(BotState):
         self.match_id = match_id
         self.progress = progress
         self.page_number = page_number
+
+# subscription branch
+
+class SubscriptionState(BotState):
+    pass
+
+class SubscriptionCreatedState(BotState):
+    is_done: bool
+
+    def __init__(self, is_done: bool):
+        self.is_done = is_done
+
+class SubscriptionDeletedState(BotState):
+    is_done: bool
+
+    def __init__(self, is_done: bool):
+        self.is_done = is_done
 
 # organisers branches
 

@@ -53,6 +53,11 @@ class MessageText:
     INSURE_UPDATING = 'Вы уверены, что хотите внести изменения в игру?'
     GAME_UPDATING_IS_CANCELLED = 'Редактирование игры отменено.'
     NO_MATCHES_FOUND = 'Не найдено игр в данной категории'
+    SUBSCRIPTION = 'Вы можете оформить подписку, чтобы получать уведовления о появлении новых игр в расписании!'
+    SUBSCRIPTION_CREATED = 'Подписка успешно оформлена!'
+    SUBSCRIPTION_ALREADY_EXISTS = 'Вы уже подписаны на уведомления о новых играх'
+    SUBSCRIPTION_DELETED = 'Подписка отменена'
+    SUBSCRIPTION_DOESNT_EXIST = 'Вы ещё не подписаны на уведомления о новых играх'
 
     def match_data(match: Match) -> str:
         return 'Имя:' + ' ' + match.name + \
@@ -62,3 +67,6 @@ class MessageText:
             '\n' + 'Жанр игры:' + ' ' + genre_repository.read_by_id(match.genre_id).name + \
             '\n' + 'Подходит ли для одиночек:' + ' ' + loneliness_to_str(match.is_loneliness_friendly) + \
             '\n' + 'Ссылка на игру:' + ' ' + match.url
+    
+    def new_match_announcement(match: Match) -> str:
+        return 'Добавлена новая игра' + '\n' + '\n' + MessageText.match_data(match)

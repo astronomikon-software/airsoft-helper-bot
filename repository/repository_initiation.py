@@ -7,6 +7,7 @@ from repository.match_repository import MatchRepository
 from repository.place_repository import PlaceRepository
 from repository.state_repository import StateRepository
 from repository.user_repository import UserRepository
+from repository.subscription_repository import SubscriptionRepository
 
 
 db_provider = DbProvider(
@@ -22,3 +23,4 @@ match_repository = MatchRepository(db_provider)
 group_repository = GroupRepository(db_provider)
 genre_repository = GenreRepository(db_provider)
 place_repository = PlaceRepository(db_provider)
+subscription_repository = SubscriptionRepository(db_provider)
