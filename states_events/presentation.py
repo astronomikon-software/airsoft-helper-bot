@@ -1043,9 +1043,8 @@ def subscribtion_presentation(state: SubscriptionState):
         return ScreenPresentation(markup, MessageText.SUBSCRIPTION)
 
 def subscribtion_managed_presentation(state: SubscriptionManagedState):
-    if state.is_created:
-        markup = types.InlineKeyboardMarkup()
-        markup.add(
+    markup = types.InlineKeyboardMarkup()
+    markup.add(
             create_button(
                 text=ButtonName.MAIN_MENU, 
                 callback=ButtonCallback.MAIN_MENU
@@ -1055,17 +1054,7 @@ def subscribtion_managed_presentation(state: SubscriptionManagedState):
                 callback=ButtonCallback.SUBSCRIBE
             )
         )
+    if state.is_created:
         return ScreenPresentation(markup, MessageText.SUBSCRIPTION_CREATED)
     else:
-        markup = types.InlineKeyboardMarkup()
-        markup.add(
-            create_button(
-                text=ButtonName.MAIN_MENU, 
-                callback=ButtonCallback.MAIN_MENU
-            ),
-            create_button(
-                text=ButtonName.GO_BACK, 
-                callback=ButtonCallback.SUBSCRIBE
-            )
-        )
         return ScreenPresentation(markup, MessageText.SUBSCRIPTION_DELETED)
