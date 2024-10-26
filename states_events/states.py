@@ -117,19 +117,16 @@ class VeiwByLonelinessState(BotState):
 # subscription branch
 
 class SubscriptionState(BotState):
-    pass
+    is_subscribed: bool
 
-class SubscriptionCreatedState(BotState):
-    is_done: bool
+    def __init__(self, is_subscribed: bool):
+        self.is_subscribed = is_subscribed
 
-    def __init__(self, is_done: bool):
-        self.is_done = is_done
+class SubscriptionManagedState(BotState):
+    is_created: bool
 
-class SubscriptionDeletedState(BotState):
-    is_done: bool
-
-    def __init__(self, is_done: bool):
-        self.is_done = is_done
+    def __init__(self, is_created: bool):
+        self.is_created = is_created
 
 # organisers branches
 

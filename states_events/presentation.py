@@ -81,11 +81,8 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
     elif isinstance(state, SubscriptionState):
         return subscribtion_presentation(state)
     
-    elif isinstance(state, SubscriptionCreatedState):
-        return subscribtion_created_presentation(state)
-    
-    elif isinstance(state, SubscriptionDeletedState):
-        return subscribtion_deleted_presentation(state)
+    elif isinstance(state, SubscriptionManagedState):
+        return subscribtion_managed_presentation(state)
 
     else:
         return error_presentation(state)
@@ -1008,32 +1005,45 @@ def error_presentation(state):
 
 def subscribtion_presentation(state: SubscriptionState):
     markup = types.InlineKeyboardMarkup()
-    markup.add(
-        create_button(
-            text=ButtonName.CREATE_SUBSCRIPTION, 
-            callback=ButtonCallback.CREATE_SUBSCRIPTION
+    if state.is_subscribed:
+        markup.add(
+            create_button(
+                text=ButtonName.DELETE_SUBSCRIPTION, 
+                callback=ButtonCallback.DELETE_SUBSCRIPTION
+            )
         )
-    )
-    markup.add(
-        create_button(
-            text=ButtonName.DELETE_SUBSCRIPTION, 
-            callback=ButtonCallback.DELETE_SUBSCRIPTION
+        markup.add(
+            create_button(
+                text=ButtonName.MAIN_MENU, 
+                callback=ButtonCallback.MAIN_MENU
+            ),
+            create_button(
+                text=ButtonName.GO_BACK, 
+                callback=ButtonCallback.SCHEDULE
+            )
         )
-    )
-    markup.add(
-        create_button(
-            text=ButtonName.MAIN_MENU, 
-            callback=ButtonCallback.MAIN_MENU
-        ),
-        create_button(
-            text=ButtonName.GO_BACK, 
-            callback=ButtonCallback.SCHEDULE
+        return ScreenPresentation(markup, MessageText.SUBSCRIPTION)
+    else:
+        markup.add(
+            create_button(
+                text=ButtonName.CREATE_SUBSCRIPTION, 
+                callback=ButtonCallback.CREATE_SUBSCRIPTION
+            )
         )
-    )
-    return ScreenPresentation(markup, MessageText.SUBSCRIPTION)
+        markup.add(
+            create_button(
+                text=ButtonName.MAIN_MENU, 
+                callback=ButtonCallback.MAIN_MENU
+            ),
+            create_button(
+                text=ButtonName.GO_BACK, 
+                callback=ButtonCallback.SCHEDULE
+            )
+        )
+        return ScreenPresentation(markup, MessageText.SUBSCRIPTION)
 
-def subscribtion_created_presentation(state: SubscriptionCreatedState):
-    if state.is_done:
+def subscribtion_managed_presentation(state: SubscriptionManagedState):
+    if state.is_created:
         markup = types.InlineKeyboardMarkup()
         markup.add(
             create_button(
@@ -1058,32 +1068,4 @@ def subscribtion_created_presentation(state: SubscriptionCreatedState):
                 callback=ButtonCallback.SUBSCRIBE
             )
         )
-        return ScreenPresentation(markup, MessageText.SUBSCRIPTION_ALREADY_EXISTS)
-    
-def subscribtion_deleted_presentation(state: SubscriptionDeletedState):
-    if state.is_done:
-        markup = types.InlineKeyboardMarkup()
-        markup.add(
-            create_button(
-                text=ButtonName.MAIN_MENU, 
-                callback=ButtonCallback.MAIN_MENU
-            ),
-            create_button(
-                text=ButtonName.GO_BACK, 
-                callback=ButtonCallback.SUBSCRIBE
-            )
-        )
         return ScreenPresentation(markup, MessageText.SUBSCRIPTION_DELETED)
-    else:
-        markup = types.InlineKeyboardMarkup()
-        markup.add(
-            create_button(
-                text=ButtonName.MAIN_MENU, 
-                callback=ButtonCallback.MAIN_MENU
-            ),
-            create_button(
-                text=ButtonName.GO_BACK, 
-                callback=ButtonCallback.SUBSCRIBE
-            )
-        )
-        return ScreenPresentation(markup, MessageText.SUBSCRIPTION_DOESNT_EXIST)

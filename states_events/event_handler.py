@@ -88,6 +88,12 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
                 return state_class(ButtonCallback.FALSE, 0, VeiwByLonelinessProgress.CHOOSE_LONELINESS_STATUS, 1)
             elif state_class is UpdateMatchState:
                 return UpdateMatchState(old_match=0, new_match=0, progress=UpdateMatchProgress.CHOOSE_GAME, page_number=1)
+            elif state_class is SubscriptionState:
+                try:
+                    subscription = subscription_repository.read_by_user_id(user.id)
+                    return state_class(is_subscribed=True)
+                except:
+                    return state_class(is_subscribed=False)
             else:
                 return state_class()
     
@@ -620,19 +626,11 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
 
 def on_subscription_state(state: SubscriptionState, event: ButtonEvent, user: User):
     if event.callback == ButtonCallback.CREATE_SUBSCRIPTION:
-        try:
-            subscription = subscription_repository.read_by_user_id(user.id)
-            return SubscriptionCreatedState(is_done=False)
-        except:
-            subscription = Subscription()
-            subscription.user_id = user.id
-            subscription_repository.create(subscription)
-            return SubscriptionCreatedState(is_done=True)
-    
+        subscription = Subscription()
+        subscription.user_id = user.id
+        subscription_repository.create(subscription)
+        return SubscriptionManagedState(is_created=True)
     elif event.callback == ButtonCallback.DELETE_SUBSCRIPTION:
-        try:
-            subscription = subscription_repository.read_by_user_id(user.id)
-            subscription_repository.delete(subscription)
-            return SubscriptionDeletedState(is_done=True)
-        except:
-            return SubscriptionDeletedState(is_done=False)
+        subscription = subscription_repository.read_by_user_id(user.id)
+        subscription_repository.delete(subscription)
+        return SubscriptionManagedState(is_created=False)
