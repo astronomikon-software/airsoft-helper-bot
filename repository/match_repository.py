@@ -1,4 +1,5 @@
 import datetime
+from typing import Callable
 from model.match import Match
 from model.genre import Genre
 from model.group import Group
@@ -9,6 +10,8 @@ from mapping.datetime_mapping import int_to_datetime
 
 
 class MatchRepository:
+
+    _on_match_created: Callable[[Match], None] = lambda _: None
 
     def __init__(self, db_provider: DbProvider):
         self.db_provider = db_provider
@@ -27,6 +30,7 @@ class MatchRepository:
                 match.url,
             )
         )
+        self._on_match_created(match)
     
     def read(self, match_id: int) -> Match:
         row = self.db_provider.execute_read_query(
@@ -155,3 +159,6 @@ class MatchRepository:
             '''SELECT COUNT(*) FROM matches;'''
         )[0][0]
         return number
+    
+    def set_on_match_created(self, callback: Callable[[Match], None]):
+        self._on_match_created = callback

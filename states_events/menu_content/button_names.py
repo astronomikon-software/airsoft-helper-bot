@@ -35,6 +35,9 @@ class ButtonName:
     UPDATE_GENRE = 'Изменить жанр'
     UPDATE_LONELINESS = 'Изменить одиноковость'
     UPDATE_URL = 'Изменить ссылку'
+    SUBSCRIBE = 'Оформить подписку'
+    CREATE_SUBSCRIPTION = 'Подписаться на уведомления'
+    DELETE_SUBSCRIPTION = 'Отказаться от подписки'
 
 
     def small_match_data(match: Match) -> str:

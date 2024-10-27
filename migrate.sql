@@ -4,6 +4,7 @@ DROP TABLE genres;
 DROP TABLE users;
 DROP TABLE matches;
 DROP TABLE user_bot_states;
+DROP TABLE subscriptions;
 
 SET client_encoding TO 'UTF8';
 
@@ -43,6 +44,11 @@ CREATE TABLE matches(
     is_loneliness_friendly BOOLEAN NOT NULL,
     url VARCHAR NOT NULL,
     last_edit_time TIMESTAMP NOT NULL
+);
+
+CREATE TABLE subscriptions(
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    user_id BIGINT NOT NULL
 );
 
 INSERT INTO places(place_name) VALUES('Северный');

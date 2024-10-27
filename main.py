@@ -6,10 +6,14 @@ import config
 
 from repository.repository_initiation import *
 
+from model.match import Match
+from model.subscription import Subscription
+
 from states_events.events import BotEvent, ButtonEvent, MessageEvent
 from states_events.event_handler import get_new_state
 from states_events.states import StartState
 from states_events.presentation import ScreenPresentation, get_presentation
+from states_events.menu_content.message_texts import MessageText
 
 from utils.user_util import get_default_user
 
@@ -41,6 +45,18 @@ def toll_the_great_bell_once(message):
         )
     except Exception as E:
         print(E)
+
+
+def toll_the_great_bell_twice(match: Match):
+    try:
+        for subscription in subscription_repository.read_all():
+            bot.send_message(
+                chat_id=subscription.user_id, 
+                text=MessageText.new_match_announcement(match)
+            )
+    except Exception as E:
+        print(E)
+match_repository.set_on_match_created(toll_the_great_bell_twice)
 
 
 @bot.callback_query_handler(func=lambda callback: True)

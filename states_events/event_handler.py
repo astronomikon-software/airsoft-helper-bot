@@ -1,8 +1,12 @@
 from model.user import User
-from repository.repository_initiation import match_repository
+from model.subscription import Subscription
+
+from repository.repository_initiation import match_repository, subscription_repository
+
 from states_events.menu_content.button_callbacks import ButtonCallback
 from states_events.states import *
 from states_events.events import *
+
 from utils.datetime_util import check_datetime_format
 from mapping.datetime_mapping import str_time_to_int
 from mapping.loneliness_mapping import str_to_loneliness
@@ -36,6 +40,9 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
     
     if isinstance(state, UpdateMatchState) and user.is_admin:
         return on_update_match_state(state, event)
+    
+    if isinstance(state, SubscriptionState) and isinstance(event, ButtonEvent):
+        return on_subscription_state(state, event, user)
 
     if isinstance(event, ButtonEvent):
         state_class = {
@@ -54,6 +61,7 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
             ButtonCallback.CALENDAR: CalendarState,
             ButtonCallback.CHOOSE_GAME_TO_UPDATE: UpdateMatchState,
             ButtonCallback.HELP: HelpState,
+            ButtonCallback.SUBSCRIBE: SubscriptionState,
         }[event.callback]
         if state_class is not None:
             if state_class is EditMatchState:
@@ -80,6 +88,12 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
                 return state_class(ButtonCallback.FALSE, 0, VeiwByLonelinessProgress.CHOOSE_LONELINESS_STATUS, 1)
             elif state_class is UpdateMatchState:
                 return UpdateMatchState(old_match=0, new_match=0, progress=UpdateMatchProgress.CHOOSE_GAME, page_number=1)
+            elif state_class is SubscriptionState:
+                try:
+                    subscription = subscription_repository.read_by_user_id(user.id)
+                    return state_class(is_subscribed=True)
+                except:
+                    return state_class(is_subscribed=False)
             else:
                 return state_class()
     
@@ -608,3 +622,15 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
         and event.callback == ButtonCallback.SAVE_GAME:
         match_repository.update(state.new_match)
         return GameIsUpdatedState()
+
+
+def on_subscription_state(state: SubscriptionState, event: ButtonEvent, user: User):
+    if event.callback == ButtonCallback.CREATE_SUBSCRIPTION:
+        subscription = Subscription()
+        subscription.user_id = user.id
+        subscription_repository.create(subscription)
+        return SubscriptionManagedState(is_created=True)
+    elif event.callback == ButtonCallback.DELETE_SUBSCRIPTION:
+        subscription = subscription_repository.read_by_user_id(user.id)
+        subscription_repository.delete(subscription)
+        return SubscriptionManagedState(is_created=False)
