@@ -80,3 +80,8 @@ INSERT INTO users(id, is_admin, is_true_admin) VALUES(1733814577, 'TRUE', 'TRUE'
 INSERT INTO users(id, is_admin, is_true_admin) VALUES(395233149, 'TRUE', 'FALSE');
 INSERT INTO users(id, is_admin, is_true_admin) VALUES(415882547, 'TRUE', 'FALSE');
 INSERT INTO users(id, is_admin, is_true_admin) VALUES(446274673, 'TRUE', 'FALSE');
+INSERT INTO users(id, is_admin, is_true_admin) VALUES(1945011574, 'TRUE', 'FALSE');
+INSERT INTO users(id, is_admin, is_true_admin) VALUES(1415439538, 'TRUE', 'FALSE');
+INSERT INTO users(id, is_admin, is_true_admin) VALUES(299076721, 'TRUE', 'FALSE');
+INSERT INTO users(id, is_admin, is_true_admin) VALUES(5422338715, 'TRUE', 'FALSE');
+INSERT INTO users(id, is_admin, is_true_admin) VALUES(5026935623, 'TRUE', 'FALSE');
