@@ -70,3 +70,9 @@ class MessageText:
     
     def new_match_announcement(match: Match) -> str:
         return 'Добавлена новая игра' + '\n' + '\n' + MessageText.match_data(match)
+    
+    def delayed_announcement(matches: list[Match]) -> str:
+        matches_text = ''
+        for match in matches:
+            matches_text += '\n' + '\n' + MessageText.match_data(match)
+        return 'Уже через пять дней состоится игра!' + matches_text
