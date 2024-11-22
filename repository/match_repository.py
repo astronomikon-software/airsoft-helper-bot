@@ -1,9 +1,6 @@
 import datetime
 from typing import Callable
 from model.match import Match
-from model.genre import Genre
-from model.group import Group
-from model.place import Place
 from data.db_provider import DbProvider
 from mapping.match_mapping import match_from_row
 from mapping.datetime_mapping import int_to_datetime
@@ -19,15 +16,17 @@ class MatchRepository:
     def create(self, match: Match):
         start_time_obj = int_to_datetime(match.start_time)
         self.db_provider.execute_query(
-            '''INSERT INTO matches (match_name, start_time, place_name, group_id, genre_id, is_loneliness_friendly, url, last_edit_time) VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())''',
+            '''INSERT INTO matches (match_name, start_time, duration_id, place_name, group_id, genre_id, is_loneliness_friendly, url, annotation, last_edit_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())''',
             (
                 match.name,
                 start_time_obj,
+                match.duration_id,
                 match.place_name,
                 match.group_id,
                 match.genre_id,
                 match.is_loneliness_friendly,
                 match.url,
+                match.annotation
             )
         )
         self._on_match_created(match)
@@ -42,15 +41,17 @@ class MatchRepository:
     def update(self, match: Match):
         start_time_obj = int_to_datetime(match.start_time)
         self.db_provider.execute_query(
-            '''UPDATE matches SET match_name = %s, start_time = %s, place_name = %s, group_id = %s, genre_id = %s, is_loneliness_friendly = %s, url = %s, last_edit_time = NOW() WHERE id = %s''',
+            '''UPDATE matches SET match_name = %s, start_time = %s, duration_id = %s, place_name = %s, group_id = %s, genre_id = %s, is_loneliness_friendly = %s, url = %s, annotation = %s, last_edit_time = NOW() WHERE id = %s''',
             (
                 match.name,
                 start_time_obj,
+                match.duration_id,
                 match.place_name,
                 match.group_id,
                 match.genre_id,
                 match.is_loneliness_friendly,
                 match.url,
+                match.annotation,
                 match.id,
             )
         )
@@ -61,9 +62,27 @@ class MatchRepository:
             (match.id,)
         )
 
+    def read_by_duration(self, duration_id: int, limit: int, offset: int) -> list[Match]:
+        rows = self.db_provider.execute_read_query(
+            '''SELECT * from matches WHERE start_time > NOW() AND duration_id = %s ORDER BY start_time LIMIT %s OFFSET %s;''',
+            (
+                duration_id,
+                limit,
+                offset,
+            )
+        )
+        return list(map(match_from_row, rows))
+    
+    def count_by_duration(self, duration_id: int) -> int:
+        number = self.db_provider.execute_read_query(
+            '''SELECT COUNT(*) FROM matches WHERE start_time > NOW() AND duration_id = %s;''',
+            (duration_id,)
+        )[0][0]
+        return number
+
     def read_by_genre(self, genre_id: int, limit: int, offset: int) -> list[Match]:
         rows = self.db_provider.execute_read_query(
-            '''SELECT * from matches WHERE start_time > NOW() AND genre_id = %s ORDER BY start_time LIMIT %s OFFSET %s;''',
+            '''SELECT * from matches WHERE start_time > NOW() AND %s = ANY (genre_id) ORDER BY start_time LIMIT %s OFFSET %s;''',
             (
                 genre_id,
                 limit,
@@ -74,7 +93,7 @@ class MatchRepository:
     
     def count_by_genre(self, genre_id: int) -> int:
         number = self.db_provider.execute_read_query(
-            '''SELECT COUNT(*) FROM matches WHERE start_time > NOW() AND genre_id = %s;''',
+            '''SELECT COUNT(*) FROM matches WHERE start_time > NOW() AND %s = ANY (genre_id);''',
             (genre_id,)
         )[0][0]
         return number
@@ -97,10 +116,9 @@ class MatchRepository:
         )[0][0]
         return number
 
-
     def read_by_group(self, group_id: int, limit: int, offset: int) -> list[Match]:
         rows = self.db_provider.execute_read_query(
-            '''SELECT * from matches WHERE start_time > NOW() AND group_id = %s ORDER BY start_time LIMIT %s OFFSET %s;''',
+            '''SELECT * from matches WHERE start_time > NOW() AND %s = ANY (group_id) ORDER BY start_time LIMIT %s OFFSET %s;''',
             (
                 group_id,
                 limit,
@@ -111,7 +129,7 @@ class MatchRepository:
     
     def count_by_group(self, group_id: int) -> int:
         number = self.db_provider.execute_read_query(
-            '''SELECT COUNT(*) FROM matches WHERE start_time > NOW() AND group_id = %s;''',
+            '''SELECT COUNT(*) FROM matches WHERE start_time > NOW() AND %s = ANY (group_id);''',
             (group_id,)
         )[0][0]
         return number
@@ -159,6 +177,12 @@ class MatchRepository:
             '''SELECT COUNT(*) FROM matches;'''
         )[0][0]
         return number
+    
+    def read_notificapable(self) -> list[Match]:
+        rows = self.db_provider.execute_read_query(
+            '''SELECT * FROM matches WHERE start_time BETWEEN NOW() + INTERVAL 4 DAY AND NOW() + INTERVAL 5 DAY;''',
+        )
+        return list(map(match_from_row, rows))
     
     def set_on_match_created(self, callback: Callable[[Match], None]):
         self._on_match_created = callback

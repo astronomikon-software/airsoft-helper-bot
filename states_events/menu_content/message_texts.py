@@ -20,7 +20,7 @@ class MessageText:
 Просматривай календарь и не упусти не одной игры!
 
 ✅Поиск по фильтрам.
-Ищешь конкретную игру от интересующих тебя орг групп? Или может быть ты ищешь ролевую игру или игру подходящую для новичков?
+Ищешь конкретную игру от интересующих тебя организаторов? Или может быть ты ищешь ролевую игру или игру подходящую для новичков?
 Теперь тебе не нужно перебирать тонны игр, используй фильтры и находи только интересные проекты!
 '''
     HELP = 'По всем вопросам пишите @bait_media!'
@@ -29,16 +29,19 @@ class MessageText:
     ORGANISER_APPLICATION = 'Чтобы получить статус организатора, пришлите свой дикпик сюда:' + '\n' + '@bait_media'
     SET_NAME = 'Введите название игры:'
     SET_DATETIME = 'Введите дату в формате "ДД.ММ.ГГГГ":'
-    CHOOSE_GENRE = 'Выберите жанр:'
-    CHOOSE_GROUP = 'Выберите орг.группу:'
-    CHOOSE_PLACE = 'Выберите полигон:'
+    CHOOSE_GENRE = 'Выберите тип мероприятия:'
+    CHOOSE_GROUP = 'Выберите организатора:'
+    CHOOSE_PLACE = 'Выберите место проведения:'
+    CHOOSE_DURATION = 'Выберите вариант длительности игры:'
     CALENDAR = 'Календарь на стадии разработки'
     FILTERS = 'Выберите фильтр:'
     SET_PLACE = 'Введите название места проведения:'
-    SET_GROUP = 'Выберите организационную группу:'
-    SET_GENRE = 'Выберите жанр игры:'
+    SET_GROUP = 'Выберите организатора:'
+    SET_GENRE = 'Выберите тип мероприятия:'
     SET_LONELINESS = 'Подходит ли игра для одиночек?'
     SET_URL = 'Отправьте ссылку на игру:'
+    SET_ANNOTATION = 'Введите краткое описание игры:'
+    SET_DURATION = 'Выберите вариант длительности игры:'
     CONFIRM_DATA = 'Подтвердите правильность введения данных'
     NEW_GAME_CREATED = 'Новая игра успешно создана!'
     NEW_GAME_CANCELLED = 'Отмена создания новой игры'
@@ -60,13 +63,28 @@ class MessageText:
     SUBSCRIPTION_DOESNT_EXIST = 'Вы ещё не подписаны на уведомления о новых играх'
 
     def match_data(match: Match) -> str:
-        return 'Имя:' + ' ' + match.name + \
+        groups = ''
+        for i in range(len(match.group_id)):
+            groups += group_repository.read_by_id(match.group_id[i]).name
+            if i < len(match.group_id) - 1:
+                groups += ', '
+        
+        genres = ''
+        for i in range(len(match.genre_id)):
+            genres += genre_repository.read_by_id(match.genre_id[i]).name
+            if i < len(match.genre_id) - 1:
+                genres += ', '
+
+        return 'Название:' + ' ' + match.name + \
             '\n' + 'Дата начала:' + ' ' + int_time_to_str(match.start_time) + \
-            '\n' + 'Полигон:' + ' ' + match.place_name + \
-            '\n' + 'Организационная группа:' + ' ' + group_repository.read_by_id(match.group_id).name + \
-            '\n' + 'Жанр игры:' + ' ' + genre_repository.read_by_id(match.genre_id).name + \
+            '\n' + 'Продолжительность:' + ' ' + match.place_name + \
+            '\n' + 'Место проведения:' + ' ' + match.place_name + \
+            '\n' + 'Организаторы:' + ' ' + groups + \
+            '\n' + 'Тип мероприятия:' + ' ' + genres + \
             '\n' + 'Подходит ли для одиночек:' + ' ' + loneliness_to_str(match.is_loneliness_friendly) + \
-            '\n' + 'Ссылка на игру:' + ' ' + match.url
+            '\n' + 'Краткое описание:' + ' ' + loneliness_to_str(match.is_loneliness_friendly) + \
+            '\n' + 'Ссылка на игру:' + ' ' + match.url + \
+            '\n' + 'Краткое описание:' + ' ' + match.annotation
     
     def new_match_announcement(match: Match) -> str:
         return 'Добавлена новая игра' + '\n' + '\n' + MessageText.match_data(match)

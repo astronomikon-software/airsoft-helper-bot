@@ -65,6 +65,9 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
 
     elif isinstance(state, VeiwByGenreState):
         return veiw_by_genre_presentation(state)
+    
+    elif isinstance(state, VeiwByDurationState):
+        return veiw_by_duration_presentation(state)
 
     elif isinstance(state, VeiwByLonelinessState):
         return veiw_by_loneliness_presentation(state)
@@ -243,6 +246,17 @@ def edit_match_presentation(state: EditMatchState):
     elif state.progress == EditMatchProgress.START_TIME_AGAIN:
         markup = types.InlineKeyboardMarkup()
         return ScreenPresentation(markup, MessageText.SET_DATETIME_AGAIN)
+    elif state.progress == EditMatchProgress.DURATION:
+        markup = types.InlineKeyboardMarkup()
+        durations = duration_repository.read_all()
+        for duration in durations:
+            markup.add(
+                create_button(
+                    text=duration.name, 
+                    callback=duration.id
+                )
+            )
+        return ScreenPresentation(markup, MessageText.SET_DURATION)
     elif state.progress == EditMatchProgress.PLACE:
         markup = types.InlineKeyboardMarkup()
         return ScreenPresentation(markup, MessageText.SET_PLACE)
@@ -256,6 +270,12 @@ def edit_match_presentation(state: EditMatchState):
                     callback=group.id
                 )
             )
+        markup.add(
+            create_button(
+                text=ButtonName.NEXT_STEP, 
+                callback=ButtonCallback.NEXT_STEP
+            )
+        )
         return ScreenPresentation(markup, MessageText.SET_GROUP)
     elif state.progress == EditMatchProgress.GENRE:
         markup = types.InlineKeyboardMarkup()
@@ -267,6 +287,12 @@ def edit_match_presentation(state: EditMatchState):
                     callback=genre.id
                 )
             )
+        markup.add(
+            create_button(
+                text=ButtonName.NEXT_STEP, 
+                callback=ButtonCallback.NEXT_STEP
+            )
+        )
         return ScreenPresentation(markup, MessageText.SET_GENRE)
     elif state.progress == EditMatchProgress.IS_LONELINESS_FRIENDLY:
         markup = types.InlineKeyboardMarkup()
@@ -283,9 +309,12 @@ def edit_match_presentation(state: EditMatchState):
             ) 
         )
         return ScreenPresentation(markup, MessageText.SET_LONELINESS)
-    if state.progress == EditMatchProgress.URL:
+    elif state.progress == EditMatchProgress.URL:
         markup = types.InlineKeyboardMarkup()
         return ScreenPresentation(markup, MessageText.SET_URL)
+    elif state.progress == EditMatchProgress.ANNOTATION:
+        markup = types.InlineKeyboardMarkup()
+        return ScreenPresentation(markup, MessageText.SET_ANNOTATION)
     elif state.progress == EditMatchProgress.CONFIRMATION:
         markup = types.InlineKeyboardMarkup()
         markup.add(
@@ -402,6 +431,12 @@ def filters_presentation(state: FiltersState):
         create_button(
             text=ButtonName.GENRES, 
             callback=ButtonCallback.CHOOSE_GENRE
+        )
+    )
+    markup.add(
+        create_button(
+            text=ButtonName.DURATION, 
+            callback=ButtonCallback.CHOOSE_DURATION
         )
     )
     markup.add(
@@ -674,6 +709,89 @@ def veiw_by_genre_presentation(state: VeiwByGenreState):
         return ScreenPresentation(markup, MessageText.match_data(match))
 
 
+def veiw_by_duration_presentation(state: VeiwByDurationState):
+    if state.progress == VeiwByDurationProgress.VEIW_DURATIONS:
+        markup = types.InlineKeyboardMarkup()
+        durations = duration_repository.read_all()
+        for duration in durations:
+            markup.add(
+                create_button(
+                    text=duration.name, 
+                    callback=duration.id
+                )
+            )
+        markup.add(
+            create_button(
+                text=ButtonName.GO_BACK, 
+                callback=ButtonCallback.FILTERS
+            ),
+            create_button(
+                text=ButtonName.MAIN_MENU, 
+                callback=ButtonCallback.MAIN_MENU
+            )
+        )
+        return ScreenPresentation(markup, MessageText.CHOOSE_DURATION)
+    elif state.progress == VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION:
+        markup = types.InlineKeyboardMarkup()
+        page_size = 8
+        matches = match_repository.read_by_duration(
+            duration_id=state.item_id,
+            limit=page_size, 
+            offset=((state.page_number - 1) * page_size)
+        )
+
+        if len(matches) == 0:
+            markup.add(
+                create_button(
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.SPECIAL_GO_BACK
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
+                )
+            )
+            return ScreenPresentation(markup, MessageText.NO_MATCHES_FOUND)
+        elif len(matches) > 0:
+            for match in matches:
+                markup.add(
+                    create_button(
+                        text=ButtonName.small_match_data(match), 
+                        callback=match.id
+                    )
+                )
+            markup = add_navigation(
+                markup=markup,
+                page_size=page_size,
+                page_number=state.page_number,
+                number_of_matches=match_repository.count_by_duration(state.item_id)
+            )
+            markup.add(
+                create_button(
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.SPECIAL_GO_BACK
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
+                )
+            )
+            return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
+    elif state.progress == VeiwByDurationProgress.VEIW_ONE_FILTERED_BY_DURATION:
+        markup = types.InlineKeyboardMarkup()
+        match = match_repository.read(state.match_id)
+        markup.add(
+            create_button(
+                text=ButtonName.GO_BACK, 
+                callback=ButtonCallback.SPECIAL_GO_BACK
+            ),
+            create_button(
+                text=ButtonName.MAIN_MENU, 
+                callback=ButtonCallback.MAIN_MENU
+            )
+        )
+        return ScreenPresentation(markup, MessageText.match_data(match))
+
 def veiw_by_loneliness_presentation(state: VeiwByLonelinessState):
     if state.progress == VeiwByLonelinessProgress.CHOOSE_LONELINESS_STATUS:
         markup = types.InlineKeyboardMarkup()
@@ -829,6 +947,19 @@ def update_match_presentation(state: UpdateMatchState):
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
             MessageText.match_data(state.new_match) + '\n' + '\n' + \
                 MessageText.SET_DATETIME_AGAIN)
+    elif state.progress == UpdateMatchProgress.UPDATE_DURATION:
+        markup = types.InlineKeyboardMarkup()
+        durations = duration_repository.read_all()
+        for duration in durations:
+            markup.add(
+                create_button(
+                    text=duration.name, 
+                    callback=duration.id
+                )
+            )
+        return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
+            MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                MessageText.SET_DURATION)
     elif state.progress == UpdateMatchProgress.UPDATE_PLACE:
         markup = types.InlineKeyboardMarkup()
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
@@ -844,6 +975,12 @@ def update_match_presentation(state: UpdateMatchState):
                     callback=group.id
                 )
             )
+        markup.add(
+            create_button(
+                text=ButtonName.NEXT_STEP,
+                callback=ButtonCallback.NEXT_STEP
+            )
+        )
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
             MessageText.match_data(state.new_match) + '\n' + '\n' + \
                 MessageText.SET_GROUP)
@@ -857,6 +994,12 @@ def update_match_presentation(state: UpdateMatchState):
                     callback=genre.id
                 )
             )
+        markup.add(
+            create_button(
+                text=ButtonName.NEXT_STEP,
+                callback=ButtonCallback.NEXT_STEP
+            )
+        )
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
             MessageText.match_data(state.new_match) + '\n' + '\n' + \
                 MessageText.SET_GENRE)
@@ -882,6 +1025,11 @@ def update_match_presentation(state: UpdateMatchState):
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
             MessageText.match_data(state.new_match) + '\n' + '\n' + \
                 MessageText.SET_URL)
+    elif state.progress == UpdateMatchProgress.UPDATE_ANNOTATION:
+        markup = types.InlineKeyboardMarkup()
+        return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
+            MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                MessageText.SET_ANNOTATION)
     elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS:
         markup = types.InlineKeyboardMarkup()
         markup.add(
@@ -894,6 +1042,12 @@ def update_match_presentation(state: UpdateMatchState):
             create_button(
                 text=ButtonName.UPDATE_START_TIME,
                 callback=ButtonCallback.UPDATE_START_TIME
+            )
+        )
+        markup.add(
+            create_button(
+                text=ButtonName.UPDATE_DURATION,
+                callback=ButtonCallback.UPDATE_DURATION
             )
         )
         markup.add(
@@ -924,6 +1078,12 @@ def update_match_presentation(state: UpdateMatchState):
             create_button(
                 text=ButtonName.UPDATE_URL,
                 callback=ButtonCallback.UPDATE_URL
+            )
+        )
+        markup.add(
+            create_button(
+                text=ButtonName.UPDATE_ANNOTATION,
+                callback=ButtonCallback.UPDATE_ANNOTATION
             )
         )
         markup.add(
