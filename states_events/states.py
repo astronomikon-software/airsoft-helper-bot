@@ -24,6 +24,9 @@ class HowToState(BotState):
 class HelpState(BotState):
     pass
 
+class DonateState(BotState):
+    pass
+
 #schedule branch
 
 class ScheduleState(BotState):

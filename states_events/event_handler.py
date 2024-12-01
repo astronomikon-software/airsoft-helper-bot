@@ -70,6 +70,7 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
             ButtonCallback.CHOOSE_GAME_TO_UPDATE: UpdateMatchState,
             ButtonCallback.HELP: HelpState,
             ButtonCallback.SUBSCRIBE: SubscriptionState,
+            ButtonCallback.DONATE: DonateState,
         }[event.callback]
         if state_class is not None:
             if state_class is EditMatchState:

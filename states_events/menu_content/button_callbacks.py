@@ -45,5 +45,6 @@ class ButtonCallback: #Enūma Eliš?..
     SUBSCRIBE = 'subscribe'
     CREATE_SUBSCRIPTION = 'create_subscription'
     DELETE_SUBSCRIPTION = 'delete_subscription'
-    NEXT_MONTH = 'NEXT_MONTH'
-    PREVIOUS_MONTH = 'PREVIOUS_MONTH'
+    NEXT_MONTH = 'next_month'
+    PREVIOUS_MONTH = 'previous_month'
+    DONATE = 'donate'

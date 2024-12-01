@@ -41,6 +41,9 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
     
     elif isinstance(state, HelpState):
         return help_presentation(state)
+    
+    elif isinstance(state, DonateState):
+        return donate_presentation(state)
 
     elif isinstance(state, OrganisersState):
         return organisers_presentation(state, user)
@@ -123,6 +126,12 @@ def main_menu_presentation(state: MainMenuState):
             callback=ButtonCallback.HELP
         )
     )
+    markup.add(
+        create_button(
+            text=ButtonName.DONATE,
+            callback=ButtonCallback.DONATE
+        )
+    )
     return ScreenPresentation(markup, MessageText.HELLO)
 
 
@@ -157,6 +166,17 @@ def help_presentation(state: HelpState):
         )
     )
     return ScreenPresentation(markup, MessageText.HELP)
+
+
+def donate_presentation(state: DonateState):
+    markup = types.InlineKeyboardMarkup()
+    markup.add(
+        create_button(
+            text=ButtonName.MAIN_MENU, 
+            callback=ButtonCallback.MAIN_MENU
+        )
+    )
+    return ScreenPresentation(markup, MessageText.DONATE)
 
 
 def schedule_presentation(state: ScheduleState):
