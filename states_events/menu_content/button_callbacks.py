@@ -19,6 +19,7 @@ class ButtonCallback: #Enūma Eliš?..
     CHOOSE_GENRE = 'choose_genre'
     CHOOSE_GROUP = 'choose_group'
     CHOOSE_PLACE = 'choose_place'
+    CHOOSE_DATE = 'choose_date'
     CHOOSE_GAME_TO_UPDATE = 'choose_game_to_update'
     TRUE = 'True'
     FALSE = 'False'
@@ -44,3 +45,5 @@ class ButtonCallback: #Enūma Eliš?..
     SUBSCRIBE = 'subscribe'
     CREATE_SUBSCRIPTION = 'create_subscription'
     DELETE_SUBSCRIPTION = 'delete_subscription'
+    NEXT_MONTH = 'NEXT_MONTH'
+    PREVIOUS_MONTH = 'PREVIOUS_MONTH'

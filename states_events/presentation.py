@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from mapping.confirmation_mapping import str_to_bool
 from mapping.datetime_mapping import int_time_to_str
 from model.user import User
@@ -12,6 +14,7 @@ from repository.repository_initiation import *
 
 from utils.button_util import create_button
 from utils.paging_util import add_navigation
+from utils.calendar_util import shift_date, add_calendar
 
 
 class ScreenPresentation:
@@ -59,6 +62,9 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
     
     elif isinstance(state, VeiwByPlaceState):
         return veiw_by_place_presentation(state)
+    
+    elif isinstance(state, VeiwByDateState):
+        return veiw_by_date_presentation(state)
 
     elif isinstance(state, VeiwByGroupState):
         return veiw_by_group_presentation(state)
@@ -423,6 +429,12 @@ def filters_presentation(state: FiltersState):
     )
     markup.add(
         create_button(
+            text=ButtonName.DATES, 
+            callback=ButtonCallback.CHOOSE_DATE
+        )
+    )
+    markup.add(
+        create_button(
             text=ButtonName.GROUPS, 
             callback=ButtonCallback.CHOOSE_GROUP
         )
@@ -527,6 +539,82 @@ def veiw_by_place_presentation(state: VeiwByPlaceState):
             )
             return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
     elif state.progress == VeiwByPlaceProgress.VEIW_ONE_FILTERED_BY_PLACE:
+        markup = types.InlineKeyboardMarkup()
+        match = match_repository.read(state.match_id)
+        markup.add(
+            create_button(
+                text=ButtonName.GO_BACK, 
+                callback=ButtonCallback.SPECIAL_GO_BACK
+            ),
+            create_button(
+                text=ButtonName.MAIN_MENU, 
+                callback=ButtonCallback.MAIN_MENU
+            )
+        )
+        return ScreenPresentation(markup, MessageText.match_data(match))
+
+
+def veiw_by_date_presentation(state: VeiwByDateState):
+    if state.progress == VeiwByDateProgress.VEIW_DATES:
+        markup = types.InlineKeyboardMarkup(row_width=7)
+
+        date_to_work = shift_date(datetime.now(), state.month_offset)
+        markup = add_calendar(markup, date_to_work)
+
+        markup.add(
+            create_button(
+                text=ButtonName.PREVIOUS_PAGE,
+                callback=ButtonCallback.PREVIOUS_MONTH
+            ),
+            create_button(
+                text=ButtonName.GO_BACK,
+                callback=ButtonCallback.FILTERS
+            ),
+            create_button(
+                text=ButtonName.MAIN_MENU,
+                callback=ButtonCallback.MAIN_MENU
+            ),
+            create_button(
+                text=ButtonName.NEXT_PAGE,
+                callback=ButtonCallback.NEXT_MONTH
+            )
+        )
+        return ScreenPresentation(markup, MessageText.CHOOSE_DATE)
+    elif state.progress == VeiwByDateProgress.VEIW_FILTERED_BY_DATE:
+        markup = types.InlineKeyboardMarkup()
+        matches = match_repository.read_by_date(state.date)
+        if len(matches) == 0:
+            markup.add(
+                create_button(
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.SPECIAL_GO_BACK
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
+                )
+            )
+            return ScreenPresentation(markup, MessageText.NO_MATCHES_FOUND_THIS_DAY)
+        elif len(matches) > 0:
+            for match in matches:
+                markup.add(
+                    create_button(
+                        text=ButtonName.small_match_data(match), 
+                        callback=match.id
+                    )
+                )
+            markup.add(
+                create_button(
+                    text=ButtonName.GO_BACK, 
+                    callback=ButtonCallback.SPECIAL_GO_BACK
+                ),
+                create_button(
+                    text=ButtonName.MAIN_MENU, 
+                    callback=ButtonCallback.MAIN_MENU
+                )
+            )
+            return ScreenPresentation(markup, MessageText.LIST_OF_MATCHES)
+    elif state.progress == VeiwByDateProgress.VEIW_ONE_FILTERED_BY_DATE:
         markup = types.InlineKeyboardMarkup()
         match = match_repository.read(state.match_id)
         markup.add(

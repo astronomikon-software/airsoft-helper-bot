@@ -152,6 +152,13 @@ class MatchRepository:
         )[0][0]
         return number
     
+    def read_by_date(self, date: int) -> list[Match]:
+        rows = self.db_provider.execute_read_query(
+            '''SELECT * FROM matches WHERE start_time = %s ORDER BY start_time;''',
+            (int_to_datetime(date),)
+        )
+        return list(map(match_from_row, rows))
+
     def read_ongoing(self, limit: int, offset: int) -> list[Match]:
         rows = self.db_provider.execute_read_query(
             '''SELECT * FROM matches WHERE start_time > NOW() ORDER BY start_time LIMIT %s OFFSET %s;''',

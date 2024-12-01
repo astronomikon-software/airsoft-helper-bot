@@ -131,6 +131,23 @@ class VeiwByDurationState(BotState):
         self.progress = progress
         self.page_number = page_number
 
+class VeiwByDateProgress():
+    VEIW_DATES = 'VEIW_DATES'
+    VEIW_FILTERED_BY_DATE = 'VEIW_FILTERED_BY_DATE'
+    VEIW_ONE_FILTERED_BY_DATE = 'VEIW_ONE_FILTERED_BY_DATE'
+
+class VeiwByDateState(BotState):
+    progress: VeiwByDateProgress
+    month_offset: int
+    date: int
+    match_id: int
+
+    def __init__(self, progress: VeiwByDateProgress, month_offset: int, date: int, match_id: int):
+        self.progress = progress
+        self.month_offset = month_offset
+        self.date = date
+        self.match_id = match_id
+
 # subscription branch
 
 class SubscriptionState(BotState):

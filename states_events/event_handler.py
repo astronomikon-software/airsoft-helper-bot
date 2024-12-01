@@ -8,7 +8,7 @@ from states_events.states import *
 from states_events.events import *
 
 from utils.datetime_util import check_datetime_format
-from mapping.datetime_mapping import str_time_to_int
+from mapping.datetime_mapping import str_time_to_int, str_to_datetime
 from mapping.loneliness_mapping import str_to_loneliness
 from mapping.confirmation_mapping import str_to_confirmation
 
@@ -41,6 +41,9 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
     if isinstance(state, VeiwByLonelinessState) and isinstance(event, ButtonEvent):
         return on_veiw_by_loneliness_state(state, event)
     
+    if isinstance(state, VeiwByDateState) and isinstance(event, ButtonEvent):
+        return on_veiw_by_date_state(state, event)
+    
     if isinstance(state, UpdateMatchState) and user.is_admin:
         return on_update_match_state(state, event)
     
@@ -59,6 +62,7 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
             ButtonCallback.CHOOSE_GROUP: VeiwByGroupState,
             ButtonCallback.CHOOSE_GENRE: VeiwByGenreState,
             ButtonCallback.CHOOSE_DURATION: VeiwByDurationState,
+            ButtonCallback.CHOOSE_DATE: VeiwByDateState,
             ButtonCallback.LONELINESS: VeiwByLonelinessState,
             ButtonCallback.ORGANISERS: OrganisersState,
             ButtonCallback.SET_DATETIME: EditMatchState,
@@ -92,6 +96,8 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
                 return state_class(0, 0, VeiwByGenreProgress.VEIW_GENRES, 1)
             elif state_class is VeiwByDurationState:
                 return state_class(0, 0, VeiwByDurationProgress.VEIW_DURATIONS, 1)
+            elif state_class is VeiwByDateState:
+                return state_class(VeiwByDateProgress.VEIW_DATES, 0, 0, 0)
             elif state_class is VeiwByLonelinessState:
                 return state_class(ButtonCallback.FALSE, 0, VeiwByLonelinessProgress.CHOOSE_LONELINESS_STATUS, 1)
             elif state_class is UpdateMatchState:
@@ -243,10 +249,10 @@ def on_calendar_state(state: CalendarState, event: ButtonEvent):
             page_number=state.page_number-1,
             progress=CalendarProgress.VEIW_ALL
         )
-    if event.callback == ButtonCallback.VOID \
-        and state.progress == CalendarProgress.VEIW_ALL: # Шутка юмора. Но я не знаю, что тут ещё придумать
-        print(event.callback)
-        print('may the void be with you eternally')
+    # if event.callback == ButtonCallback.VOID \
+    #     and state.progress == CalendarProgress.VEIW_ALL: # Шутка юмора. Но я не знаю, что тут ещё придумать
+    #     print(event.callback)
+    #     print('may the void be with you eternally')
     if state.progress == CalendarProgress.VEIW_ALL:
         return CalendarState(
             match_id=int(event.callback),
@@ -498,6 +504,58 @@ def on_veiw_by_loneliness_state(state: VeiwByLonelinessState, event: ButtonEvent
             page_number=state.page_number,
             progress=VeiwByLonelinessProgress.VEIW_ONE_FILTERED_BY_LONELINESS
         )
+
+
+def on_veiw_by_date_state(state: VeiwByDateState, event: ButtonEvent):
+    if state.progress == VeiwByDateProgress.VEIW_DATES: # решил оформление по условиям слегка поменять
+        if event.callback == ButtonCallback.FILTERS:
+            return FiltersState()       
+        if event.callback == ButtonCallback.NEXT_MONTH:
+            return VeiwByDateState(
+                progress=VeiwByDateProgress.VEIW_DATES,
+                month_offset=state.month_offset+1,
+                date=state.date,
+                match_id=state.match_id
+            )
+        if event.callback == ButtonCallback.PREVIOUS_MONTH:
+            return VeiwByDateState(
+                progress=VeiwByDateProgress.VEIW_DATES,
+                month_offset=state.month_offset-1,
+                date=state.date,
+                match_id=state.match_id
+            )
+        # if event.callback == ButtonCallback.VOID:
+        #     return state
+        else:
+            return VeiwByDateState(
+                progress=VeiwByDateProgress.VEIW_FILTERED_BY_DATE,
+                month_offset=state.month_offset,
+                date=int(event.callback),
+                match_id=state.match_id
+            )
+    if state.progress == VeiwByDateProgress.VEIW_FILTERED_BY_DATE:
+        if event.callback == ButtonCallback.SPECIAL_GO_BACK:
+            return VeiwByDateState(
+                progress=VeiwByDateProgress.VEIW_DATES,
+                month_offset=state.month_offset,
+                date=state.date,
+                match_id=state.match_id
+            )
+        else:
+            return VeiwByDateState(
+                progress=VeiwByDateProgress.VEIW_ONE_FILTERED_BY_DATE,
+                month_offset=state.month_offset,
+                date=state.date,
+                match_id=int(event.callback)
+            )
+    if state.progress == VeiwByDateProgress.VEIW_ONE_FILTERED_BY_DATE \
+        and event.callback == ButtonCallback.SPECIAL_GO_BACK:
+        return VeiwByDateState(
+                progress=VeiwByDateProgress.VEIW_FILTERED_BY_DATE,
+                month_offset=state.month_offset,
+                date=state.date,
+                match_id=state.match_id
+            )
 
 
 # Вспоминаются времена, когда я лежал в больнице. Как я гулял по территории. Как ждал Анну. Мне её очень не хватает.

@@ -7,10 +7,10 @@ from states_events.menu_content.button_callbacks import ButtonCallback
 def add_navigation(markup: types.InlineKeyboardMarkup, page_size: int, page_number: int, number_of_matches: int):
     if page_number == 1 and number_of_matches > page_size: # first page
         return markup.add(
-            create_button(
-                text=str(page_number), 
-                callback=ButtonCallback.VOID
-            ),
+            # create_button(
+            #     text=str(page_number), 
+            #     callback=ButtonCallback.VOID
+            # ),
             create_button(
                 text=ButtonName.NEXT_PAGE,
                 callback=ButtonCallback.NEXT_PAGE
@@ -22,10 +22,10 @@ def add_navigation(markup: types.InlineKeyboardMarkup, page_size: int, page_numb
                 text=ButtonName.PREVIOUS_PAGE, 
                 callback=ButtonCallback.PREVIOUS_PAGE
             ),
-            create_button(
-                text=str(page_number), 
-                callback=ButtonCallback.VOID
-            ),
+            # create_button(
+            #     text=str(page_number), 
+            #     callback=ButtonCallback.VOID
+            # ),
             create_button(
                 text=ButtonName.NEXT_PAGE, 
                 callback=ButtonCallback.NEXT_PAGE
@@ -37,10 +37,10 @@ def add_navigation(markup: types.InlineKeyboardMarkup, page_size: int, page_numb
                 text=ButtonName.PREVIOUS_PAGE,
                 callback=ButtonCallback.PREVIOUS_PAGE
             ),
-            create_button(
-                text=str(page_number), 
-                callback=ButtonCallback.VOID
-            )
+            # create_button(
+            #     text=str(page_number), 
+            #     callback=ButtonCallback.VOID
+            # )
         )
     elif number_of_matches <= page_size: # the only page 
         return markup
