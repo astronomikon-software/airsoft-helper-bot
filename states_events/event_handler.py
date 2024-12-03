@@ -8,7 +8,7 @@ from states_events.states import *
 from states_events.events import *
 
 from utils.datetime_util import check_datetime_format
-from mapping.datetime_mapping import str_time_to_int
+from mapping.datetime_mapping import str_time_to_int, str_to_datetime
 from mapping.loneliness_mapping import str_to_loneliness
 from mapping.confirmation_mapping import str_to_confirmation
 
@@ -35,8 +35,14 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
     if isinstance(state, VeiwByGenreState) and isinstance(event, ButtonEvent):
         return on_veiw_by_genre_state(state, event)
     
+    if isinstance(state, VeiwByDurationState) and isinstance(event, ButtonEvent):
+        return on_veiw_by_duration_state(state, event)
+    
     if isinstance(state, VeiwByLonelinessState) and isinstance(event, ButtonEvent):
         return on_veiw_by_loneliness_state(state, event)
+    
+    if isinstance(state, VeiwByDateState) and isinstance(event, ButtonEvent):
+        return on_veiw_by_date_state(state, event)
     
     if isinstance(state, UpdateMatchState) and user.is_admin:
         return on_update_match_state(state, event)
@@ -55,6 +61,8 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
             ButtonCallback.CHOOSE_PLACE: VeiwByPlaceState,
             ButtonCallback.CHOOSE_GROUP: VeiwByGroupState,
             ButtonCallback.CHOOSE_GENRE: VeiwByGenreState,
+            ButtonCallback.CHOOSE_DURATION: VeiwByDurationState,
+            ButtonCallback.CHOOSE_DATE: VeiwByDateState,
             ButtonCallback.LONELINESS: VeiwByLonelinessState,
             ButtonCallback.ORGANISERS: OrganisersState,
             ButtonCallback.SET_DATETIME: EditMatchState,
@@ -62,6 +70,7 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
             ButtonCallback.CHOOSE_GAME_TO_UPDATE: UpdateMatchState,
             ButtonCallback.HELP: HelpState,
             ButtonCallback.SUBSCRIBE: SubscriptionState,
+            ButtonCallback.DONATE: DonateState,
         }[event.callback]
         if state_class is not None:
             if state_class is EditMatchState:
@@ -69,11 +78,13 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
                 id=0,
                 name='',
                 start_time=0,
+                duration_id=0,
                 place_name=0,
-                group_id=0,
-                genre_id=0,
+                group_id=list(),
+                genre_id=list(),
                 is_loneliness_friendly=False,
-                url=''
+                url='',
+                annotation=''
                 )
                 return state_class(match=match, progress=EditMatchProgress.NAME)
             elif state_class is CalendarState:
@@ -84,6 +95,10 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
                 return state_class(0, 0, VeiwByGroupProgress.VEIW_GROUPS, 1)
             elif state_class is VeiwByGenreState:
                 return state_class(0, 0, VeiwByGenreProgress.VEIW_GENRES, 1)
+            elif state_class is VeiwByDurationState:
+                return state_class(0, 0, VeiwByDurationProgress.VEIW_DURATIONS, 1)
+            elif state_class is VeiwByDateState:
+                return state_class(VeiwByDateProgress.VEIW_DATES, 0, 0, 0)
             elif state_class is VeiwByLonelinessState:
                 return state_class(ButtonCallback.FALSE, 0, VeiwByLonelinessProgress.CHOOSE_LONELINESS_STATUS, 1)
             elif state_class is UpdateMatchState:
@@ -118,7 +133,7 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
             match.start_time = str_time_to_int(event.text)
             return EditMatchState(
                 match=match,
-                progress=EditMatchProgress.PLACE,
+                progress=EditMatchProgress.DURATION,
             )
         except:
             return EditMatchState(
@@ -131,13 +146,20 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
             match.start_time = str_time_to_int(event.text)
             return EditMatchState(
                 match=match,
-                progress=EditMatchProgress.PLACE,
+                progress=EditMatchProgress.DURATION,
             )
         except:
             return EditMatchState(
                 match=match,
                 progress=EditMatchProgress.START_TIME_AGAIN,
             )
+    elif (state.progress == EditMatchProgress.DURATION) \
+        and isinstance(event, ButtonEvent):
+        match.duration_id = int(event.callback)
+        return EditMatchState(
+            match=match,
+            progress=EditMatchProgress.PLACE,
+        )
     elif (state.progress == EditMatchProgress.PLACE) \
         and isinstance(event, MessageEvent):
         match.place_name = event.text
@@ -147,18 +169,30 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
         )
     elif (state.progress == EditMatchProgress.GROUP) \
         and isinstance(event, ButtonEvent):
-        match.group_id = int(event.callback)
-        return EditMatchState(
-            match=match,
-            progress=EditMatchProgress.GENRE,
-        )
+        if event.callback == ButtonCallback.NEXT_STEP:
+            return EditMatchState(
+                match=match,
+                progress=EditMatchProgress.GENRE,
+            )
+        else:
+            match.group_id.append(int(event.callback))
+            return EditMatchState(
+                match=match,
+                progress=EditMatchProgress.GROUP,
+            )
     elif (state.progress == EditMatchProgress.GENRE) \
         and isinstance(event, ButtonEvent):
-        match.genre_id = int(event.callback)
-        return EditMatchState(
-            match=match,
-            progress=EditMatchProgress.IS_LONELINESS_FRIENDLY,
-        )
+        if event.callback == ButtonCallback.NEXT_STEP:
+            return EditMatchState(
+                match=match,
+                progress=EditMatchProgress.IS_LONELINESS_FRIENDLY,
+            )
+        else:
+            match.genre_id.append(int(event.callback))
+            return EditMatchState(
+                match=match,
+                progress=EditMatchProgress.GENRE,
+            )
     elif (state.progress == EditMatchProgress.IS_LONELINESS_FRIENDLY) \
         and isinstance(event, ButtonEvent):
         match.is_loneliness_friendly = str_to_loneliness(event.callback)
@@ -169,6 +203,13 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
     elif (state.progress == EditMatchProgress.URL) \
         and isinstance(event, MessageEvent):
         match.url = event.text
+        return EditMatchState(
+            match=match,
+            progress=EditMatchProgress.ANNOTATION,
+        )
+    elif (state.progress == EditMatchProgress.ANNOTATION) \
+        and isinstance(event, MessageEvent):
+        match.annotation = event.text
         return EditMatchState(
             match=match,
             progress=EditMatchProgress.CONFIRMATION,
@@ -209,10 +250,10 @@ def on_calendar_state(state: CalendarState, event: ButtonEvent):
             page_number=state.page_number-1,
             progress=CalendarProgress.VEIW_ALL
         )
-    if event.callback == ButtonCallback.VOID \
-        and state.progress == CalendarProgress.VEIW_ALL: # Шутка юмора. Но я не знаю, что тут ещё придумать
-        print(event.callback)
-        print('may the void be with you eternally')
+    # if event.callback == ButtonCallback.VOID \
+    #     and state.progress == CalendarProgress.VEIW_ALL: # Шутка юмора. Но я не знаю, что тут ещё придумать
+    #     print(event.callback)
+    #     print('may the void be with you eternally')
     if state.progress == CalendarProgress.VEIW_ALL:
         return CalendarState(
             match_id=int(event.callback),
@@ -368,6 +409,55 @@ def on_veiw_by_genre_state(state: VeiwByGenreState, event: ButtonEvent):
         )
 
 
+def on_veiw_by_duration_state(state: VeiwByDurationState, event: ButtonEvent):
+    if event.callback == ButtonCallback.FILTERS:
+        return FiltersState()
+    if event.callback == ButtonCallback.SPECIAL_GO_BACK \
+        and state.progress == VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION:
+        return VeiwByDurationState(
+            item_id=0,
+            match_id=0,
+            page_number=0,
+            progress=VeiwByDurationProgress.VEIW_DURATIONS
+        )
+    if event.callback == ButtonCallback.SPECIAL_GO_BACK \
+        and state.progress == VeiwByDurationProgress.VEIW_ONE_FILTERED_BY_DURATION:
+        return VeiwByDurationState(
+            item_id=state.item_id,
+            match_id=0,
+            page_number=state.page_number,
+            progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
+        )
+    if event.callback == ButtonCallback.NEXT_PAGE:
+        return VeiwByDurationState(
+            item_id=state.item_id,
+            match_id=0,
+            page_number=state.page_number+1,
+            progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
+        )
+    if event.callback == ButtonCallback.PREVIOUS_PAGE:
+        return VeiwByDurationState(
+            item_id=state.item_id,
+            match_id=0,
+            page_number=state.page_number-1,
+            progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
+        )
+    if state.progress == VeiwByDurationProgress.VEIW_DURATIONS:
+        return VeiwByDurationState(
+            item_id=event.callback,
+            match_id=0,
+            page_number=1,
+            progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
+        )
+    if state.progress == VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION:
+        return VeiwByDurationState(
+            item_id=state.item_id,
+            match_id=event.callback,
+            page_number=state.page_number,
+            progress=VeiwByDurationProgress.VEIW_ONE_FILTERED_BY_DURATION
+        )
+
+
 def on_veiw_by_loneliness_state(state: VeiwByLonelinessState, event: ButtonEvent):
     if event.callback == ButtonCallback.FILTERS:
         return FiltersState()
@@ -415,6 +505,58 @@ def on_veiw_by_loneliness_state(state: VeiwByLonelinessState, event: ButtonEvent
             page_number=state.page_number,
             progress=VeiwByLonelinessProgress.VEIW_ONE_FILTERED_BY_LONELINESS
         )
+
+
+def on_veiw_by_date_state(state: VeiwByDateState, event: ButtonEvent):
+    if state.progress == VeiwByDateProgress.VEIW_DATES: # решил оформление по условиям слегка поменять
+        if event.callback == ButtonCallback.FILTERS:
+            return FiltersState()       
+        if event.callback == ButtonCallback.NEXT_MONTH:
+            return VeiwByDateState(
+                progress=VeiwByDateProgress.VEIW_DATES,
+                month_offset=state.month_offset+1,
+                date=state.date,
+                match_id=state.match_id
+            )
+        if event.callback == ButtonCallback.PREVIOUS_MONTH:
+            return VeiwByDateState(
+                progress=VeiwByDateProgress.VEIW_DATES,
+                month_offset=state.month_offset-1,
+                date=state.date,
+                match_id=state.match_id
+            )
+        # if event.callback == ButtonCallback.VOID:
+        #     return state
+        else:
+            return VeiwByDateState(
+                progress=VeiwByDateProgress.VEIW_FILTERED_BY_DATE,
+                month_offset=state.month_offset,
+                date=int(event.callback),
+                match_id=state.match_id
+            )
+    if state.progress == VeiwByDateProgress.VEIW_FILTERED_BY_DATE:
+        if event.callback == ButtonCallback.SPECIAL_GO_BACK:
+            return VeiwByDateState(
+                progress=VeiwByDateProgress.VEIW_DATES,
+                month_offset=state.month_offset,
+                date=state.date,
+                match_id=state.match_id
+            )
+        else:
+            return VeiwByDateState(
+                progress=VeiwByDateProgress.VEIW_ONE_FILTERED_BY_DATE,
+                month_offset=state.month_offset,
+                date=state.date,
+                match_id=int(event.callback)
+            )
+    if state.progress == VeiwByDateProgress.VEIW_ONE_FILTERED_BY_DATE \
+        and event.callback == ButtonCallback.SPECIAL_GO_BACK:
+        return VeiwByDateState(
+                progress=VeiwByDateProgress.VEIW_FILTERED_BY_DATE,
+                month_offset=state.month_offset,
+                date=state.date,
+                match_id=state.match_id
+            )
 
 
 # Вспоминаются времена, когда я лежал в больнице. Как я гулял по территории. Как ждал Анну. Мне её очень не хватает.
@@ -509,6 +651,16 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
                 progress=UpdateMatchProgress.UPDATE_START_TIME_AGAIN,
                 page_number=1,
             )
+    elif state.progress == UpdateMatchProgress.UPDATE_DURATION \
+        and isinstance(event, ButtonEvent):
+        updating_match = state.new_match
+        updating_match.duration_id = int(event.callback)
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=updating_match,
+            progress=UpdateMatchProgress.COMPARING_EDITIONS,
+            page_number=1,
+        )
     elif state.progress == UpdateMatchProgress.UPDATE_PLACE \
         and isinstance(event, MessageEvent):
         updating_match = state.new_match
@@ -522,23 +674,39 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
     elif state.progress == UpdateMatchProgress.UPDATE_GROUP \
         and isinstance(event, ButtonEvent):
         updating_match = state.new_match
-        updating_match.group_id = int(event.callback)
-        return UpdateMatchState(
-            old_match=state.old_match,
-            new_match=updating_match,
-            progress=UpdateMatchProgress.COMPARING_EDITIONS,
-            page_number=1,
-        )
-    elif state.progress == UpdateMatchProgress.UPDATE_GENRE\
+        if event.callback == ButtonCallback.NEXT_STEP:
+            return UpdateMatchState(
+                old_match=state.old_match,
+                new_match=updating_match,
+                progress=UpdateMatchProgress.COMPARING_EDITIONS,
+                page_number=1,
+            )
+        else:
+            updating_match.group_id.append(int(event.callback))
+            return UpdateMatchState(
+                old_match=state.old_match,
+                new_match=updating_match,
+                progress=UpdateMatchProgress.UPDATE_GROUP,
+                page_number=1,
+            )
+    elif state.progress == UpdateMatchProgress.UPDATE_GENRE \
         and isinstance(event, ButtonEvent):
         updating_match = state.new_match
-        updating_match.genre_id = int(event.callback)
-        return UpdateMatchState(
-            old_match=state.old_match,
-            new_match=updating_match,
-            progress=UpdateMatchProgress.COMPARING_EDITIONS,
-            page_number=1,
-        )
+        if event.callback == ButtonCallback.NEXT_STEP:
+            return UpdateMatchState(
+                old_match=state.old_match,
+                new_match=updating_match,
+                progress=UpdateMatchProgress.COMPARING_EDITIONS,
+                page_number=1,
+            )
+        else:
+            updating_match.genre_id.append(int(event.callback))
+            return UpdateMatchState(
+                old_match=state.old_match,
+                new_match=updating_match,
+                progress=UpdateMatchProgress.UPDATE_GENRE,
+                page_number=1,
+            )
     elif state.progress == UpdateMatchProgress.UPDATE_LONELINESS \
         and isinstance(event, ButtonEvent):
         updating_match = state.new_match
@@ -553,6 +721,16 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
         and isinstance(event, MessageEvent):
         updating_match = state.new_match
         updating_match.url = event.text
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=state.new_match,
+            progress=UpdateMatchProgress.COMPARING_EDITIONS,
+            page_number=1,
+        )
+    elif state.progress == UpdateMatchProgress.UPDATE_ANNOTATION \
+        and isinstance(event, MessageEvent):
+        updating_match = state.new_match
+        updating_match.annotation = event.text
         return UpdateMatchState(
             old_match=state.old_match,
             new_match=state.new_match,
@@ -576,6 +754,14 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
             page_number=1,
         )
     elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
+        and event.callback == ButtonCallback.UPDATE_DURATION:
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=state.new_match,
+            progress=UpdateMatchProgress.UPDATE_DURATION,
+            page_number=1,
+        )
+    elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
         and event.callback == ButtonCallback.UPDATE_PLACE:
         return UpdateMatchState(
             old_match=state.old_match,
@@ -585,17 +771,21 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
         )
     elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
         and event.callback == ButtonCallback.UPDATE_GROUP:
+        new_match = state.new_match
+        new_match.group_id = list()
         return UpdateMatchState(
             old_match=state.old_match,
-            new_match=state.new_match,
+            new_match=new_match,
             progress=UpdateMatchProgress.UPDATE_GROUP,
             page_number=1,
         )
     elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
         and event.callback == ButtonCallback.UPDATE_GENRE:
+        new_match = state.new_match
+        new_match.genre_id = list()
         return UpdateMatchState(
             old_match=state.old_match,
-            new_match=state.new_match,
+            new_match=new_match,
             progress=UpdateMatchProgress.UPDATE_GENRE,
             page_number=1,
         )
@@ -613,6 +803,14 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
             old_match=state.old_match,
             new_match=state.new_match,
             progress=UpdateMatchProgress.UPDATE_URL,
+            page_number=1,
+        )
+    elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \
+        and event.callback == ButtonCallback.UPDATE_ANNOTATION:
+        return UpdateMatchState(
+            old_match=state.old_match,
+            new_match=state.new_match,
+            progress=UpdateMatchProgress.UPDATE_ANNOTATION,
             page_number=1,
         )
     elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS \

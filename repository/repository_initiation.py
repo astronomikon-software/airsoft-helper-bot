@@ -8,6 +8,7 @@ from repository.place_repository import PlaceRepository
 from repository.state_repository import StateRepository
 from repository.user_repository import UserRepository
 from repository.subscription_repository import SubscriptionRepository
+from repository.duration_repository import DurationRepository
 
 
 db_provider = DbProvider(
@@ -24,3 +25,4 @@ group_repository = GroupRepository(db_provider)
 genre_repository = GenreRepository(db_provider)
 place_repository = PlaceRepository(db_provider)
 subscription_repository = SubscriptionRepository(db_provider)
+duration_repository = DurationRepository(db_provider)

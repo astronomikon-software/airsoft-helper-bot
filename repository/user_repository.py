@@ -26,6 +26,10 @@ class UserRepository:
         )
         return user_from_row(rows[0])
 
+    def read_all(self) -> list[User]:
+        rows = self.db_provider.execute_read_query('''SELECT * from users''')
+        return list(map(user_from_row, rows))
+
     def update(self, user: User):
         self.db_provider.execute_query(
             '''UPDATE users SET is_admin = %s WHERE id = %s''', 

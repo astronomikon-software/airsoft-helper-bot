@@ -1,6 +1,8 @@
 import telebot
 import flask
 from flask import Flask
+import schedule
+import time
 
 import config
 
@@ -30,6 +32,7 @@ def handle_event(event: BotEvent, user_id: int) -> ScreenPresentation:
     screen_presentation = get_presentation(state=state, user=user)
     state_repository.update(state=state, user_id=user.id)
     return screen_presentation
+
 
 @bot.message_handler()
 def toll_the_great_bell_once(message):
@@ -78,6 +81,18 @@ def toll_the_great_bell_thrice(callback):
         )
     except Exception as E:
         print(E)
+
+
+def check_notifications():
+    matches = match_repository.read_notificapable()
+    
+    if len(matches) > 0:
+        for user in user_repository.read_all():
+            bot.send_message(
+                chat_id=user.id, 
+                text=MessageText.delayed_announcement(matches)
+            )
+schedule.every().day.at('10:00').do(check_notifications)
 
 
 if config.USE_WEBHOOK:

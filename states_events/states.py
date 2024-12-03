@@ -24,6 +24,9 @@ class HowToState(BotState):
 class HelpState(BotState):
     pass
 
+class DonateState(BotState):
+    pass
+
 #schedule branch
 
 class ScheduleState(BotState):
@@ -114,6 +117,40 @@ class VeiwByLonelinessState(BotState):
         self.progress = progress
         self.page_number = page_number
 
+class VeiwByDurationProgress():
+    VEIW_DURATIONS = 'VEIW_DURATIONS'
+    VEIW_FILTERED_BY_DURATION = 'VEIW_FILTERED_BY_DURATION'
+    VEIW_ONE_FILTERED_BY_DURATION = 'VEIW_ONE_FILTERED_BY_DURATION'
+
+class VeiwByDurationState(BotState):
+    progress: VeiwByPlaceProgress
+    item_id: int
+    match_id: int
+    page_number: int
+
+    def __init__(self, item_id, match_id, progress, page_number):
+        self.item_id = item_id
+        self.match_id = match_id
+        self.progress = progress
+        self.page_number = page_number
+
+class VeiwByDateProgress():
+    VEIW_DATES = 'VEIW_DATES'
+    VEIW_FILTERED_BY_DATE = 'VEIW_FILTERED_BY_DATE'
+    VEIW_ONE_FILTERED_BY_DATE = 'VEIW_ONE_FILTERED_BY_DATE'
+
+class VeiwByDateState(BotState):
+    progress: VeiwByDateProgress
+    month_offset: int
+    date: int
+    match_id: int
+
+    def __init__(self, progress: VeiwByDateProgress, month_offset: int, date: int, match_id: int):
+        self.progress = progress
+        self.month_offset = month_offset
+        self.date = date
+        self.match_id = match_id
+
 # subscription branch
 
 class SubscriptionState(BotState):
@@ -145,6 +182,7 @@ class EditMatchProgress():
     GENRE = 'GENRE'
     IS_LONELINESS_FRIENDLY = 'IS_LONELINESS_FRIENDLY'
     URL = 'URL'
+    ANNOTATION = 'ANNOTATION'
     CONFIRMATION ='CONFIRMATION'
 
 class EditMatchState(BotState):
@@ -173,11 +211,13 @@ class UpdateMatchProgress():
     UPDATE_NAME = 'UPDATE_NAME'
     UPDATE_START_TIME = 'UPDATE_START_TIME'
     UPDATE_START_TIME_AGAIN = 'UPDATE_START_TIME_AGAIN'
+    UPDATE_DURATION = 'UPDATE_DURATION'
     UPDATE_PLACE = 'UPDATE_PLACE'
     UPDATE_GROUP = 'UPDATE_GROUP'
     UPDATE_GENRE = 'UPDATE_GENRE'
     UPDATE_LONELINESS = 'UPDATE_LONELINESS'
     UPDATE_URL = 'UPDATE_URL'
+    UPDATE_ANNOTATION = 'UPDATE_ANNOTATION'
     COMPARING_EDITIONS = 'COMPARING_EDITIONS'
     FINISH_UPDATING = 'FINISH_UPDATING'
 
