@@ -9,8 +9,9 @@ importlib_metadata==8.5.0
 itsdangerous==2.2.0
 Jinja2==3.1.4
 MarkupSafe==2.1.5
+psycopg2==2.9.10
 psycopg2-binary==2.9.1
-pyTelegramBotAPI==4.23.0
+pyTelegramBotAPI==4.25.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 requests==2.32.3
