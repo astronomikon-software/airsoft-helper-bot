@@ -35,8 +35,8 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
     if isinstance(state, VeiwByGenreState) and isinstance(event, ButtonEvent):
         return on_veiw_by_genre_state(state, event)
     
-    if isinstance(state, VeiwByDurationState) and isinstance(event, ButtonEvent):
-        return on_veiw_by_duration_state(state, event)
+    # if isinstance(state, VeiwByDurationState) and isinstance(event, ButtonEvent):
+    #     return on_veiw_by_duration_state(state, event)
     
     if isinstance(state, VeiwByLonelinessState) and isinstance(event, ButtonEvent):
         return on_veiw_by_loneliness_state(state, event)
@@ -78,7 +78,7 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
                 id=0,
                 name='',
                 start_time=0,
-                duration_id=0,
+                duration='',
                 place_name=0,
                 group_id=list(),
                 genre_id=list(),
@@ -95,8 +95,8 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
                 return state_class(0, 0, VeiwByGroupProgress.VEIW_GROUPS, 1)
             elif state_class is VeiwByGenreState:
                 return state_class(0, 0, VeiwByGenreProgress.VEIW_GENRES, 1)
-            elif state_class is VeiwByDurationState:
-                return state_class(0, 0, VeiwByDurationProgress.VEIW_DURATIONS, 1)
+            # elif state_class is VeiwByDurationState:
+            #     return state_class(0, 0, VeiwByDurationProgress.VEIW_DURATIONS, 1)
             elif state_class is VeiwByDateState:
                 return state_class(VeiwByDateProgress.VEIW_DATES, 0, 0, 0)
             elif state_class is VeiwByLonelinessState:
@@ -154,8 +154,8 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
                 progress=EditMatchProgress.START_TIME_AGAIN,
             )
     elif (state.progress == EditMatchProgress.DURATION) \
-        and isinstance(event, ButtonEvent):
-        match.duration_id = int(event.callback)
+        and isinstance(event, MessageEvent):
+        match.duration = event.text
         return EditMatchState(
             match=match,
             progress=EditMatchProgress.PLACE,
@@ -409,53 +409,53 @@ def on_veiw_by_genre_state(state: VeiwByGenreState, event: ButtonEvent):
         )
 
 
-def on_veiw_by_duration_state(state: VeiwByDurationState, event: ButtonEvent):
-    if event.callback == ButtonCallback.FILTERS:
-        return FiltersState()
-    if event.callback == ButtonCallback.SPECIAL_GO_BACK \
-        and state.progress == VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION:
-        return VeiwByDurationState(
-            item_id=0,
-            match_id=0,
-            page_number=0,
-            progress=VeiwByDurationProgress.VEIW_DURATIONS
-        )
-    if event.callback == ButtonCallback.SPECIAL_GO_BACK \
-        and state.progress == VeiwByDurationProgress.VEIW_ONE_FILTERED_BY_DURATION:
-        return VeiwByDurationState(
-            item_id=state.item_id,
-            match_id=0,
-            page_number=state.page_number,
-            progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
-        )
-    if event.callback == ButtonCallback.NEXT_PAGE:
-        return VeiwByDurationState(
-            item_id=state.item_id,
-            match_id=0,
-            page_number=state.page_number+1,
-            progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
-        )
-    if event.callback == ButtonCallback.PREVIOUS_PAGE:
-        return VeiwByDurationState(
-            item_id=state.item_id,
-            match_id=0,
-            page_number=state.page_number-1,
-            progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
-        )
-    if state.progress == VeiwByDurationProgress.VEIW_DURATIONS:
-        return VeiwByDurationState(
-            item_id=event.callback,
-            match_id=0,
-            page_number=1,
-            progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
-        )
-    if state.progress == VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION:
-        return VeiwByDurationState(
-            item_id=state.item_id,
-            match_id=event.callback,
-            page_number=state.page_number,
-            progress=VeiwByDurationProgress.VEIW_ONE_FILTERED_BY_DURATION
-        )
+# def on_veiw_by_duration_state(state: VeiwByDurationState, event: ButtonEvent):
+#     if event.callback == ButtonCallback.FILTERS:
+#         return FiltersState()
+#     if event.callback == ButtonCallback.SPECIAL_GO_BACK \
+#         and state.progress == VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION:
+#         return VeiwByDurationState(
+#             item_id=0,
+#             match_id=0,
+#             page_number=0,
+#             progress=VeiwByDurationProgress.VEIW_DURATIONS
+#         )
+#     if event.callback == ButtonCallback.SPECIAL_GO_BACK \
+#         and state.progress == VeiwByDurationProgress.VEIW_ONE_FILTERED_BY_DURATION:
+#         return VeiwByDurationState(
+#             item_id=state.item_id,
+#             match_id=0,
+#             page_number=state.page_number,
+#             progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
+#         )
+#     if event.callback == ButtonCallback.NEXT_PAGE:
+#         return VeiwByDurationState(
+#             item_id=state.item_id,
+#             match_id=0,
+#             page_number=state.page_number+1,
+#             progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
+#         )
+#     if event.callback == ButtonCallback.PREVIOUS_PAGE:
+#         return VeiwByDurationState(
+#             item_id=state.item_id,
+#             match_id=0,
+#             page_number=state.page_number-1,
+#             progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
+#         )
+#     if state.progress == VeiwByDurationProgress.VEIW_DURATIONS:
+#         return VeiwByDurationState(
+#             item_id=event.callback,
+#             match_id=0,
+#             page_number=1,
+#             progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
+#         )
+#     if state.progress == VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION:
+#         return VeiwByDurationState(
+#             item_id=state.item_id,
+#             match_id=event.callback,
+#             page_number=state.page_number,
+#             progress=VeiwByDurationProgress.VEIW_ONE_FILTERED_BY_DURATION
+#         )
 
 
 def on_veiw_by_loneliness_state(state: VeiwByLonelinessState, event: ButtonEvent):
@@ -652,9 +652,9 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
                 page_number=1,
             )
     elif state.progress == UpdateMatchProgress.UPDATE_DURATION \
-        and isinstance(event, ButtonEvent):
+        and isinstance(event, MessageEvent):
         updating_match = state.new_match
-        updating_match.duration_id = int(event.callback)
+        updating_match.duration = event.text
         return UpdateMatchState(
             old_match=state.old_match,
             new_match=updating_match,

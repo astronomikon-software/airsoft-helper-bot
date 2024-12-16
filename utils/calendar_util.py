@@ -44,7 +44,7 @@ def add_calendar(markup: types.InlineKeyboardMarkup, day: datetime) -> types.Inl
             if day == 0:
                 row_buttons.append(create_button(' ', callback=ButtonCallback.VOID))
             else:
-                row_buttons.append(create_button(text=str(day), callback=str(str_time_to_int(f'{day}.{month}.{year}'))))
+                row_buttons.append(create_button(text=str(day), callback=str(str_time_to_int(f'{day}.{month}.{year} 00:00'))))
         markup.add(*row_buttons)
 
     return markup

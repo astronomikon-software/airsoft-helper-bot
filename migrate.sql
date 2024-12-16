@@ -1,4 +1,3 @@
-DROP TABLE durations;
 DROP TABLE places;
 DROP TABLE groups;
 DROP TABLE genres;
@@ -8,11 +7,6 @@ DROP TABLE user_bot_states;
 DROP TABLE subscriptions;
 
 SET client_encoding TO 'UTF8';
-
-CREATE TABLE durations(
-    id BIGSERIAL NOT NULL PRIMARY KEY,
-    duration_name VARCHAR NOT NULL
-);
 
 CREATE TABLE places(
     id BIGSERIAL NOT NULL PRIMARY KEY,
@@ -44,7 +38,7 @@ CREATE TABLE matches(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     match_name VARCHAR NOT NULL,
     start_time TIMESTAMP NOT NULL,
-    duration_id BIGINT NOT NULL,
+    duration VARCHAR NOT NULL,
     place_name VARCHAR NOT NULL,
     group_id INT[] NOT NULL,
     genre_id INT[] NOT NULL,
@@ -58,9 +52,6 @@ CREATE TABLE subscriptions(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     user_id BIGINT NOT NULL
 );
-
-INSERT INTO durations(duration_name) VALUES('5 часов');
-INSERT INTO durations(duration_name) VALUES('22:00 до 02:00');
 
 INSERT INTO places(place_name) VALUES('Северный');
 INSERT INTO places(place_name) VALUES('Ольгино');
