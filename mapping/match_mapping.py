@@ -7,7 +7,7 @@ def match_from_row(row: tuple) -> Match:
         id = row[0],
         name = row[1],
         start_time = datetime_to_int(row[2]),
-        duration_id=row[3],
+        duration=row[3],
         place_name = row[4],
         group_id = row[5],
         genre_id = row[6],
@@ -21,7 +21,7 @@ def row_from_match(match: Match) -> tuple:
     row = (
         match.name,
         int_start_time,
-        match.duration_id,
+        match.duration,
         match.place_name,
         match.group_id,
         match.genre_id,

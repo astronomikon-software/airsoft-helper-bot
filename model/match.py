@@ -2,7 +2,7 @@ class Match:
     id: int
     name: str
     start_time: int
-    duration_id: int
+    duration: str
     place_name: str
     group_id: list[int]
     genre_id: list[int]
@@ -15,7 +15,7 @@ class Match:
             id: int,
             name: str,
             start_time: int,
-            duration_id: int,
+            duration: str,
             place_name: str,
             group_id: list,
             genre_id: list,
@@ -26,7 +26,7 @@ class Match:
         self.id = id
         self.name = name
         self.start_time = start_time
-        self.duration_id = duration_id
+        self.duration = duration
         self.place_name = place_name
         self.group_id = group_id
         self.genre_id = genre_id

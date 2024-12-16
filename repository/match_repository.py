@@ -16,11 +16,11 @@ class MatchRepository:
     def create(self, match: Match):
         start_time_obj = int_to_datetime(match.start_time)
         self.db_provider.execute_query(
-            '''INSERT INTO matches (match_name, start_time, duration_id, place_name, group_id, genre_id, is_loneliness_friendly, url, annotation, last_edit_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())''',
+            '''INSERT INTO matches (match_name, start_time, duration, place_name, group_id, genre_id, is_loneliness_friendly, url, annotation, last_edit_time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())''',
             (
                 match.name,
                 start_time_obj,
-                match.duration_id,
+                match.duration,
                 match.place_name,
                 match.group_id,
                 match.genre_id,
@@ -41,11 +41,11 @@ class MatchRepository:
     def update(self, match: Match):
         start_time_obj = int_to_datetime(match.start_time)
         self.db_provider.execute_query(
-            '''UPDATE matches SET match_name = %s, start_time = %s, duration_id = %s, place_name = %s, group_id = %s, genre_id = %s, is_loneliness_friendly = %s, url = %s, annotation = %s, last_edit_time = NOW() WHERE id = %s''',
+            '''UPDATE matches SET match_name = %s, start_time = %s, duration = %s, place_name = %s, group_id = %s, genre_id = %s, is_loneliness_friendly = %s, url = %s, annotation = %s, last_edit_time = NOW() WHERE id = %s''',
             (
                 match.name,
                 start_time_obj,
-                match.duration_id,
+                match.duration,
                 match.place_name,
                 match.group_id,
                 match.genre_id,
@@ -62,23 +62,23 @@ class MatchRepository:
             (match.id,)
         )
 
-    def read_by_duration(self, duration_id: int, limit: int, offset: int) -> list[Match]:
-        rows = self.db_provider.execute_read_query(
-            '''SELECT * from matches WHERE start_time > NOW() AND duration_id = %s ORDER BY start_time LIMIT %s OFFSET %s;''',
-            (
-                duration_id,
-                limit,
-                offset,
-            )
-        )
-        return list(map(match_from_row, rows))
+    # def read_by_duration(self, duration_id: int, limit: int, offset: int) -> list[Match]:
+    #     rows = self.db_provider.execute_read_query(
+    #         '''SELECT * from matches WHERE start_time > NOW() AND duration_id = %s ORDER BY start_time LIMIT %s OFFSET %s;''',
+    #         (
+    #             duration_id,
+    #             limit,
+    #             offset,
+    #         )
+    #     )
+    #     return list(map(match_from_row, rows))
     
-    def count_by_duration(self, duration_id: int) -> int:
-        number = self.db_provider.execute_read_query(
-            '''SELECT COUNT(*) FROM matches WHERE start_time > NOW() AND duration_id = %s;''',
-            (duration_id,)
-        )[0][0]
-        return number
+    # def count_by_duration(self, duration_id: int) -> int:
+    #     number = self.db_provider.execute_read_query(
+    #         '''SELECT COUNT(*) FROM matches WHERE start_time > NOW() AND duration_id = %s;''',
+    #         (duration_id,)
+    #     )[0][0]
+    #     return number
 
     def read_by_genre(self, genre_id: int, limit: int, offset: int) -> list[Match]:
         rows = self.db_provider.execute_read_query(
@@ -153,9 +153,10 @@ class MatchRepository:
         return number
     
     def read_by_date(self, date: int) -> list[Match]:
+        date_plus = date + (24 * 60 * 60) # добавляем сутки
         rows = self.db_provider.execute_read_query(
-            '''SELECT * FROM matches WHERE start_time = %s ORDER BY start_time;''',
-            (int_to_datetime(date),)
+            '''SELECT * FROM matches WHERE start_time >= %s AND start_time < %s ORDER BY start_time;''',
+            (int_to_datetime(date), int_to_datetime(date_plus),)
         )
         return list(map(match_from_row, rows))
 
