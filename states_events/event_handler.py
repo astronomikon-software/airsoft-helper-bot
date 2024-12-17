@@ -35,9 +35,6 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
     if isinstance(state, VeiwByGenreState) and isinstance(event, ButtonEvent):
         return on_veiw_by_genre_state(state, event)
     
-    # if isinstance(state, VeiwByDurationState) and isinstance(event, ButtonEvent):
-    #     return on_veiw_by_duration_state(state, event)
-    
     if isinstance(state, VeiwByLonelinessState) and isinstance(event, ButtonEvent):
         return on_veiw_by_loneliness_state(state, event)
     
@@ -95,8 +92,6 @@ def get_new_state(state: BotState, event: BotEvent, user: User) -> BotState:
                 return state_class(0, 0, VeiwByGroupProgress.VEIW_GROUPS, 1)
             elif state_class is VeiwByGenreState:
                 return state_class(0, 0, VeiwByGenreProgress.VEIW_GENRES, 1)
-            # elif state_class is VeiwByDurationState:
-            #     return state_class(0, 0, VeiwByDurationProgress.VEIW_DURATIONS, 1)
             elif state_class is VeiwByDateState:
                 return state_class(VeiwByDateProgress.VEIW_DATES, 0, 0, 0)
             elif state_class is VeiwByLonelinessState:
@@ -175,7 +170,10 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
                 progress=EditMatchProgress.GENRE,
             )
         else:
-            match.group_id.append(int(event.callback))
+            if int(event.callback) not in match.group_id:
+                match.group_id.append(int(event.callback))
+            else:
+                match.group_id.remove(int(event.callback))
             return EditMatchState(
                 match=match,
                 progress=EditMatchProgress.GROUP,
@@ -188,7 +186,10 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
                 progress=EditMatchProgress.IS_LONELINESS_FRIENDLY,
             )
         else:
-            match.genre_id.append(int(event.callback))
+            if int(event.callback) not in match.genre_id:
+                match.genre_id.append(int(event.callback))
+            else:
+                match.genre_id.remove(int(event.callback))
             return EditMatchState(
                 match=match,
                 progress=EditMatchProgress.GENRE,
@@ -407,55 +408,6 @@ def on_veiw_by_genre_state(state: VeiwByGenreState, event: ButtonEvent):
             page_number=state.page_number,
             progress=VeiwByGenreProgress.VEIW_ONE_FILTERED_BY_GENRE
         )
-
-
-# def on_veiw_by_duration_state(state: VeiwByDurationState, event: ButtonEvent):
-#     if event.callback == ButtonCallback.FILTERS:
-#         return FiltersState()
-#     if event.callback == ButtonCallback.SPECIAL_GO_BACK \
-#         and state.progress == VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION:
-#         return VeiwByDurationState(
-#             item_id=0,
-#             match_id=0,
-#             page_number=0,
-#             progress=VeiwByDurationProgress.VEIW_DURATIONS
-#         )
-#     if event.callback == ButtonCallback.SPECIAL_GO_BACK \
-#         and state.progress == VeiwByDurationProgress.VEIW_ONE_FILTERED_BY_DURATION:
-#         return VeiwByDurationState(
-#             item_id=state.item_id,
-#             match_id=0,
-#             page_number=state.page_number,
-#             progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
-#         )
-#     if event.callback == ButtonCallback.NEXT_PAGE:
-#         return VeiwByDurationState(
-#             item_id=state.item_id,
-#             match_id=0,
-#             page_number=state.page_number+1,
-#             progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
-#         )
-#     if event.callback == ButtonCallback.PREVIOUS_PAGE:
-#         return VeiwByDurationState(
-#             item_id=state.item_id,
-#             match_id=0,
-#             page_number=state.page_number-1,
-#             progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
-#         )
-#     if state.progress == VeiwByDurationProgress.VEIW_DURATIONS:
-#         return VeiwByDurationState(
-#             item_id=event.callback,
-#             match_id=0,
-#             page_number=1,
-#             progress=VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION
-#         )
-#     if state.progress == VeiwByDurationProgress.VEIW_FILTERED_BY_DURATION:
-#         return VeiwByDurationState(
-#             item_id=state.item_id,
-#             match_id=event.callback,
-#             page_number=state.page_number,
-#             progress=VeiwByDurationProgress.VEIW_ONE_FILTERED_BY_DURATION
-#         )
 
 
 def on_veiw_by_loneliness_state(state: VeiwByLonelinessState, event: ButtonEvent):
@@ -682,7 +634,10 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
                 page_number=1,
             )
         else:
-            updating_match.group_id.append(int(event.callback))
+            if int(event.callback) not in updating_match.group_id:
+                updating_match.group_id.append(int(event.callback))
+            else:
+                updating_match.group_id.remove(int(event.callback))
             return UpdateMatchState(
                 old_match=state.old_match,
                 new_match=updating_match,
@@ -700,7 +655,10 @@ def on_update_match_state(state: UpdateMatchState, event: ButtonEvent):
                 page_number=1,
             )
         else:
-            updating_match.genre_id.append(int(event.callback))
+            if int(event.callback) not in updating_match.genre_id:
+                updating_match.genre_id.append(int(event.callback))
+            else:
+                updating_match.genre_id.remove(int(event.callback))
             return UpdateMatchState(
                 old_match=state.old_match,
                 new_match=updating_match,
