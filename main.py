@@ -84,42 +84,54 @@ def toll_the_great_bell_thrice(callback):
 
 
 def check_notifications():
-    matches = match_repository.read_notificapable()
-    
-    if len(matches) > 0:
-        for user in user_repository.read_all():
-            bot.send_message(
-                chat_id=user.id, 
-                text=MessageText.delayed_announcement(matches)
+    try:
+        matches = match_repository.read_notificapable()
+        
+        if len(matches) > 0:
+            for user in user_repository.read_all():
+                bot.send_message(
+                    chat_id=user.id, 
+                    text=MessageText.delayed_announcement(matches)
             )
+    except Exception as e:
+        print(e)
 schedule.every().day.at('10:00').do(check_notifications)
 
 
-if config.USE_WEBHOOK:
-    app = Flask(__name__)
+def main():
+    if config.USE_WEBHOOK:
+        app = Flask(__name__)
 
-    # TODO: Доделать вебхук...
-    @app.route('/', methods=['GET', 'HEAD'])
-    def index():
-        return ''
-    
-    @app.route(WEBHOOK_URL_PATH, methods=['POST'])
-    def webhook():
-        if flask.request.headers.get('content-type') == 'application/json':
-            json_string = flask.request.get_data().decode('utf-8')
-            update = telebot.types.Update.de_json(json_string)
-            bot.process_new_updates([update])
+        # TODO: Доделать вебхук...
+        @app.route('/', methods=['GET', 'HEAD'])
+        def index():
             return ''
-        else:
-            flask.abort(403)
-    
-    bot.set_webhook(url=WEBHOOK_URL_BASE + WEBHOOK_URL_PATH)
-    app.run(
-        host=config.WEBHOOK_HOST,
-        port=config.WEBHOOK_PORT,
-        debug=True
-    )
-else:
-    bot.infinity_polling()
+        
+        @app.route(WEBHOOK_URL_PATH, methods=['POST'])
+        def webhook():
+            if flask.request.headers.get('content-type') == 'application/json':
+                json_string = flask.request.get_data().decode('utf-8')
+                update = telebot.types.Update.de_json(json_string)
+                bot.process_new_updates([update])
+                return ''
+            else:
+                flask.abort(403)
+        
+        bot.set_webhook(url=WEBHOOK_URL_BASE + WEBHOOK_URL_PATH)
+        app.run(
+            host=config.WEBHOOK_HOST,
+            port=config.WEBHOOK_PORT,
+            debug=True
+        )
+    else:
+        bot.infinity_polling()
 
+
+while True:
+    try:
+        main()
+    except Exception as e:
+        print(e)
+        time.sleep(config.RESTART_DELAY)
+    
 # Я посвящаю эту работу своим великим учителям: Артемию и Анне.
