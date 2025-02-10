@@ -10,6 +10,7 @@ class DbProvider:
             user: str,
             password: str,
             host: str,
+            port: int,
             autocommit=True
         ):
         self.connection = psycopg2.connect(
@@ -17,6 +18,7 @@ class DbProvider:
             user=user,
             password=password,
             host=host,
+            port=port,
         )
         self.autocommit = autocommit
     
