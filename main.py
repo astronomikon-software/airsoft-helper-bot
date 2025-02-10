@@ -92,7 +92,7 @@ def check_notifications():
                 bot.send_message(
                     chat_id=user.id, 
                     text=MessageText.delayed_announcement(matches)
-            )
+                )
     except Exception as e:
         print(e)
 schedule.every().day.at('10:00').do(check_notifications)
