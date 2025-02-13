@@ -90,16 +90,15 @@ https://www.donationalerts.com/r/danceegss
             if i < len(match.genre_id) - 1:
                 genres += ', '
 
-        return 'Название:' + ' ' + match.name + \
-            '\n' + 'Дата начала:' + ' ' + int_time_to_str(match.start_time) + \
-            '\n' + 'Продолжительность:' + ' ' + match.duration + \
-            '\n' + 'Место проведения:' + ' ' + match.place_name + \
-            '\n' + 'Организаторы:' + ' ' + groups + \
-            '\n' + 'Тип мероприятия:' + ' ' + genres + \
-            '\n' + 'Подходит ли для одиночек:' + ' ' + loneliness_to_str(match.is_loneliness_friendly) + \
-            '\n' + 'Краткое описание:' + ' ' + loneliness_to_str(match.is_loneliness_friendly) + \
-            '\n' + 'Ссылка на игру:' + ' ' + match.url + \
-            '\n' + 'Краткое описание:' + ' ' + match.annotation
+        return '- *Название:*' + ' ' + match.name + \
+            '\n' +'- *Дата начала:*' + ' ' + int_time_to_str(match.start_time) + \
+            '\n' +'- *Продолжительность:*' + ' ' + match.duration + \
+            '\n' +'- *Место проведения:*' + ' ' + match.place_name + \
+            '\n' +'- *Организаторы:*' + ' ' + groups + \
+            '\n' +'- *Тип мероприятия:*' + ' ' + genres + \
+            '\n' +'- *Подходит ли для одиночек:*' + ' ' + loneliness_to_str(match.is_loneliness_friendly) + \
+            '\n' +'- *Ссылка на игру:*' + ' ' + match.url + \
+            '\n' +'- *Краткое описание:*' + ' ' + match.annotation
     
     def new_match_announcement(match: Match) -> str:
         return 'Добавлена новая игра' + '\n' + '\n' + MessageText.match_data(match)

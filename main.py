@@ -34,6 +34,13 @@ def handle_event(event: BotEvent, user_id: int) -> ScreenPresentation:
     return screen_presentation
 
 
+def get_parse_mode(text):
+    if '*' in text:
+        return 'Markdown'
+    else:
+        return None
+
+
 @bot.message_handler()
 def toll_the_great_bell_once(message):
     try:
@@ -44,7 +51,8 @@ def toll_the_great_bell_once(message):
         bot.send_message(
             chat_id=message.chat.id, 
             text=screen_presentation.message_text, 
-            reply_markup=screen_presentation.markup
+            reply_markup=screen_presentation.markup,
+            parse_mode=get_parse_mode(screen_presentation.message_text)
         )
     except Exception as E:
         print(E)
@@ -55,7 +63,8 @@ def toll_the_great_bell_twice(match: Match):
         for subscription in subscription_repository.read_all():
             bot.send_message(
                 chat_id=subscription.user_id, 
-                text=MessageText.new_match_announcement(match)
+                text=MessageText.new_match_announcement(match),
+                parse_mode=get_parse_mode(MessageText.new_match_announcement(match))
             )
     except Exception as E:
         print(E)
@@ -72,7 +81,8 @@ def toll_the_great_bell_thrice(callback):
         bot.edit_message_text(
             chat_id=callback.message.chat.id, 
             message_id=callback.message.message_id, 
-            text=screen_presentation.message_text
+            text=screen_presentation.message_text,
+            parse_mode=get_parse_mode(screen_presentation.message_text)
         )
         bot.edit_message_reply_markup(
             chat_id=callback.message.chat.id, 
@@ -91,7 +101,8 @@ def check_notifications():
             for user in user_repository.read_all():
                 bot.send_message(
                     chat_id=user.id, 
-                    text=MessageText.delayed_announcement(matches)
+                    text=MessageText.delayed_announcement(matches),
+                    parse_mode=get_parse_mode(MessageText.delayed_announcement(matches))
                 )
     except Exception as e:
         print(e)
