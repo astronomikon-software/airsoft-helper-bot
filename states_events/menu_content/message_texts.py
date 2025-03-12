@@ -2,6 +2,7 @@ from model.match import Match
 from repository.repository_initiation import *
 from mapping.datetime_mapping import int_time_to_str
 from mapping.loneliness_mapping import loneliness_to_str
+from utils.text_util import escape_for_markdown as esc
 
 
 class MessageText:
@@ -59,7 +60,7 @@ https://www.donationalerts.com/r/danceegss
     NEW_GAME_CREATED = 'Новая игра успешно создана!'
     NEW_GAME_CANCELLED = 'Отмена создания новой игры'
     SET_DATETIME_AGAIN = 'Формат данных неверен или введена некорректная дата. Попробуйте снова.' + '\n' + '\n' + \
-        'Введите дату и время в формате "ДД.ММ.ГГГГ":'
+                         'Введите дату и время в формате "ДД.ММ.ГГГГ ЧЧ:ММ":'
     LIST_OF_MATCHES = 'Выберите матч, чтобы увидеть полную информацию:'
     CHOOSE_LONELINESS_STATUS = 'Выберите, должна ли игра подходить одиночкам:'
     CHOOSE_DATE = 'Выберите дату, чтобы проверить наличие игр:'
@@ -77,32 +78,37 @@ https://www.donationalerts.com/r/danceegss
     SUBSCRIPTION_DELETED = 'Подписка отменена'
     SUBSCRIPTION_DOESNT_EXIST = 'Вы ещё не подписаны на уведомления о новых играх'
 
+    @staticmethod
     def match_data(match: Match) -> str:
         groups = ''
         for i in range(len(match.group_id)):
             groups += group_repository.read_by_id(match.group_id[i]).name
             if i < len(match.group_id) - 1:
                 groups += ', '
-        
+
         genres = ''
         for i in range(len(match.genre_id)):
             genres += genre_repository.read_by_id(match.genre_id[i]).name
             if i < len(match.genre_id) - 1:
                 genres += ', '
 
-        return '- *Название:*' + ' ' + match.name + \
-            '\n' +'- *Дата начала:*' + ' ' + int_time_to_str(match.start_time) + \
-            '\n' +'- *Продолжительность:*' + ' ' + match.duration + \
-            '\n' +'- *Место проведения:*' + ' ' + match.place_name + \
-            '\n' +'- *Организаторы:*' + ' ' + groups + \
-            '\n' +'- *Тип мероприятия:*' + ' ' + genres + \
-            '\n' +'- *Подходит ли для одиночек:*' + ' ' + loneliness_to_str(match.is_loneliness_friendly) + \
-            '\n' +'- *Ссылка на игру:*' + ' ' + match.url + \
-            '\n' +'- *Краткое описание:*' + ' ' + match.annotation
-    
+        return '\n'.join([
+            f'- <b>Название:</b> {esc(match.name)}',
+            f'- <b>Дата начала:</b> {esc(int_time_to_str(match.start_time))}',
+            f'- <b>Продолжительность:</b> {esc(match.duration)}',
+            f'- <b>Место проведения:</b> {esc(match.place_name)}',
+            f'- <b>Организаторы:</b> {esc(groups)}\n',
+            f'- <b>Тип мероприятия:</b> {esc(genres)}\n',
+            f'- <b>Подходит ли для одиночек:</b> {esc(loneliness_to_str(match.is_loneliness_friendly))}',
+            f'- <b>Ссылка на игру:</b> {esc(match.url)}',
+            f'- <b>Краткое описание:</b> {esc(match.annotation)}'
+        ])
+
+    @staticmethod
     def new_match_announcement(match: Match) -> str:
         return 'Добавлена новая игра' + '\n' + '\n' + MessageText.match_data(match)
-    
+
+    @staticmethod
     def delayed_announcement(matches: list[Match]) -> str:
         matches_text = ''
         for match in matches:
