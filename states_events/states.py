@@ -38,7 +38,7 @@ class CalendarProgress():
 
 class CalendarState(BotState):
     progress: CalendarProgress
-    match_id: int
+    match_id: int | None
     page_number: int
 
     def __init__(self, match_id, progress, page_number):

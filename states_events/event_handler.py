@@ -232,6 +232,12 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
 def on_calendar_state(state: CalendarState, event: ButtonEvent):
     if event.callback == ButtonCallback.SCHEDULE:
         return ScheduleState()
+    if event.callback == ButtonCallback.CALENDAR:
+        return CalendarState(
+            match_id=0,
+            page_number=0,
+            progress=CalendarProgress.VEIW_ALL,
+        )
     if event.callback == ButtonCallback.SPECIAL_GO_BACK \
         and state.progress == CalendarProgress.VEIW_ONE:
         return CalendarState(
