@@ -5,7 +5,7 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 
-USE_WEBHOOK = os.getenv('USE_WEBHOOK').lower() == 'true'
+USE_WEBHOOK = os.getenv('USE_WEBHOOK', 'False').lower() == 'true'
 WEBHOOK_HOST = os.getenv('WEBHOOK_HOST')
 WEBHOOK_PORT = os.getenv('WEBHOOK_PORT')
 DB_NAME = os.getenv('DB_NAME')

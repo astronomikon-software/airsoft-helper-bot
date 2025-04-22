@@ -232,6 +232,12 @@ def on_edit_match_state(state: EditMatchState, event: BotEvent, user: User):
 def on_calendar_state(state: CalendarState, event: ButtonEvent):
     if event.callback == ButtonCallback.SCHEDULE:
         return ScheduleState()
+    if event.callback == ButtonCallback.CALENDAR:
+        return CalendarState(
+            match_id=0,
+            page_number=0,
+            progress=CalendarProgress.VEIW_ALL,
+        )
     if event.callback == ButtonCallback.SPECIAL_GO_BACK \
         and state.progress == CalendarProgress.VEIW_ONE:
         return CalendarState(
@@ -277,21 +283,21 @@ def on_veiw_by_place_state(state: VeiwByPlaceState, event: ButtonEvent):
     if event.callback == ButtonCallback.SPECIAL_GO_BACK \
         and state.progress == VeiwByPlaceProgress.VEIW_ONE_FILTERED_BY_PLACE:
         return VeiwByPlaceState(
-            item_id=state.item_id,
+            item_id=state.place_name,
             match_id=0,
             page_number=state.page_number,
             progress=VeiwByPlaceProgress.VEIW_FILTERED_BY_PLACE
         )
     if event.callback == ButtonCallback.NEXT_PAGE:
         return VeiwByPlaceState(
-            item_id=state.item_id,
+            item_id=state.place_name,
             match_id=0,
             page_number=state.page_number+1,
             progress=VeiwByPlaceProgress.VEIW_FILTERED_BY_PLACE
         )
     if event.callback == ButtonCallback.PREVIOUS_PAGE:
         return VeiwByPlaceState(
-            item_id=state.item_id,
+            item_id=state.place_name,
             match_id=0,
             page_number=state.page_number-1,
             progress=VeiwByPlaceProgress.VEIW_FILTERED_BY_PLACE
@@ -305,7 +311,7 @@ def on_veiw_by_place_state(state: VeiwByPlaceState, event: ButtonEvent):
         )
     if state.progress == VeiwByPlaceProgress.VEIW_FILTERED_BY_PLACE:
         return VeiwByPlaceState(
-            item_id=state.item_id,
+            item_id=state.place_name,
             match_id=event.callback,
             page_number=state.page_number,
             progress=VeiwByPlaceProgress.VEIW_ONE_FILTERED_BY_PLACE

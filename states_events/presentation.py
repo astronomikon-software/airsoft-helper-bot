@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from mapping.confirmation_mapping import str_to_bool
-from mapping.datetime_mapping import int_time_to_str
+import utils.text_util
 from model.user import User
 from states_events.states import *
 from telebot import types
@@ -29,31 +28,31 @@ class ScreenPresentation:
 def get_presentation(state: BotState, user: User) -> ScreenPresentation:
     if isinstance(state, MainMenuState):
         return main_menu_presentation(state)
-    
+
     elif isinstance(state, HowToState):
         return how_to_presentation(state)
-    
+
     elif isinstance(state, MarketState):
         return market_presentation(state)
-    
+
     elif isinstance(state, ScheduleState):
         return schedule_presentation(state)
-    
+
     elif isinstance(state, HelpState):
         return help_presentation(state)
-    
+
     elif isinstance(state, DonateState):
         return donate_presentation(state)
 
     elif isinstance(state, OrganisersState):
         return organisers_presentation(state, user)
-    
+
     elif isinstance(state, EditMatchState):
         return edit_match_presentation(state)
 
     elif isinstance(state, GameIsSavedState):
         return game_is_saved_presentation(state)
-    
+
     elif isinstance(state, GameIsCancelledState):
         return game_is_cancelled_presentation(state)
 
@@ -62,10 +61,10 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
 
     elif isinstance(state, FiltersState):
         return filters_presentation(state)
-    
+
     elif isinstance(state, VeiwByPlaceState):
         return veiw_by_place_presentation(state)
-    
+
     elif isinstance(state, VeiwByDateState):
         return veiw_by_date_presentation(state)
 
@@ -74,25 +73,24 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
 
     elif isinstance(state, VeiwByGenreState):
         return veiw_by_genre_presentation(state)
-    
+
     elif isinstance(state, VeiwByLonelinessState):
         return veiw_by_loneliness_presentation(state)
-    
+
     elif isinstance(state, UpdateMatchState):
         return update_match_presentation(state)
-        
+
     elif isinstance(state, GameIsUpdatedState):
         return game_is_updated_presentation(state)
-    
+
     elif isinstance(state, GameUpdatingIsCancelledState):
         return game_updating_is_cancelled_presentation(state)
-    
+
     elif isinstance(state, SubscriptionState):
         return subscribtion_presentation(state)
-    
+
     elif isinstance(state, SubscriptionManagedState):
         return subscribtion_managed_presentation(state)
-
     else:
         return error_presentation(state)
 
@@ -101,7 +99,7 @@ def main_menu_presentation(state: MainMenuState):
     markup = types.InlineKeyboardMarkup()
     markup.add(
         create_button(
-            text=ButtonName.SCHEDULE, 
+            text=ButtonName.SCHEDULE,
             callback=ButtonCallback.SCHEDULE
         )
     )
@@ -147,7 +145,7 @@ def market_presentation(state: MarketState):
     markup = types.InlineKeyboardMarkup()
     markup.add(
         create_button(
-            text=ButtonName.MAIN_MENU, 
+            text=ButtonName.MAIN_MENU,
             callback=ButtonCallback.MAIN_MENU
         )
     )
@@ -158,7 +156,7 @@ def help_presentation(state: HelpState):
     markup = types.InlineKeyboardMarkup()
     markup.add(
         create_button(
-            text=ButtonName.MAIN_MENU, 
+            text=ButtonName.MAIN_MENU,
             callback=ButtonCallback.MAIN_MENU
         )
     )
@@ -169,7 +167,7 @@ def donate_presentation(state: DonateState):
     markup = types.InlineKeyboardMarkup()
     markup.add(
         create_button(
-            text=ButtonName.MAIN_MENU, 
+            text=ButtonName.MAIN_MENU,
             callback=ButtonCallback.MAIN_MENU
         )
     )
@@ -180,31 +178,31 @@ def schedule_presentation(state: ScheduleState):
     markup = types.InlineKeyboardMarkup()
     markup.add(
         create_button(
-            text=ButtonName.CALENDAR, 
+            text=ButtonName.CALENDAR,
             callback=ButtonCallback.CALENDAR
         )
     )
     markup.add(
         create_button(
-            text=ButtonName.FILTERS, 
+            text=ButtonName.FILTERS,
             callback=ButtonCallback.FILTERS
         )
     )
     markup.add(
         create_button(
-            text=ButtonName.ORGANISERS, 
+            text=ButtonName.ORGANISERS,
             callback=ButtonCallback.ORGANISERS
         )
     )
     markup.add(
         create_button(
-            text=ButtonName.SUBSCRIBE, 
+            text=ButtonName.SUBSCRIBE,
             callback=ButtonCallback.SUBSCRIBE
         )
     )
     markup.add(
         create_button(
-            text=ButtonName.GO_BACK, 
+            text=ButtonName.GO_BACK,
             callback=ButtonCallback.MAIN_MENU
         )
     )
@@ -239,7 +237,7 @@ def organisers_presentation(state, user: User):
                 callback=ButtonCallback.SCHEDULE
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -252,7 +250,7 @@ def organisers_presentation(state, user: User):
                 callback=ButtonCallback.SCHEDULE
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -288,7 +286,7 @@ def edit_match_presentation(state: EditMatchState):
             )
         markup.add(
             create_button(
-                text=ButtonName.NEXT_STEP, 
+                text=ButtonName.NEXT_STEP,
                 callback=ButtonCallback.NEXT_STEP
             )
         )
@@ -306,7 +304,7 @@ def edit_match_presentation(state: EditMatchState):
             )
         markup.add(
             create_button(
-                text=ButtonName.NEXT_STEP, 
+                text=ButtonName.NEXT_STEP,
                 callback=ButtonCallback.NEXT_STEP
             )
         )
@@ -317,13 +315,13 @@ def edit_match_presentation(state: EditMatchState):
             create_button(
                 text=ButtonName.YES,
                 callback=ButtonCallback.TRUE
-            ) 
+            )
         )
         markup.add(
             create_button(
                 text=ButtonName.NO,
                 callback=ButtonCallback.FALSE
-            ) 
+            )
         )
         return ScreenPresentation(markup, MessageText.SET_LONELINESS)
     elif state.progress == EditMatchProgress.URL:
@@ -338,29 +336,29 @@ def edit_match_presentation(state: EditMatchState):
             create_button(
                 text=ButtonName.SAVE_GAME,
                 callback=ButtonCallback.SAVE_GAME
-            ) 
+            )
         )
         markup.add(
             create_button(
                 text=ButtonName.CANCEL_GAME_EDITING,
                 callback=ButtonCallback.CANCEL_GAME_EDITING
-            ) 
+            )
         )
         return ScreenPresentation(markup, MessageText.CONFIRM_DATA + \
-            '\n' + '\n' + MessageText.match_data(state.match))
+                                  '\n' + '\n' + MessageText.match_data(state.match))
 
 
 def game_is_saved_presentation(state: GameIsSavedState):
     markup = types.InlineKeyboardMarkup()
     markup.add(
         create_button(
-            text=ButtonName.BACK_TO_ORGANISERS, 
+            text=ButtonName.BACK_TO_ORGANISERS,
             callback=ButtonCallback.ORGANISERS
         )
     )
     markup.add(
         create_button(
-            text=ButtonName.MAIN_MENU, 
+            text=ButtonName.MAIN_MENU,
             callback=ButtonCallback.MAIN_MENU
         )
     )
@@ -371,13 +369,13 @@ def game_is_cancelled_presentation(state: GameIsCancelledState):
     markup = types.InlineKeyboardMarkup()
     markup.add(
         create_button(
-            text=ButtonName.BACK_TO_ORGANISERS, 
+            text=ButtonName.BACK_TO_ORGANISERS,
             callback=ButtonCallback.ORGANISERS
         )
-    ) 
+    )
     markup.add(
         create_button(
-            text=ButtonName.MAIN_MENU, 
+            text=ButtonName.MAIN_MENU,
             callback=ButtonCallback.MAIN_MENU
         )
     )
@@ -389,11 +387,11 @@ def calendar_presentation(state: CalendarState):
         markup = types.InlineKeyboardMarkup()
         page_size = 8
         matches = match_repository.read_ongoing(limit=page_size, offset=((state.page_number - 1) * page_size))
-        
+
         for match in matches:
             markup.add(
                 create_button(
-                    text=ButtonName.small_match_data(match), 
+                    text=ButtonName.small_match_data(match),
                     callback=match.id
                 )
             )
@@ -405,11 +403,11 @@ def calendar_presentation(state: CalendarState):
         )
         markup.add(
             create_button(
-                text=ButtonName.GO_BACK, 
+                text=ButtonName.GO_BACK,
                 callback=ButtonCallback.SCHEDULE
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -419,11 +417,11 @@ def calendar_presentation(state: CalendarState):
         match = match_repository.read(state.match_id)
         markup.add(
             create_button(
-                text=ButtonName.GO_BACK, 
+                text=ButtonName.GO_BACK,
                 callback=ButtonCallback.SPECIAL_GO_BACK
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -434,41 +432,41 @@ def filters_presentation(state: FiltersState):
     markup = types.InlineKeyboardMarkup()
     markup.add(
         create_button(
-            text=ButtonName.PLACES, 
+            text=ButtonName.PLACES,
             callback=ButtonCallback.CHOOSE_PLACE
         )
     )
     markup.add(
         create_button(
-            text=ButtonName.DATES, 
+            text=ButtonName.DATES,
             callback=ButtonCallback.CHOOSE_DATE
         )
     )
     markup.add(
         create_button(
-            text=ButtonName.GROUPS, 
+            text=ButtonName.GROUPS,
             callback=ButtonCallback.CHOOSE_GROUP
         )
     )
     markup.add(
         create_button(
-            text=ButtonName.GENRES, 
+            text=ButtonName.GENRES,
             callback=ButtonCallback.CHOOSE_GENRE
         )
     )
     markup.add(
         create_button(
-            text=ButtonName.LONELINESS, 
+            text=ButtonName.LONELINESS,
             callback=ButtonCallback.LONELINESS
         )
     )
     markup.add(
         create_button(
-            text=ButtonName.GO_BACK, 
+            text=ButtonName.GO_BACK,
             callback=ButtonCallback.SCHEDULE
         ),
         create_button(
-            text=ButtonName.MAIN_MENU, 
+            text=ButtonName.MAIN_MENU,
             callback=ButtonCallback.MAIN_MENU
         )
     )
@@ -482,17 +480,17 @@ def veiw_by_place_presentation(state: VeiwByPlaceState):
         for place in places:
             markup.add(
                 create_button(
-                    text=place, 
-                    callback=place
+                    text=utils.text_util.escape_for_markdown(place.name),
+                    callback=place.name,
                 )
             )
         markup.add(
             create_button(
-                text=ButtonName.GO_BACK, 
+                text=ButtonName.GO_BACK,
                 callback=ButtonCallback.FILTERS
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -501,19 +499,19 @@ def veiw_by_place_presentation(state: VeiwByPlaceState):
         markup = types.InlineKeyboardMarkup()
         page_size = 8
         matches = match_repository.read_by_place(
-            place_name=state.item_id, 
-            limit=page_size, 
+            place_name=state.place_name,
+            limit=page_size,
             offset=((state.page_number - 1) * page_size)
         )
 
         if len(matches) == 0:
             markup.add(
                 create_button(
-                    text=ButtonName.GO_BACK, 
+                    text=ButtonName.GO_BACK,
                     callback=ButtonCallback.SPECIAL_GO_BACK
                 ),
                 create_button(
-                    text=ButtonName.MAIN_MENU, 
+                    text=ButtonName.MAIN_MENU,
                     callback=ButtonCallback.MAIN_MENU
                 )
             )
@@ -522,7 +520,7 @@ def veiw_by_place_presentation(state: VeiwByPlaceState):
             for match in matches:
                 markup.add(
                     create_button(
-                        text=ButtonName.small_match_data(match), 
+                        text=ButtonName.small_match_data(match),
                         callback=match.id
                     )
                 )
@@ -530,15 +528,15 @@ def veiw_by_place_presentation(state: VeiwByPlaceState):
                 markup=markup,
                 page_size=page_size,
                 page_number=state.page_number,
-                number_of_matches=match_repository.count_by_place(state.item_id)
+                number_of_matches=match_repository.count_by_place(state.place_name)
             )
             markup.add(
                 create_button(
-                    text=ButtonName.GO_BACK, 
+                    text=ButtonName.GO_BACK,
                     callback=ButtonCallback.SPECIAL_GO_BACK
                 ),
                 create_button(
-                    text=ButtonName.MAIN_MENU, 
+                    text=ButtonName.MAIN_MENU,
                     callback=ButtonCallback.MAIN_MENU
                 )
             )
@@ -548,11 +546,11 @@ def veiw_by_place_presentation(state: VeiwByPlaceState):
         match = match_repository.read(state.match_id)
         markup.add(
             create_button(
-                text=ButtonName.GO_BACK, 
+                text=ButtonName.GO_BACK,
                 callback=ButtonCallback.SPECIAL_GO_BACK
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -591,11 +589,11 @@ def veiw_by_date_presentation(state: VeiwByDateState):
         if len(matches) == 0:
             markup.add(
                 create_button(
-                    text=ButtonName.GO_BACK, 
+                    text=ButtonName.GO_BACK,
                     callback=ButtonCallback.SPECIAL_GO_BACK
                 ),
                 create_button(
-                    text=ButtonName.MAIN_MENU, 
+                    text=ButtonName.MAIN_MENU,
                     callback=ButtonCallback.MAIN_MENU
                 )
             )
@@ -604,17 +602,17 @@ def veiw_by_date_presentation(state: VeiwByDateState):
             for match in matches:
                 markup.add(
                     create_button(
-                        text=ButtonName.small_match_data(match), 
+                        text=ButtonName.small_match_data(match),
                         callback=match.id
                     )
                 )
             markup.add(
                 create_button(
-                    text=ButtonName.GO_BACK, 
+                    text=ButtonName.GO_BACK,
                     callback=ButtonCallback.SPECIAL_GO_BACK
                 ),
                 create_button(
-                    text=ButtonName.MAIN_MENU, 
+                    text=ButtonName.MAIN_MENU,
                     callback=ButtonCallback.MAIN_MENU
                 )
             )
@@ -624,11 +622,11 @@ def veiw_by_date_presentation(state: VeiwByDateState):
         match = match_repository.read(state.match_id)
         markup.add(
             create_button(
-                text=ButtonName.GO_BACK, 
+                text=ButtonName.GO_BACK,
                 callback=ButtonCallback.SPECIAL_GO_BACK
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -642,17 +640,17 @@ def veiw_by_group_presentation(state: VeiwByGroupState):
         for group in groups:
             markup.add(
                 create_button(
-                    text=group.name, 
+                    text=group.name,
                     callback=group.id
                 )
             )
         markup.add(
             create_button(
-                text=ButtonName.GO_BACK, 
+                text=ButtonName.GO_BACK,
                 callback=ButtonCallback.FILTERS
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -662,17 +660,17 @@ def veiw_by_group_presentation(state: VeiwByGroupState):
         page_size = 8
         matches = match_repository.read_by_group(
             group_id=state.item_id,
-            limit=page_size, 
+            limit=page_size,
             offset=((state.page_number - 1) * page_size)
         )
         if len(matches) == 0:
             markup.add(
                 create_button(
-                    text=ButtonName.GO_BACK, 
+                    text=ButtonName.GO_BACK,
                     callback=ButtonCallback.SPECIAL_GO_BACK
                 ),
                 create_button(
-                    text=ButtonName.MAIN_MENU, 
+                    text=ButtonName.MAIN_MENU,
                     callback=ButtonCallback.MAIN_MENU
                 )
             )
@@ -681,7 +679,7 @@ def veiw_by_group_presentation(state: VeiwByGroupState):
             for match in matches:
                 markup.add(
                     create_button(
-                        text=ButtonName.small_match_data(match), 
+                        text=ButtonName.small_match_data(match),
                         callback=match.id
                     )
                 )
@@ -693,11 +691,11 @@ def veiw_by_group_presentation(state: VeiwByGroupState):
             )
             markup.add(
                 create_button(
-                    text=ButtonName.GO_BACK, 
+                    text=ButtonName.GO_BACK,
                     callback=ButtonCallback.SPECIAL_GO_BACK
                 ),
                 create_button(
-                    text=ButtonName.MAIN_MENU, 
+                    text=ButtonName.MAIN_MENU,
                     callback=ButtonCallback.MAIN_MENU
                 )
             )
@@ -707,11 +705,11 @@ def veiw_by_group_presentation(state: VeiwByGroupState):
         match = match_repository.read(state.match_id)
         markup.add(
             create_button(
-                text=ButtonName.GO_BACK, 
+                text=ButtonName.GO_BACK,
                 callback=ButtonCallback.SPECIAL_GO_BACK
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -725,17 +723,17 @@ def veiw_by_genre_presentation(state: VeiwByGenreState):
         for genre in genres:
             markup.add(
                 create_button(
-                    text=genre.name, 
+                    text=genre.name,
                     callback=genre.id
                 )
             )
         markup.add(
             create_button(
-                text=ButtonName.GO_BACK, 
+                text=ButtonName.GO_BACK,
                 callback=ButtonCallback.FILTERS
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -745,18 +743,18 @@ def veiw_by_genre_presentation(state: VeiwByGenreState):
         page_size = 8
         matches = match_repository.read_by_genre(
             genre_id=state.item_id,
-            limit=page_size, 
+            limit=page_size,
             offset=((state.page_number - 1) * page_size)
         )
 
         if len(matches) == 0:
             markup.add(
                 create_button(
-                    text=ButtonName.GO_BACK, 
+                    text=ButtonName.GO_BACK,
                     callback=ButtonCallback.SPECIAL_GO_BACK
                 ),
                 create_button(
-                    text=ButtonName.MAIN_MENU, 
+                    text=ButtonName.MAIN_MENU,
                     callback=ButtonCallback.MAIN_MENU
                 )
             )
@@ -765,7 +763,7 @@ def veiw_by_genre_presentation(state: VeiwByGenreState):
             for match in matches:
                 markup.add(
                     create_button(
-                        text=ButtonName.small_match_data(match), 
+                        text=ButtonName.small_match_data(match),
                         callback=match.id
                     )
                 )
@@ -777,11 +775,11 @@ def veiw_by_genre_presentation(state: VeiwByGenreState):
             )
             markup.add(
                 create_button(
-                    text=ButtonName.GO_BACK, 
+                    text=ButtonName.GO_BACK,
                     callback=ButtonCallback.SPECIAL_GO_BACK
                 ),
                 create_button(
-                    text=ButtonName.MAIN_MENU, 
+                    text=ButtonName.MAIN_MENU,
                     callback=ButtonCallback.MAIN_MENU
                 )
             )
@@ -791,11 +789,11 @@ def veiw_by_genre_presentation(state: VeiwByGenreState):
         match = match_repository.read(state.match_id)
         markup.add(
             create_button(
-                text=ButtonName.GO_BACK, 
+                text=ButtonName.GO_BACK,
                 callback=ButtonCallback.SPECIAL_GO_BACK
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -807,23 +805,23 @@ def veiw_by_loneliness_presentation(state: VeiwByLonelinessState):
         markup = types.InlineKeyboardMarkup()
         markup.add(
             create_button(
-                text=ButtonName.YES, 
+                text=ButtonName.YES,
                 callback=ButtonCallback.TRUE
             )
         )
         markup.add(
             create_button(
-                text=ButtonName.NO, 
+                text=ButtonName.NO,
                 callback=ButtonCallback.FALSE
             )
         )
         markup.add(
             create_button(
-                text=ButtonName.GO_BACK, 
+                text=ButtonName.GO_BACK,
                 callback=ButtonCallback.FILTERS
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -833,18 +831,18 @@ def veiw_by_loneliness_presentation(state: VeiwByLonelinessState):
         page_size = 8
         matches = match_repository.read_by_loneliness(
             loneliness_status=state.status,
-            limit=page_size, 
+            limit=page_size,
             offset=((state.page_number - 1) * page_size)
         )
 
         if len(matches) == 0:
             markup.add(
                 create_button(
-                    text=ButtonName.GO_BACK, 
+                    text=ButtonName.GO_BACK,
                     callback=ButtonCallback.SPECIAL_GO_BACK
                 ),
                 create_button(
-                    text=ButtonName.MAIN_MENU, 
+                    text=ButtonName.MAIN_MENU,
                     callback=ButtonCallback.MAIN_MENU
                 )
             )
@@ -853,7 +851,7 @@ def veiw_by_loneliness_presentation(state: VeiwByLonelinessState):
             for match in matches:
                 markup.add(
                     create_button(
-                        text=ButtonName.small_match_data(match), 
+                        text=ButtonName.small_match_data(match),
                         callback=match.id
                     )
                 )
@@ -865,11 +863,11 @@ def veiw_by_loneliness_presentation(state: VeiwByLonelinessState):
             )
             markup.add(
                 create_button(
-                    text=ButtonName.GO_BACK, 
+                    text=ButtonName.GO_BACK,
                     callback=ButtonCallback.SPECIAL_GO_BACK
                 ),
                 create_button(
-                    text=ButtonName.MAIN_MENU, 
+                    text=ButtonName.MAIN_MENU,
                     callback=ButtonCallback.MAIN_MENU
                 )
             )
@@ -879,11 +877,11 @@ def veiw_by_loneliness_presentation(state: VeiwByLonelinessState):
         match = match_repository.read(state.match_id)
         markup.add(
             create_button(
-                text=ButtonName.GO_BACK, 
+                text=ButtonName.GO_BACK,
                 callback=ButtonCallback.SPECIAL_GO_BACK
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -895,13 +893,13 @@ def update_match_presentation(state: UpdateMatchState):
         markup = types.InlineKeyboardMarkup()
         page_size = 8
         matches = match_repository.read_by_updating(
-            limit=page_size, 
+            limit=page_size,
             offset=((state.page_number - 1) * page_size)
         )
         for match in matches:
             markup.add(
                 create_button(
-                    text=ButtonName.small_match_data(match), 
+                    text=ButtonName.small_match_data(match),
                     callback=match.id
                 )
             )
@@ -917,7 +915,7 @@ def update_match_presentation(state: UpdateMatchState):
                 callback=ButtonCallback.ORGANISERS
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -937,7 +935,7 @@ def update_match_presentation(state: UpdateMatchState):
                 callback=ButtonCallback.SPECIAL_GO_BACK
             ),
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             )
         )
@@ -945,28 +943,28 @@ def update_match_presentation(state: UpdateMatchState):
     elif state.progress == UpdateMatchProgress.UPDATE_NAME:
         markup = types.InlineKeyboardMarkup()
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
-            MessageText.match_data(state.new_match) + '\n' + '\n' + \
-                MessageText.SET_NAME)
+                                  MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                                  MessageText.SET_NAME)
     elif state.progress == UpdateMatchProgress.UPDATE_START_TIME:
         markup = types.InlineKeyboardMarkup()
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
-            MessageText.match_data(state.new_match) + '\n' + '\n' + \
-                MessageText.SET_DATETIME)
+                                  MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                                  MessageText.SET_DATETIME)
     elif state.progress == UpdateMatchProgress.UPDATE_START_TIME_AGAIN:
         markup = types.InlineKeyboardMarkup()
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
-            MessageText.match_data(state.new_match) + '\n' + '\n' + \
-                MessageText.SET_DATETIME_AGAIN)
+                                  MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                                  MessageText.SET_DATETIME_AGAIN)
     elif state.progress == UpdateMatchProgress.UPDATE_DURATION:
         markup = types.InlineKeyboardMarkup()
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
-            MessageText.match_data(state.new_match) + '\n' + '\n' + \
-                MessageText.SET_DURATION)
+                                  MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                                  MessageText.SET_DURATION)
     elif state.progress == UpdateMatchProgress.UPDATE_PLACE:
         markup = types.InlineKeyboardMarkup()
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
-            MessageText.match_data(state.new_match) + '\n' + '\n' + \
-                MessageText.SET_PLACE)
+                                  MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                                  MessageText.SET_PLACE)
     elif state.progress == UpdateMatchProgress.UPDATE_GROUP:
         markup = types.InlineKeyboardMarkup()
         groups = group_repository.read_all()
@@ -985,8 +983,8 @@ def update_match_presentation(state: UpdateMatchState):
             )
         )
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
-            MessageText.match_data(state.new_match) + '\n' + '\n' + \
-                MessageText.SET_GROUP)
+                                  MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                                  MessageText.SET_GROUP)
     elif state.progress == UpdateMatchProgress.UPDATE_GENRE:
         markup = types.InlineKeyboardMarkup()
         genres = genre_repository.read_all()
@@ -1005,35 +1003,35 @@ def update_match_presentation(state: UpdateMatchState):
             )
         )
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
-            MessageText.match_data(state.new_match) + '\n' + '\n' + \
-                MessageText.SET_GENRE)
+                                  MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                                  MessageText.SET_GENRE)
     elif state.progress == UpdateMatchProgress.UPDATE_LONELINESS:
         markup = types.InlineKeyboardMarkup()
         markup.add(
             create_button(
                 text=ButtonName.YES,
                 callback=ButtonCallback.TRUE
-            ) 
+            )
         )
         markup.add(
             create_button(
                 text=ButtonName.NO,
                 callback=ButtonCallback.FALSE
-            ) 
+            )
         )
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
-            MessageText.match_data(state.new_match) + '\n' + '\n' + \
-                MessageText.SET_LONELINESS)
+                                  MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                                  MessageText.SET_LONELINESS)
     elif state.progress == UpdateMatchProgress.UPDATE_URL:
         markup = types.InlineKeyboardMarkup()
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
-            MessageText.match_data(state.new_match) + '\n' + '\n' + \
-                MessageText.SET_URL)
+                                  MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                                  MessageText.SET_URL)
     elif state.progress == UpdateMatchProgress.UPDATE_ANNOTATION:
         markup = types.InlineKeyboardMarkup()
         return ScreenPresentation(markup, MessageText.UPDATING_MATCH + '\n' + '\n' + \
-            MessageText.match_data(state.new_match) + '\n' + '\n' + \
-                MessageText.SET_ANNOTATION)
+                                  MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                                  MessageText.SET_ANNOTATION)
     elif state.progress == UpdateMatchProgress.COMPARING_EDITIONS:
         markup = types.InlineKeyboardMarkup()
         markup.add(
@@ -1101,10 +1099,10 @@ def update_match_presentation(state: UpdateMatchState):
             )
         )
         return ScreenPresentation(markup, MessageText.CURRENT_MATCH + '\n' + '\n' + \
-            MessageText.match_data(state.old_match) + '\n' + '\n' + \
-            MessageText.UPDATING_MATCH + '\n' + '\n' + \
-            MessageText.match_data(state.new_match) + '\n' + '\n' + \
-                MessageText.UPDATING_PROCESS)
+                                  MessageText.match_data(state.old_match) + '\n' + '\n' + \
+                                  MessageText.UPDATING_MATCH + '\n' + '\n' + \
+                                  MessageText.match_data(state.new_match) + '\n' + '\n' + \
+                                  MessageText.UPDATING_PROCESS)
     elif state.progress == UpdateMatchProgress.FINISH_UPDATING:
         markup = types.InlineKeyboardMarkup()
         markup.add(
@@ -1120,19 +1118,19 @@ def update_match_presentation(state: UpdateMatchState):
             )
         )
         return ScreenPresentation(markup, MessageText.INSURE_UPDATING)
-    
+
 
 def game_is_updated_presentation(state: GameIsUpdatedState):
     markup = types.InlineKeyboardMarkup()
     markup.add(
         create_button(
-            text=ButtonName.BACK_TO_ORGANISERS, 
+            text=ButtonName.BACK_TO_ORGANISERS,
             callback=ButtonCallback.ORGANISERS
         )
     )
     markup.add(
         create_button(
-            text=ButtonName.MAIN_MENU, 
+            text=ButtonName.MAIN_MENU,
             callback=ButtonCallback.MAIN_MENU
         )
     )
@@ -1143,13 +1141,13 @@ def game_updating_is_cancelled_presentation(state: GameUpdatingIsCancelledState)
     markup = types.InlineKeyboardMarkup()
     markup.add(
         create_button(
-            text=ButtonName.BACK_TO_ORGANISERS, 
+            text=ButtonName.BACK_TO_ORGANISERS,
             callback=ButtonCallback.ORGANISERS
         )
     )
     markup.add(
         create_button(
-            text=ButtonName.MAIN_MENU, 
+            text=ButtonName.MAIN_MENU,
             callback=ButtonCallback.MAIN_MENU
         )
     )
@@ -1160,7 +1158,7 @@ def error_presentation(state):
     markup = types.InlineKeyboardMarkup()
     markup.add(
         create_button(
-            text=ButtonName.MAIN_MENU, 
+            text=ButtonName.MAIN_MENU,
             callback=ButtonCallback.MAIN_MENU
         )
     )
@@ -1172,17 +1170,17 @@ def subscribtion_presentation(state: SubscriptionState):
     if state.is_subscribed:
         markup.add(
             create_button(
-                text=ButtonName.DELETE_SUBSCRIPTION, 
+                text=ButtonName.DELETE_SUBSCRIPTION,
                 callback=ButtonCallback.DELETE_SUBSCRIPTION
             )
         )
         markup.add(
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             ),
             create_button(
-                text=ButtonName.GO_BACK, 
+                text=ButtonName.GO_BACK,
                 callback=ButtonCallback.SCHEDULE
             )
         )
@@ -1190,34 +1188,35 @@ def subscribtion_presentation(state: SubscriptionState):
     else:
         markup.add(
             create_button(
-                text=ButtonName.CREATE_SUBSCRIPTION, 
+                text=ButtonName.CREATE_SUBSCRIPTION,
                 callback=ButtonCallback.CREATE_SUBSCRIPTION
             )
         )
         markup.add(
             create_button(
-                text=ButtonName.MAIN_MENU, 
+                text=ButtonName.MAIN_MENU,
                 callback=ButtonCallback.MAIN_MENU
             ),
             create_button(
-                text=ButtonName.GO_BACK, 
+                text=ButtonName.GO_BACK,
                 callback=ButtonCallback.SCHEDULE
             )
         )
         return ScreenPresentation(markup, MessageText.SUBSCRIPTION)
 
+
 def subscribtion_managed_presentation(state: SubscriptionManagedState):
     markup = types.InlineKeyboardMarkup()
     markup.add(
-            create_button(
-                text=ButtonName.MAIN_MENU, 
-                callback=ButtonCallback.MAIN_MENU
-            ),
-            create_button(
-                text=ButtonName.GO_BACK, 
-                callback=ButtonCallback.SUBSCRIBE
-            )
+        create_button(
+            text=ButtonName.MAIN_MENU,
+            callback=ButtonCallback.MAIN_MENU
+        ),
+        create_button(
+            text=ButtonName.GO_BACK,
+            callback=ButtonCallback.SUBSCRIBE
         )
+    )
     if state.is_created:
         return ScreenPresentation(markup, MessageText.SUBSCRIPTION_CREATED)
     else:

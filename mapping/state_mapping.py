@@ -55,7 +55,7 @@ def calendar_state_to_dict(state: CalendarState) -> dict:
 def veiw_by_place_state_to_dict(state: VeiwByPlaceState) -> dict:
     return {
         'state_name': 'VeiwByPlaceState',
-        'item_id': state.item_id,
+        'item_id': state.place_name,
         'match_id': state.match_id,
         'page_number': state.page_number,
         'progress': progress_to_str(state.progress)

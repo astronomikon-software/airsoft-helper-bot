@@ -38,7 +38,7 @@ class CalendarProgress():
 
 class CalendarState(BotState):
     progress: CalendarProgress
-    match_id: int
+    match_id: int | None
     page_number: int
 
     def __init__(self, match_id, progress, page_number):
@@ -56,12 +56,12 @@ class VeiwByPlaceProgress():
 
 class VeiwByPlaceState(BotState):
     progress: VeiwByPlaceProgress
-    item_id: int
+    place_name: int
     match_id: int
     page_number: int
 
     def __init__(self, item_id, match_id, progress, page_number):
-        self.item_id = item_id
+        self.place_name = item_id
         self.match_id = match_id
         self.progress = progress
         self.page_number = page_number
