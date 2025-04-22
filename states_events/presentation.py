@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from mapping.confirmation_mapping import str_to_bool
-from mapping.datetime_mapping import int_time_to_str
+import utils.text_util
 from model.user import User
 from states_events.states import *
 from telebot import types
@@ -92,7 +91,6 @@ def get_presentation(state: BotState, user: User) -> ScreenPresentation:
 
     elif isinstance(state, SubscriptionManagedState):
         return subscribtion_managed_presentation(state)
-
     else:
         return error_presentation(state)
 
@@ -482,8 +480,8 @@ def veiw_by_place_presentation(state: VeiwByPlaceState):
         for place in places:
             markup.add(
                 create_button(
-                    text=place,
-                    callback=place
+                    text=utils.text_util.escape_for_markdown(place.name),
+                    callback=place.name,
                 )
             )
         markup.add(
@@ -501,7 +499,7 @@ def veiw_by_place_presentation(state: VeiwByPlaceState):
         markup = types.InlineKeyboardMarkup()
         page_size = 8
         matches = match_repository.read_by_place(
-            place_name=state.item_id,
+            place_name=state.place_name,
             limit=page_size,
             offset=((state.page_number - 1) * page_size)
         )
@@ -530,7 +528,7 @@ def veiw_by_place_presentation(state: VeiwByPlaceState):
                 markup=markup,
                 page_size=page_size,
                 page_number=state.page_number,
-                number_of_matches=match_repository.count_by_place(state.item_id)
+                number_of_matches=match_repository.count_by_place(state.place_name)
             )
             markup.add(
                 create_button(

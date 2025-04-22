@@ -21,6 +21,14 @@ class StateRepository:
             )
         )
 
+    def delete(self, user_id: int):
+        self.db_provider.execute_query(
+            '''DELETE FROM user_bot_states WHERE user_id=%s''',
+            (
+                user_id,
+            )
+        )
+
     def update(self, state: BotState, user_id: int):
         state_json = json.dumps(serialize(state))
         self.db_provider.execute_query(
@@ -43,6 +51,7 @@ class StateRepository:
         try:
             return self.read(user_id=user_id)
         except:
+            self.delete(user_id=user_id)
             self.create(state, user_id)
             return state
         
