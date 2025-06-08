@@ -91,3 +91,5 @@ INSERT INTO users(id, is_admin, is_true_admin) VALUES(299076721, 'TRUE', 'FALSE'
 INSERT INTO users(id, is_admin, is_true_admin) VALUES(5422338715, 'TRUE', 'FALSE');
 INSERT INTO users(id, is_admin, is_true_admin) VALUES(5026935623, 'TRUE', 'FALSE');
 INSERT INTO users(id, is_admin, is_true_admin) VALUES(439436332, 'TRUE', 'FALSE');
+INSERT INTO users(id, is_admin, is_true_admin) VALUES(815828751, 'TRUE', 'FALSE');
+INSERT INTO users(id, is_admin, is_true_admin) VALUES(986532791, 'TRUE', 'FALSE');

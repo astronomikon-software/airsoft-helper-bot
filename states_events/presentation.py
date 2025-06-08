@@ -430,12 +430,13 @@ def calendar_presentation(state: CalendarState):
 
 def filters_presentation(state: FiltersState):
     markup = types.InlineKeyboardMarkup()
-    markup.add(
-        create_button(
-            text=ButtonName.PLACES,
-            callback=ButtonCallback.CHOOSE_PLACE
-        )
-    )
+    # Убрано по согласованию
+    # markup.add(
+    #     create_button(
+    #         text=ButtonName.PLACES,
+    #         callback=ButtonCallback.CHOOSE_PLACE
+    #     )
+    # )
     markup.add(
         create_button(
             text=ButtonName.DATES,
